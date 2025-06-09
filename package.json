@@ -19,6 +19,7 @@
         "@tanstack/react-router": "^1.120.20",
         "@tanstack/react-router-devtools": "^1.120.20",
         "@tanstack/router-plugin": "^1.120.20",
+        "@types/node": "^22.15.30",
         "@types/react": "^19.1.6",
         "@types/react-dom": "^19.1.6",
         "@vitejs/plugin-react-swc": "^3.10.1",
