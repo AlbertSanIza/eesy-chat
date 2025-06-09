@@ -16,6 +16,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.28.0",
+        "@radix-ui/react-avatar": "^1.1.10",
         "@radix-ui/react-dialog": "^1.1.14",
         "@radix-ui/react-dropdown-menu": "^2.1.15",
         "@radix-ui/react-separator": "^1.1.7",
