@@ -11,9 +11,7 @@ function RootComponent() {
     return (
         <SidebarProvider>
             <AppSidebar />
-            <main>
-                <Outlet />
-            </main>
+            <Outlet />
         </SidebarProvider>
     )
 }
