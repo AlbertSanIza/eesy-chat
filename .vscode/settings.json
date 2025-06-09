@@ -14,7 +14,16 @@
     "files.associations": {
         "*.css": "tailwindcss"
     },
+    "files.readonlyInclude": {
+        "**/route-tree.gen.ts": true
+    },
+    "files.watcherExclude": {
+        "**/route-tree.gen.ts": true
+    },
     "git.autofetch": true,
     "git.confirmSync": false,
+    "search.exclude": {
+        "**/route-tree.gen.ts": true
+    },
     "workbench.iconTheme": "material-icon-theme"
 }
