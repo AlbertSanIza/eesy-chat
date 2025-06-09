@@ -1,3 +1,12 @@
 {
+    "cSpell.language": "en",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.organizeImports": "explicit"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "git.autofetch": true,
+    "git.confirmSync": false,
     "workbench.iconTheme": "material-icon-theme"
 }
