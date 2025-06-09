@@ -5,6 +5,6 @@
     "singleQuote": true,
     "tabWidth": 4,
     "tailwindFunctions": ["clsx", "cn", "cva", "twMerge"],
-    "tailwindStylesheet": "./app/globals.css",
+    "tailwindStylesheet": "./app/index.css",
     "trailingComma": "none"
 }
