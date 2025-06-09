@@ -1,6 +1,7 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 
 import { AppSidebar } from '@/components/sidebar'
+import { ThemeProvider } from '@/components/theme-provider'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 
 export const Route = createRootRoute({
@@ -9,11 +10,13 @@ export const Route = createRootRoute({
 
 function RootComponent() {
     return (
-        <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-                <Outlet />
-            </SidebarInset>
-        </SidebarProvider>
+        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+            <SidebarProvider>
+                <AppSidebar />
+                <SidebarInset>
+                    <Outlet />
+                </SidebarInset>
+            </SidebarProvider>
+        </ThemeProvider>
     )
 }
