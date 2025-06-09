@@ -38,6 +38,21 @@ export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 
         root.classList.add(theme)
     }, [theme])
 
+    useEffect(() => {
+        if (theme === 'system') {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+            const handleChange = () => {
+                const root = window.document.documentElement
+                root.classList.remove('light', 'dark')
+                const systemTheme = mediaQuery.matches ? 'dark' : 'light'
+                root.classList.add(systemTheme)
+            }
+
+            mediaQuery.addEventListener('change', handleChange)
+            return () => mediaQuery.removeEventListener('change', handleChange)
+        }
+    }, [theme])
+
     const value = {
         theme,
         setTheme: (theme: Theme) => {
