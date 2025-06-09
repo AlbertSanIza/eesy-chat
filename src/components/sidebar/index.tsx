@@ -8,7 +8,7 @@ export function AppSidebar() {
     return (
         <Sidebar>
             <SidebarHeader>
-                <h1 className="my-1 border-b border-transparent text-center text-xl font-bold">TheOpenChat</h1>
+                <h1 className="my-1 border-b border-transparent text-center text-xl font-bold">eesy.chat</h1>
                 <Button asChild>
                     <Link to="/">New Chat</Link>
                 </Button>
