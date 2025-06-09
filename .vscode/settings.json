@@ -32,5 +32,6 @@
     "search.exclude": {
         "**/route-tree.gen.ts": true
     },
+    "tailwindCSS.classFunctions": ["clsx", "cn", "cva", "twMerge", "tw", "clsx", "tw\\.[a-z-]+"],
     "workbench.iconTheme": "material-icon-theme"
 }
