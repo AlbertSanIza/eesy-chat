@@ -6,6 +6,9 @@
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
     "git.autofetch": true,
     "git.confirmSync": false,
     "workbench.iconTheme": "material-icon-theme"
