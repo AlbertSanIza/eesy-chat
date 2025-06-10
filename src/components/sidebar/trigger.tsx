@@ -9,17 +9,12 @@ export function AppSidebarTrigger() {
     const { open, isMobile } = useSidebar()
 
     return (
-        <div
-            className={cn(
-                'fixed top-0 left-0 z-10 gap-2 rounded-br-lg border-r border-b bg-sidebar transition-all duration-75 ease-linear',
-                open && !isMobile ? 'border-transparent p-0 pt-2 pl-2' : 'p-2'
-            )}
-        >
-            <SidebarTrigger className="size-9" size="icon" variant="ghost" />
+        <div className={cn('fixed top-2 left-2 z-10 rounded-lg border bg-sidebar p-1', open && !isMobile ? 'border-transparent' : '')}>
+            <SidebarTrigger className="size-8" size="icon" variant="ghost" />
             {(!open || isMobile) && (
-                <Button size="icon" variant="ghost" asChild>
+                <Button size="icon" variant="ghost" className="size-8 transition-none" asChild>
                     <Link to="/">
-                        <PlusIcon className="size-5" />
+                        <PlusIcon />
                     </Link>
                 </Button>
             )}
