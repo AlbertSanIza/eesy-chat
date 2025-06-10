@@ -3,8 +3,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import { CodeIcon, GraduationCapIcon, NewspaperIcon, SparklesIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 
+import Input from '@/components/input'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { cn, getConvexSiteUrl } from '@/lib/utils'
 import { useState, type ChangeEvent } from 'react'
 
 export const Route = createFileRoute('/')({
@@ -35,7 +36,7 @@ const suggestions = {
 }
 
 function RouteComponent() {
-    const { input, handleInputChange } = useChat()
+    const { input, status, handleInputChange, handleSubmit, stop } = useChat({ api: `${getConvexSiteUrl()}/stream` })
     const [category, setCategory] = useState<'create' | 'explore' | 'code' | 'learn' | 'default'>('default')
 
     const handleCategorySelect = (option: 'create' | 'explore' | 'code' | 'learn') => {
@@ -93,6 +94,7 @@ function RouteComponent() {
                     ))}
                 </div>
             </motion.div>
+            <Input input={input} status={status} onInputChange={handleInputChange} onSubmit={handleSubmit} onStop={stop} />
         </div>
     )
 }
