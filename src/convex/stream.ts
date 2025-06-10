@@ -1,11 +1,11 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-import { Message, streamText } from 'ai'
+import { type Message, streamText } from 'ai'
 
 import { httpAction } from './_generated/server'
 
 const openrouter = createOpenRouter()
 
-export const stream = httpAction(async (ctx, request) => {
+export const stream = httpAction(async (_, request) => {
     const { messages }: { messages: Message[] } = await request.json()
     const result = streamText({
         system: 'You are a helpful assistant. Respond to the user in Markdown format.',
