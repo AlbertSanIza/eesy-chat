@@ -11,7 +11,7 @@ export function AppSidebarTrigger() {
     return (
         <div
             className={cn(
-                'fixed top-0 left-0 z-10 gap-2 rounded-br-lg border-r border-b bg-sidebar transition-all duration-200 ease-linear',
+                'fixed top-0 left-0 z-10 gap-2 rounded-br-lg border-r border-b bg-sidebar transition-all duration-75 ease-linear',
                 open && !isMobile ? 'border-transparent p-0 pt-2 pl-2' : 'p-2'
             )}
         >
