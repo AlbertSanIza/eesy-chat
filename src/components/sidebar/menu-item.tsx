@@ -69,12 +69,12 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     return (
         <ThreadContextMenu thread={thread} onEdit={onEdit} onDelete={handleOnDelete} onTogglePin={() => toggleThreadPin({ id: thread._id })}>
             <ShadSidebarMenuItem>
-                <SidebarMenuButton isActive={isEditing} className={cn('group/sidebar-menu-button m-0 py-0 transition-none', isEditing && 'm-0 p-0')} asChild>
-                    <Link
-                        to={`/$threadId`}
-                        params={{ threadId: thread._id }}
-                        className="flex h-full w-full items-center gap-2 px-2 py-1.5 text-sm font-medium outline-none hover:bg-sky-50 hover:text-sky-900 focus:bg-sky-50 focus:text-sky-900"
-                    >
+                <SidebarMenuButton
+                    isActive={threadId === thread._id || isEditing}
+                    className={cn('group/sidebar-menu-button m-0 py-0 transition-none', isEditing && 'm-0 p-0')}
+                    asChild
+                >
+                    <Link to={`/$threadId`} params={{ threadId: thread._id }}>
                         {isEditing && (
                             <input
                                 className="h-full w-full rounded px-2 pb-[1px] outline-none"
