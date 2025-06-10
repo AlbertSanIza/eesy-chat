@@ -12,7 +12,7 @@ export const Route = createRootRoute({
 
 function RootComponent() {
     return (
-        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <ThemeProvider>
             <SidebarProvider>
                 <AppSidebar />
                 <AppSidebarTrigger />
