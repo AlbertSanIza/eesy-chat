@@ -1,4 +1,4 @@
-import { PersistentTextStreaming, StreamId, StreamIdValidator } from '@convex-dev/persistent-text-streaming'
+import { PersistentTextStreaming, type StreamId, StreamIdValidator } from '@convex-dev/persistent-text-streaming'
 
 import { components } from './_generated/api'
 import { query } from './_generated/server'
