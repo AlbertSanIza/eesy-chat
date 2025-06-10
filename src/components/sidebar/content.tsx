@@ -1,7 +1,6 @@
-'use client'
-
 import { useMemo } from 'react'
 
+import { AppSidebarMenuItem } from '@/components/sidebar/menu-item'
 import { SidebarContent as ShadSidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu } from '@/components/ui/sidebar'
 import { api } from '@/convex/_generated/api'
 import { type Doc } from '@/convex/_generated/dataModel'
@@ -89,7 +88,7 @@ export function AppSidebarContent() {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {groupedThreads[groupTitle].map((thread) => (
-                                <div key={thread._id}>Hello {thread.name || 'Untitled Thread'}</div>
+                                <AppSidebarMenuItem key={thread._id} thread={thread} />
                             ))}
                         </SidebarMenu>
                     </SidebarGroupContent>
