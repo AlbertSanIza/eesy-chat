@@ -118,3 +118,47 @@
         @apply bg-background text-foreground;
     }
 }
+
+.markdown h1 {
+    @apply mb-4 text-3xl font-bold;
+}
+.markdown h2 {
+    @apply mb-4 text-2xl font-bold;
+}
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+    @apply mb-4 font-bold;
+}
+.markdown p {
+    @apply mb-4;
+}
+.markdown ul {
+    @apply mb-4 list-inside list-disc;
+}
+.markdown ol {
+    @apply mb-4 list-inside list-decimal;
+}
+.markdown hr {
+    @apply my-12;
+}
+.markdown a {
+    @apply text-blue-500 hover:underline;
+}
+.markdown table {
+    @apply mb-4 w-full table-auto border-collapse;
+}
+.markdown th {
+    @apply bg-sidebar;
+}
+.markdown td,
+.markdown th {
+    @apply border p-2;
+}
+.markdown pre {
+    @apply mb-4;
+}
+.markdown code:not(pre code) {
+    @apply rounded bg-accent px-1 font-mono text-sm;
+}
