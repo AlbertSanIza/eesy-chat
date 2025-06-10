@@ -8,7 +8,9 @@
  * @module
  */
 
+import type * as http from "../http.js";
 import type * as messages from "../messages.js";
+import type * as stream from "../stream.js";
 import type * as streaming from "../streaming.js";
 import type * as threads from "../threads.js";
 
@@ -27,7 +29,9 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  http: typeof http;
   messages: typeof messages;
+  stream: typeof stream;
   streaming: typeof streaming;
   threads: typeof threads;
 }>;
