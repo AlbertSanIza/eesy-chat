@@ -7,7 +7,7 @@ import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton, SidebarRail }
 
 export function AppSidebar() {
     return (
-        <Sidebar>
+        <Sidebar className="dark:[&>div]:bg-[url(/public/noise-light.png)]">
             <SidebarHeader>
                 <h1 className="my-1 border-b border-transparent text-center text-xl font-bold">eesy.chat</h1>
                 <Button asChild>
