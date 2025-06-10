@@ -8,7 +8,7 @@ export function ThemeToggle() {
     const { setTheme } = useTheme()
 
     return (
-        <div className="fixed top-2 right-2 z-10 rounded-lg border bg-sidebar p-1">
+        <div className="fixed top-1.5 right-1.5 z-10 rounded-lg border bg-sidebar p-0.5">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="size-8">
