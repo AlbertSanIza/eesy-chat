@@ -1,4 +1,4 @@
-import { StreamId } from '@convex-dev/persistent-text-streaming'
+import type { StreamId } from '@convex-dev/persistent-text-streaming'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { type Message, streamText } from 'ai'
 
@@ -23,7 +23,7 @@ export const stream = httpAction(async (_, request) => {
 
 export const streamConvex = httpAction(async (ctx, request) => {
     const body = (await request.json()) as { streamId: string }
-    const response = await streamingComponent.stream(ctx, request, body.streamId as StreamId, async (ctx, request, streamId, append) => {
+    const response = await streamingComponent.stream(ctx, request, body.streamId as StreamId, async (ctx, _request, _streamId, append) => {
         const history = await ctx.runQuery(internal.messages.getHistory)
         const { textStream } = streamText({
             system: 'You are a helpful assistant. Respond to the user in Markdown format.',

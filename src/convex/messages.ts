@@ -1,6 +1,6 @@
 import { v } from 'convex/values'
 
-import { StreamId } from '@convex-dev/persistent-text-streaming'
+import type { StreamId } from '@convex-dev/persistent-text-streaming'
 import { internalMutation, internalQuery, mutation, query } from './_generated/server'
 import { streamingComponent } from './streaming'
 
