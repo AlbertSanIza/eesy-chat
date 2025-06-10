@@ -11,14 +11,14 @@
 // Import Routes
 
 import { Route as rootRoute } from './../routes/__root'
-import { Route as ChatImport } from './../routes/chat'
+import { Route as ThreadIdImport } from './../routes/$threadId'
 import { Route as IndexImport } from './../routes/index'
 
 // Create/Update Routes
 
-const ChatRoute = ChatImport.update({
-  id: '/chat',
-  path: '/chat',
+const ThreadIdRoute = ThreadIdImport.update({
+  id: '/$threadId',
+  path: '/$threadId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -39,11 +39,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/chat': {
-      id: '/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof ChatImport
+    '/$threadId': {
+      id: '/$threadId'
+      path: '/$threadId'
+      fullPath: '/$threadId'
+      preLoaderRoute: typeof ThreadIdImport
       parentRoute: typeof rootRoute
     }
   }
@@ -53,37 +53,37 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/chat': typeof ChatRoute
+  '/$threadId': typeof ThreadIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/chat': typeof ChatRoute
+  '/$threadId': typeof ThreadIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/chat': typeof ChatRoute
+  '/$threadId': typeof ThreadIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/chat'
+  fullPaths: '/' | '/$threadId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/chat'
-  id: '__root__' | '/' | '/chat'
+  to: '/' | '/$threadId'
+  id: '__root__' | '/' | '/$threadId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ChatRoute: typeof ChatRoute
+  ThreadIdRoute: typeof ThreadIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ChatRoute: ChatRoute,
+  ThreadIdRoute: ThreadIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,14 +97,14 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/chat"
+        "/$threadId"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/chat": {
-      "filePath": "chat.tsx"
+    "/$threadId": {
+      "filePath": "$threadId.tsx"
     }
   }
 }
