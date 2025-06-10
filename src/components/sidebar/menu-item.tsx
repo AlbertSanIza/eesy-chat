@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils'
 
 export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     const navigate = useNavigate()
-    const { threadId } = useParams({ from: '/$threadId' })
+    const { threadId } = useParams({ strict: false })
     const [isEditing, setIsEditing] = useState(false)
     const [inputValue, setInputValue] = useState(thread.name)
     const [optimisticName, setOptimisticName] = useState<string | null>(null)
