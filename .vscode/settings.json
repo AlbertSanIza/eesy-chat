@@ -15,9 +15,11 @@
         "*.css": "tailwindcss"
     },
     "files.readonlyInclude": {
+        "**/convex/_generated/**": true,
         "**/route-tree.gen.ts": true
     },
     "files.watcherExclude": {
+        "**/convex/_generated/**": true,
         "**/route-tree.gen.ts": true
     },
     "git.autofetch": true,
@@ -30,6 +32,7 @@
     },
     "github.copilot.nextEditSuggestions.enabled": true,
     "search.exclude": {
+        "**/convex/_generated/**": true,
         "**/route-tree.gen.ts": true
     },
     "tailwindCSS.classFunctions": ["clsx", "cn", "cva", "twMerge", "tw", "clsx", "tw\\.[a-z-]+"],
