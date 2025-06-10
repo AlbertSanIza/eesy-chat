@@ -18,8 +18,7 @@ export function useCachedQuery<Query extends FunctionReference<'query'>>(
                 if (Date.now() - parseInt(timestamp) < CACHE_DURATION) {
                     return JSON.parse(cached)
                 } else {
-                    localStorage.removeItem(cacheKey)
-                    localStorage.removeItem(`${cacheKey}:timestamp`)
+                    clearQueryCache(cacheKey)
                 }
             }
             return undefined
@@ -43,4 +42,13 @@ export function useCachedQuery<Query extends FunctionReference<'query'>>(
     }, [freshData, cacheKey])
 
     return freshData !== undefined ? freshData : cachedData
+}
+
+function clearQueryCache(key: string) {
+    try {
+        localStorage.removeItem(key)
+        localStorage.removeItem(`${key}:timestamp`)
+    } catch (error) {
+        console.warn(`Failed to clear cache for ${key}:`, error)
+    }
 }
