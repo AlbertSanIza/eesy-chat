@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { AppSidebarMenuItem } from '@/components/sidebar/menu-item'
 import { SidebarContent as ShadSidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu } from '@/components/ui/sidebar'
 import { api } from '@/convex/_generated/api'
-import { type Doc } from '@/convex/_generated/dataModel'
+import type { Doc } from '@/convex/_generated/dataModel'
 import { useCachedQuery } from '@/hooks/use-cached-query'
 
 interface GroupedThreads {

@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button'
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from '@/components/ui/context-menu'
 import { SidebarMenuItem as ShadSidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar'
 import { api } from '@/convex/_generated/api'
-import { type Doc } from '@/convex/_generated/dataModel'
+import type { Doc } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 
 export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
