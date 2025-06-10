@@ -11,7 +11,7 @@ export function AppSidebar() {
     return (
         <Sidebar className="dark:[&>div]:bg-[url(/public/noise-light.png)]">
             <SidebarHeader>
-                <h1 className="my-1 border-b border-transparent text-center text-xl font-bold">eesy.chat</h1>
+                <h1 className="mt-0.5 mb-1 border-transparent text-center text-xl">eesy.chat</h1>
                 <Button asChild>
                     <Link to="/">New Chat</Link>
                 </Button>
