@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './../routes/__root'
 import { Route as ThreadIdImport } from './../routes/$threadId'
 import { Route as IndexImport } from './../routes/index'
+import { Route as ConvexThreadIdImport } from './../routes/convex/$threadId'
 
 // Create/Update Routes
 
@@ -25,6 +26,12 @@ const ThreadIdRoute = ThreadIdImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ConvexThreadIdRoute = ConvexThreadIdImport.update({
+  id: '/convex/$threadId',
+  path: '/convex/$threadId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -46,6 +53,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ThreadIdImport
       parentRoute: typeof rootRoute
     }
+    '/convex/$threadId': {
+      id: '/convex/$threadId'
+      path: '/convex/$threadId'
+      fullPath: '/convex/$threadId'
+      preLoaderRoute: typeof ConvexThreadIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -54,36 +68,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$threadId': typeof ThreadIdRoute
+  '/convex/$threadId': typeof ConvexThreadIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$threadId': typeof ThreadIdRoute
+  '/convex/$threadId': typeof ConvexThreadIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/$threadId': typeof ThreadIdRoute
+  '/convex/$threadId': typeof ConvexThreadIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$threadId'
+  fullPaths: '/' | '/$threadId' | '/convex/$threadId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$threadId'
-  id: '__root__' | '/' | '/$threadId'
+  to: '/' | '/$threadId' | '/convex/$threadId'
+  id: '__root__' | '/' | '/$threadId' | '/convex/$threadId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ThreadIdRoute: typeof ThreadIdRoute
+  ConvexThreadIdRoute: typeof ConvexThreadIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ThreadIdRoute: ThreadIdRoute,
+  ConvexThreadIdRoute: ConvexThreadIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,7 +116,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/$threadId"
+        "/$threadId",
+        "/convex/$threadId"
       ]
     },
     "/": {
@@ -105,6 +125,9 @@ export const routeTree = rootRoute
     },
     "/$threadId": {
       "filePath": "$threadId.tsx"
+    },
+    "/convex/$threadId": {
+      "filePath": "convex/$threadId.tsx"
     }
   }
 }
