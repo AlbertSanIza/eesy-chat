@@ -5,5 +5,5 @@ export const Route = createFileRoute('/$threadId')({
 })
 
 function RouteComponent() {
-    return <div>Hello "/$thread"!</div>
+    return <div className="w-full pt-8 pb-38">Hello "/$thread"!</div>
 }
