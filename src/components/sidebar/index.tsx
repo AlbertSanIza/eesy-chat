@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router'
 
+import { AppSidebarContent } from '@/components/sidebar/content'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenuButton, SidebarRail } from '@/components/ui/sidebar'
+import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton, SidebarRail } from '@/components/ui/sidebar'
 
 export function AppSidebar() {
     return (
@@ -13,7 +14,7 @@ export function AppSidebar() {
                     <Link to="/">New Chat</Link>
                 </Button>
             </SidebarHeader>
-            <SidebarContent></SidebarContent>
+            <AppSidebarContent />
             <SidebarFooter>
                 <SidebarMenuButton size="lg" asChild>
                     <Link to="/">
