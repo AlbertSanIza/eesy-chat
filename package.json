@@ -19,6 +19,7 @@
         "@convex-dev/persistent-text-streaming": "^0.2.3",
         "@eslint/js": "^9.28.0",
         "@openrouter/ai-sdk-provider": "^0.7.1",
+        "@radix-ui/react-alert-dialog": "^1.1.14",
         "@radix-ui/react-avatar": "^1.1.10",
         "@radix-ui/react-dialog": "^1.1.14",
         "@radix-ui/react-dropdown-menu": "^2.1.15",
