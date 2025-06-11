@@ -1,6 +1,6 @@
 import type { StreamId } from '@convex-dev/persistent-text-streaming'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-import { type Message, streamText } from 'ai'
+import { type Message, smoothStream, streamText } from 'ai'
 
 import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
@@ -28,7 +28,8 @@ export const streamConvex = httpAction(async (ctx, request) => {
         const { textStream } = streamText({
             system: 'You are a helpful assistant. Respond to the user in Markdown format.',
             model: openrouter.chat('openai/gpt-4.1-nano'),
-            messages: history
+            messages: history,
+            experimental_transform: smoothStream()
         })
         for await (const textPart of textStream) {
             append(textPart)
