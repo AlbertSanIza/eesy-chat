@@ -1,14 +1,14 @@
-import { useChat } from '@ai-sdk/react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation } from 'convex/react'
 import { CodeIcon, GraduationCapIcon, NewspaperIcon, SparklesIcon } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useState, type ChangeEvent } from 'react'
+import { useState } from 'react'
 
 import { Input } from '@/components/input'
 import { Button } from '@/components/ui/button'
 import { api } from '@/convex/_generated/api'
-import { cn } from '@/lib/utils'
+import { useAiChat } from '@/hooks/use-ai-chat'
+import { cn, getConvexSiteUrl } from '@/lib/utils'
 
 export const Route = createFileRoute('/')({
     component: RouteComponent
@@ -40,7 +40,7 @@ const suggestions = {
 function RouteComponent() {
     const navigate = useNavigate({ from: '/' })
     const createThread = useMutation(api.threads.create)
-    const { input, status, handleInputChange } = useChat()
+    const { id, input, handleInputChange } = useAiChat({ id: 'home', url: `${getConvexSiteUrl()}/stream` })
     const [category, setCategory] = useState<'create' | 'explore' | 'code' | 'learn' | 'default'>('default')
 
     const handleCategorySelect = (option: 'create' | 'explore' | 'code' | 'learn') => {
@@ -49,6 +49,7 @@ function RouteComponent() {
 
     const handleOnSubmit = async () => {
         navigate({ to: `/${await createThread({ prompt: input.trim() })}` })
+        handleInputChange('')
     }
 
     return (
@@ -58,7 +59,7 @@ function RouteComponent() {
                 animate={{ opacity: input.length === 0 ? 1 : 0 }}
                 transition={{ duration: 0.1, ease: 'easeInOut' }}
             >
-                <div className="text-2xl font-semibold tracking-tight">How can I help you today?</div>
+                <div className="text-2xl font-semibold tracking-tight">How can I help you today? {id}</div>
                 <div className="flex gap-2">
                     <Button
                         variant="ghost"
@@ -91,17 +92,13 @@ function RouteComponent() {
                 </div>
                 <div className="flex flex-col">
                     {suggestions[category].map((suggestion) => (
-                        <Button
-                            variant="ghost"
-                            key={suggestion}
-                            onClick={() => handleInputChange({ target: { value: `${suggestion} ` } } as ChangeEvent<HTMLInputElement>)}
-                        >
+                        <Button variant="ghost" key={suggestion} onClick={() => handleInputChange(`${suggestion} `)}>
                             {suggestion}
                         </Button>
                     ))}
                 </div>
             </motion.div>
-            <Input input={input} status={status} onInputChange={handleInputChange} onSubmit={handleOnSubmit} />
+            <Input />
         </div>
     )
 }

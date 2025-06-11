@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useAction, useMutation } from 'convex/react'
-import { PinIcon, PinOffIcon, TextCursorIcon, Trash2Icon, XIcon } from 'lucide-react'
+import { Loader2Icon, PinIcon, PinOffIcon, TextCursorIcon, Trash2Icon, XIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import {
@@ -19,7 +19,8 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator,
 import { SidebarMenuItem as ShadSidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar'
 import { api } from '@/convex/_generated/api'
 import type { Doc } from '@/convex/_generated/dataModel'
-import { cn } from '@/lib/utils'
+import { cn, getConvexSiteUrl } from '@/lib/utils'
+import { useChat } from '@ai-sdk/react'
 
 export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     const navigate = useNavigate()
@@ -31,6 +32,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     const [inputValue, setInputValue] = useState(thread.name)
     const toggleThreadPin = useMutation(api.threads.togglePin)
     const [optimisticName, setOptimisticName] = useState<string | null>(null)
+    const { status } = useChat({ id: thread._id, api: `${getConvexSiteUrl()}/stream`, initialMessages: [] })
 
     useEffect(() => {
         if (optimisticName && thread.name === optimisticName) {
@@ -119,6 +121,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
                                 )}
                             </div>
                         )}
+                        {status === 'submitted' || (status === 'streaming' && <Loader2Icon className="animate-spin" />)}
                     </Link>
                 </SidebarMenuButton>
             </ShadSidebarMenuItem>

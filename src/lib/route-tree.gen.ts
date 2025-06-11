@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './../routes/__root'
 import { Route as ThreadIdRouteImport } from './../routes/$threadId'
 import { Route as IndexRouteImport } from './../routes/index'
-import { Route as TestIndexRouteImport } from './../routes/test/index'
 import { Route as ConvexThreadIdRouteImport } from './../routes/convex/$threadId'
 
 const ThreadIdRoute = ThreadIdRouteImport.update({
@@ -24,11 +23,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TestIndexRoute = TestIndexRouteImport.update({
-  id: '/test/',
-  path: '/test/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ConvexThreadIdRoute = ConvexThreadIdRouteImport.update({
   id: '/convex/$threadId',
   path: '/convex/$threadId',
@@ -39,34 +33,30 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$threadId': typeof ThreadIdRoute
   '/convex/$threadId': typeof ConvexThreadIdRoute
-  '/test': typeof TestIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$threadId': typeof ThreadIdRoute
   '/convex/$threadId': typeof ConvexThreadIdRoute
-  '/test': typeof TestIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$threadId': typeof ThreadIdRoute
   '/convex/$threadId': typeof ConvexThreadIdRoute
-  '/test/': typeof TestIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$threadId' | '/convex/$threadId' | '/test'
+  fullPaths: '/' | '/$threadId' | '/convex/$threadId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$threadId' | '/convex/$threadId' | '/test'
-  id: '__root__' | '/' | '/$threadId' | '/convex/$threadId' | '/test/'
+  to: '/' | '/$threadId' | '/convex/$threadId'
+  id: '__root__' | '/' | '/$threadId' | '/convex/$threadId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ThreadIdRoute: typeof ThreadIdRoute
   ConvexThreadIdRoute: typeof ConvexThreadIdRoute
-  TestIndexRoute: typeof TestIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -92,13 +82,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConvexThreadIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/test/': {
-      id: '/test/'
-      path: '/test'
-      fullPath: '/test'
-      preLoaderRoute: typeof TestIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -106,7 +89,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ThreadIdRoute: ThreadIdRoute,
   ConvexThreadIdRoute: ConvexThreadIdRoute,
-  TestIndexRoute: TestIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

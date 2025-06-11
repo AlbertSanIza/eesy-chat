@@ -1,13 +1,14 @@
-import { useChat } from '@ai-sdk/react'
 import { LoaderCircleIcon, SendHorizontalIcon, SquareIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useSidebar } from '@/components/ui/sidebar'
-import { cn, getConvexSiteUrl } from '@/lib/utils'
+import type { Id } from '@/convex/_generated/dataModel'
+import { useAiChat } from '@/hooks/use-ai-chat'
+import { cn } from '@/lib/utils'
 
-export function Input() {
-    const { input, status, handleInputChange, handleSubmit, stop } = useChat({ id: 'test', api: `${getConvexSiteUrl()}/stream` })
+export function Input({ threadId }: { threadId?: Id<'threads'> }) {
+    const { id, input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
     const { open } = useSidebar()
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -45,7 +46,7 @@ export function Input() {
                                 }
                             }}
                             onChange={(event) => {
-                                handleInputChange(event)
+                                handleInputChange(event.target.value)
                                 textAreaRef.current?.style.setProperty('height', 'auto')
                                 textAreaRef.current?.style.setProperty('height', `${Math.min(event.target.scrollHeight, 5 * 24)}px`)
                             }}
