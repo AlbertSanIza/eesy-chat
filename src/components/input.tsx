@@ -8,7 +8,7 @@ import { useAiChat } from '@/hooks/use-ai-chat'
 import { cn } from '@/lib/utils'
 
 export function Input({ threadId }: { threadId?: Id<'threads'> }) {
-    const { id, input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
+    const { input, status, handleInputChange, handleSubmit } = useAiChat({ id: threadId || 'home' })
     const { open } = useSidebar()
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
 

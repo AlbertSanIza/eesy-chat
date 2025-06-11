@@ -8,7 +8,7 @@ import { Input } from '@/components/input'
 import { Button } from '@/components/ui/button'
 import { api } from '@/convex/_generated/api'
 import { useAiChat } from '@/hooks/use-ai-chat'
-import { cn, getConvexSiteUrl } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/')({
     component: RouteComponent
@@ -40,7 +40,7 @@ const suggestions = {
 function RouteComponent() {
     const navigate = useNavigate({ from: '/' })
     const createThread = useMutation(api.threads.create)
-    const { input, handleInputChange } = useAiChat({ id: 'home', url: `${getConvexSiteUrl()}/stream` })
+    const { input, handleInputChange } = useAiChat({ id: 'home' })
     const [category, setCategory] = useState<'create' | 'explore' | 'code' | 'learn' | 'default'>('default')
 
     const handleCategorySelect = (option: 'create' | 'explore' | 'code' | 'learn') => {
