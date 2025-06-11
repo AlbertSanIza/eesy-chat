@@ -5,7 +5,7 @@ import { CodeIcon, GraduationCapIcon, NewspaperIcon, SparklesIcon } from 'lucide
 import { motion } from 'motion/react'
 import { useState, type ChangeEvent } from 'react'
 
-import Input from '@/components/input'
+import { Input } from '@/components/input'
 import { Button } from '@/components/ui/button'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
