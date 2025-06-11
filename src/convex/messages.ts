@@ -36,34 +36,25 @@ export const removeAll = internalMutation({
 export const getHistory = internalQuery({
     args: {},
     handler: async (ctx) => {
-        // Grab all the user messages
-        const allMessages = await ctx.db.query('messages').collect()
-
-        // Lets join the user messages with the assistant messages
+        const messages = await ctx.db.query('messages').collect()
         const joinedResponses = await Promise.all(
-            allMessages.map(async (userMessage) => {
-                return {
-                    userMessage,
-                    responseMessage: await persistentTextStreamingComponent.getStreamBody(ctx, userMessage.streamId as StreamId)
-                }
-            })
+            messages.map(async (message) => ({
+                message,
+                responseMessage: await persistentTextStreamingComponent.getStreamBody(ctx, message.streamId as StreamId)
+            }))
         )
-
         return joinedResponses.flatMap((joined) => {
             const user = {
                 role: 'user' as const,
-                content: joined.userMessage.prompt
+                content: joined.message.prompt
             }
-
             const assistant = {
                 role: 'assistant' as const,
                 content: joined.responseMessage.text
             }
-
-            // If the assistant message is empty, its probably because we have not
-            // started streaming yet so lets not include it in the history
-            if (!assistant.content) return [user]
-
+            if (!assistant.content) {
+                return [user]
+            }
             return [user, assistant]
         })
     }
