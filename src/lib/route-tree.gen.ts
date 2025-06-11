@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './../routes/__root'
 import { Route as ThreadIdRouteImport } from './../routes/$threadId'
 import { Route as IndexRouteImport } from './../routes/index'
-import { Route as ConvexThreadIdRouteImport } from './../routes/convex/$threadId'
 
 const ThreadIdRoute = ThreadIdRouteImport.update({
   id: '/$threadId',
@@ -23,40 +22,31 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ConvexThreadIdRoute = ConvexThreadIdRouteImport.update({
-  id: '/convex/$threadId',
-  path: '/convex/$threadId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$threadId': typeof ThreadIdRoute
-  '/convex/$threadId': typeof ConvexThreadIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$threadId': typeof ThreadIdRoute
-  '/convex/$threadId': typeof ConvexThreadIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$threadId': typeof ThreadIdRoute
-  '/convex/$threadId': typeof ConvexThreadIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$threadId' | '/convex/$threadId'
+  fullPaths: '/' | '/$threadId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$threadId' | '/convex/$threadId'
-  id: '__root__' | '/' | '/$threadId' | '/convex/$threadId'
+  to: '/' | '/$threadId'
+  id: '__root__' | '/' | '/$threadId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ThreadIdRoute: typeof ThreadIdRoute
-  ConvexThreadIdRoute: typeof ConvexThreadIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,20 +65,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ThreadIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/convex/$threadId': {
-      id: '/convex/$threadId'
-      path: '/convex/$threadId'
-      fullPath: '/convex/$threadId'
-      preLoaderRoute: typeof ConvexThreadIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ThreadIdRoute: ThreadIdRoute,
-  ConvexThreadIdRoute: ConvexThreadIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
