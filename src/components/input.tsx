@@ -15,7 +15,7 @@ export function Input() {
     const { threadId } = useParams({ strict: false })
     const createThread = useMutation(api.threads.create)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
-    const { input, status, handleInputChange, handleSubmit } = useAiChat({ threadId: threadId || 'home' })
+    const { input, status, handleInputChange, handleSubmit } = useAiChat({ id: threadId || 'home' })
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
@@ -23,23 +23,16 @@ export function Input() {
         }
     }, [input, threadId])
 
-    const handleOnSubmit = async () => {
+    const handleOnSubmit = async (newInput: string) => {
+        textAreaRef.current?.style.setProperty('height', 'auto')
         if (threadId) {
+            handleSubmit({ id: threadId, override: newInput })
             return
         }
         const newThreadId = await createThread({ prompt: input.trim() })
+        handleSubmit({ id: newThreadId, override: newInput })
         await navigate({ to: `/${newThreadId}` })
-        handleInputChange({ threadId: 'home', value: '' })
-
-        // const newThreadId = threadId || undefined
-        // if (!threadId) {
-        //     console.log('🚀 ~ handleOnSubmit ~ newThreadId:', newThreadId)
-        //     newThreadId = await createThread({ prompt: input.trim() })
-        //     await navigate({ to: `/${newThreadId}` })
-        // }
-        // textAreaRef.current?.style.setProperty('height', 'auto')
-        // console.log('🚀 ~ handleOnSubmit ~ newThreadId:', newThreadId)
-        // handleSubmit({ id: newThreadId })
+        handleInputChange({ id: 'home', value: '' })
     }
 
     return (
@@ -49,7 +42,7 @@ export function Input() {
                 <form
                     onSubmit={(event) => {
                         event.preventDefault()
-                        handleOnSubmit()
+                        handleOnSubmit(input)
                     }}
                     className="mx-auto max-w-2xl rounded-t-3xl border-x border-t bg-sidebar/80 px-1.5 pt-1.5 shadow-2xl shadow-sky-300 backdrop-blur-xs dark:shadow-none"
                 >
@@ -64,12 +57,12 @@ export function Input() {
                                 if (event.key === 'Enter' && !event.shiftKey) {
                                     event.preventDefault()
                                     if (status === 'ready') {
-                                        handleOnSubmit()
+                                        handleOnSubmit(input)
                                     }
                                 }
                             }}
                             onChange={(event) => {
-                                handleInputChange({ threadId, value: event.target.value })
+                                handleInputChange({ id: threadId || 'home', value: event.target.value })
                                 textAreaRef.current?.style.setProperty('height', 'auto')
                                 textAreaRef.current?.style.setProperty('height', `${Math.min(event.target.scrollHeight, 5 * 24)}px`)
                             }}
