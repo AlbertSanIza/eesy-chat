@@ -48,16 +48,17 @@ export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 
         }
     }, [theme])
 
-    const value = {
-        theme,
-        setTheme: (theme: Theme) => {
-            localStorage.setItem(storageKey, theme)
-            setTheme(theme)
-        }
-    }
-
     return (
-        <ThemeProviderContext.Provider {...props} value={value}>
+        <ThemeProviderContext.Provider
+            {...props}
+            value={{
+                theme,
+                setTheme: (theme: Theme) => {
+                    localStorage.setItem(storageKey, theme)
+                    setTheme(theme)
+                }
+            }}
+        >
             {children}
         </ThemeProviderContext.Provider>
     )
