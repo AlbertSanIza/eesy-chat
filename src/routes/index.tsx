@@ -1,12 +1,10 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useMutation } from 'convex/react'
+import { createFileRoute } from '@tanstack/react-router'
 import { CodeIcon, GraduationCapIcon, NewspaperIcon, SparklesIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 
 import { Input } from '@/components/input'
 import { Button } from '@/components/ui/button'
-import { api } from '@/convex/_generated/api'
 import { useAiChat } from '@/hooks/use-ai-chat'
 import { cn } from '@/lib/utils'
 
@@ -38,18 +36,11 @@ const suggestions = {
 }
 
 function RouteComponent() {
-    const navigate = useNavigate({ from: '/' })
-    const createThread = useMutation(api.threads.create)
     const { input, handleInputChange } = useAiChat({ id: 'home' })
     const [category, setCategory] = useState<'create' | 'explore' | 'code' | 'learn' | 'default'>('default')
 
     const handleCategorySelect = (option: 'create' | 'explore' | 'code' | 'learn') => {
         setCategory(category === option ? 'default' : option)
-    }
-
-    const handleOnSubmit = async () => {
-        navigate({ to: `/${await createThread({ prompt: input.trim() })}` })
-        handleInputChange('')
     }
 
     return (
@@ -99,7 +90,7 @@ function RouteComponent() {
                     ))}
                 </div>
             </motion.div>
-            <Input onSubmit={handleOnSubmit} />
+            <Input />
         </div>
     )
 }
