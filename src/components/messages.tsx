@@ -3,7 +3,7 @@ import { useChat } from '@ai-sdk/react'
 import { MemoizedMarkdown } from '@/components/memoized-markdown'
 import { cn, getConvexSiteUrl } from '@/lib/utils'
 
-export default function Messages() {
+export function Messages() {
     const { messages } = useChat({ id: 'test', api: `${getConvexSiteUrl()}/stream` })
 
     return (
