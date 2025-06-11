@@ -121,7 +121,7 @@
 }
 
 .bg-sidebar {
-    @apply dark:bg-[url(/public/noise-light.png)];
+    @apply dark:bg-[url(/noise-light.png)];
 }
 
 .markdown h1 {
