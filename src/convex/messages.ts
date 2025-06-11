@@ -2,7 +2,7 @@ import { v } from 'convex/values'
 
 import type { StreamId } from '@convex-dev/persistent-text-streaming'
 import { internalMutation, internalQuery, mutation, query } from './_generated/server'
-import { streamingComponent } from './streaming'
+import { persistentTextStreamingComponent } from './streaming'
 
 export const findAll = query({
     args: { threadId: v.id('threads') },
@@ -16,7 +16,7 @@ export const findAll = query({
 export const create = mutation({
     args: { threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { threadId, prompt }) => {
-        const streamId = await streamingComponent.createStream(ctx)
+        const streamId = await persistentTextStreamingComponent.createStream(ctx)
         const messageId = await ctx.db.insert('messages', { threadId, streamId, prompt })
         return messageId
     }
@@ -59,7 +59,7 @@ export const getHistory = internalQuery({
             allMessages.map(async (userMessage) => {
                 return {
                     userMessage,
-                    responseMessage: await streamingComponent.getStreamBody(ctx, userMessage.streamId as StreamId)
+                    responseMessage: await persistentTextStreamingComponent.getStreamBody(ctx, userMessage.streamId as StreamId)
                 }
             })
         )

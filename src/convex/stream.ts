@@ -4,7 +4,7 @@ import { type Message, streamText } from 'ai'
 
 import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
-import { streamingComponent } from './streaming'
+import { persistentTextStreamingComponent } from './streaming'
 
 const openrouter = createOpenRouter()
 
@@ -23,7 +23,7 @@ export const stream = httpAction(async (_, request) => {
 
 export const streamConvex = httpAction(async (ctx, request) => {
     const body = (await request.json()) as { streamId: string }
-    const response = await streamingComponent.stream(ctx, request, body.streamId as StreamId, async (ctx, _request, _streamId, append) => {
+    const response = await persistentTextStreamingComponent.stream(ctx, request, body.streamId as StreamId, async (ctx, _request, _streamId, append) => {
         const history = await ctx.runQuery(internal.messages.getHistory)
         const { textStream } = streamText({
             system: 'You are a helpful assistant. Respond to the user in Markdown format.',
