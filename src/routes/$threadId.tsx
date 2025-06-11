@@ -5,7 +5,6 @@ import { LoaderCircleIcon } from 'lucide-react'
 import { Fragment, useState } from 'react'
 
 import Input from '@/components/input'
-import Messages from '@/components/messages'
 import { ServerMessage } from '@/components/ServerMessage'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
@@ -16,10 +15,10 @@ export const Route = createFileRoute('/$threadId')({
 })
 function RouteComponent() {
     const { threadId } = useParams({ from: Route.fullPath })
-    const messages = useQuery(api.messages.findAll, { threadId: threadId as Id<'threads'> })
-    const [drivenIds, setDrivenIds] = useState<Set<string>>(new Set())
     const sendMessage = useMutation(api.messages.sendMessage)
-    const { messages: aiMessages, input, status, handleInputChange, stop } = useChat({ api: `${getConvexSiteUrl()}/stream` })
+    const [drivenIds, setDrivenIds] = useState<Set<string>>(new Set())
+    const messages = useQuery(api.messages.findAll, { threadId: threadId as Id<'threads'> })
+    const { input, status, handleInputChange, stop } = useChat({ api: `${getConvexSiteUrl()}/stream` })
 
     return (
         <div className="w-full pt-8 pb-38">
@@ -34,7 +33,6 @@ function RouteComponent() {
                 ))}
                 {(status === 'submitted' || status === 'streaming') && <LoaderCircleIcon className="size-4 animate-spin opacity-20" />}
             </div>
-            <Messages messages={aiMessages} />
             <Input
                 input={input}
                 status={status}
@@ -46,7 +44,6 @@ function RouteComponent() {
                         return prev
                     })
                 }}
-                onStop={stop}
             />
         </div>
     )
