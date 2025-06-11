@@ -2,12 +2,13 @@ import { useChat } from '@ai-sdk/react'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery } from 'convex/react'
 import { LoaderCircleIcon } from 'lucide-react'
-import { Fragment, useState } from 'react'
+import { Fragment, type ChangeEvent } from 'react'
 
 import Input from '@/components/input'
 import { ServerMessage } from '@/components/ServerMessage'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
+import { useChatStore } from '@/lib/store'
 import { getConvexSiteUrl } from '@/lib/utils'
 
 export const Route = createFileRoute('/$threadId')({
@@ -16,7 +17,7 @@ export const Route = createFileRoute('/$threadId')({
 function RouteComponent() {
     const { threadId } = useParams({ from: Route.fullPath })
     const createMessage = useMutation(api.messages.create)
-    const [drivenIds, setDrivenIds] = useState<Set<string>>(new Set())
+    const { updateDrivenIds } = useChatStore()
     const messages = useQuery(api.messages.findAll, { threadId: threadId as Id<'threads'> })
     const { input, status, handleInputChange } = useChat({ api: `${getConvexSiteUrl()}/stream` })
 
@@ -27,7 +28,7 @@ function RouteComponent() {
                     <Fragment key={message._id}>
                         <div className="ml-auto w-fit rounded-lg border bg-sidebar px-3 py-2">{message.prompt}</div>
                         <div className="markdown">
-                            <ServerMessage message={message} isDriven={drivenIds.has(message._id)} stopStreaming={() => {}} />
+                            <ServerMessage message={message} isDriven={true} stopStreaming={() => {}} />
                         </div>
                     </Fragment>
                 ))}
@@ -39,10 +40,8 @@ function RouteComponent() {
                 onInputChange={handleInputChange}
                 onSubmit={async () => {
                     const chatId = await createMessage({ prompt: input, threadId: threadId as Id<'threads'> })
-                    setDrivenIds((prev) => {
-                        prev.add(chatId)
-                        return prev
-                    })
+                    handleInputChange({ target: { value: '' } } as ChangeEvent<HTMLInputElement>)
+                    updateDrivenIds(chatId)
                 }}
             />
         </div>
