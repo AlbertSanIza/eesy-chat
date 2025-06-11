@@ -1,4 +1,3 @@
-import { StreamIdValidator } from '@convex-dev/persistent-text-streaming'
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 
@@ -11,7 +10,7 @@ export default defineSchema({
     }).index('by_user', ['user']),
     messages: defineTable({
         threadId: v.id('threads'),
-        streamId: StreamIdValidator,
+        streamId: v.id('streams'),
         prompt: v.string()
     }).index('by_stream', ['streamId']),
     streams: defineTable({

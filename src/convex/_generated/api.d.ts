@@ -8,17 +8,15 @@
  * @module
  */
 
-import type * as http from "../http.js";
-import type * as messages from "../messages.js";
-import type * as stream from "../stream.js";
-import type * as streaming from "../streaming.js";
-import type * as threads from "../threads.js";
-
 import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as http from "../http.js";
+import type * as messages from "../messages.js";
+import type * as stream from "../stream.js";
+import type * as threads from "../threads.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -32,54 +30,13 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   messages: typeof messages;
   stream: typeof stream;
-  streaming: typeof streaming;
   threads: typeof threads;
 }>;
-declare const fullApiWithMounts: typeof fullApi;
-
 export declare const api: FilterApi<
-  typeof fullApiWithMounts,
+  typeof fullApi,
   FunctionReference<any, "public">
 >;
 export declare const internal: FilterApi<
-  typeof fullApiWithMounts,
+  typeof fullApi,
   FunctionReference<any, "internal">
 >;
-
-export declare const components: {
-  persistentTextStreaming: {
-    lib: {
-      addChunk: FunctionReference<
-        "mutation",
-        "internal",
-        { final: boolean; streamId: string; text: string },
-        any
-      >;
-      createStream: FunctionReference<"mutation", "internal", {}, any>;
-      getStreamStatus: FunctionReference<
-        "query",
-        "internal",
-        { streamId: string },
-        "pending" | "streaming" | "done" | "error" | "timeout"
-      >;
-      getStreamText: FunctionReference<
-        "query",
-        "internal",
-        { streamId: string },
-        {
-          status: "pending" | "streaming" | "done" | "error" | "timeout";
-          text: string;
-        }
-      >;
-      setStreamStatus: FunctionReference<
-        "mutation",
-        "internal",
-        {
-          status: "pending" | "streaming" | "done" | "error" | "timeout";
-          streamId: string;
-        },
-        any
-      >;
-    };
-  };
-};
