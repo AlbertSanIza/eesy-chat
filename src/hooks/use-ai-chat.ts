@@ -46,31 +46,21 @@ const useChatStore = create<{
     }
 }))
 
-export interface UseChatProps {
-    id: string
-    url?: string
-}
-
 export interface UseChatReturn {
     id: Id<'threads'> | string
     input: string
     messages: UseChatHelpers['messages']
     status: UseChatHelpers['status']
-    handleInputChange: ({ id, value }: { id?: string; value: string }) => void
+    handleInputChange: ({ id, value }: { id: string; value: string }) => void
     handleSubmit: ({ id, override }: { id: string; override?: string }) => void
 }
 
-export function useAiChat({ id = 'home' }: UseChatProps): UseChatReturn {
+export function useAiChat({ id = 'home' }: { id: string }): UseChatReturn {
     const { instances, setInputValue, addMessage } = useChatStore()
 
     const currentInstance = instances[id] || { input: '', messages: [] }
 
-    const handleInputChange = useCallback(
-        ({ id, value }: { id?: string; value: string }) => {
-            setInputValue(id, value)
-        },
-        [setInputValue]
-    )
+    const handleInputChange = useCallback(({ id, value }: { id: string; value: string }) => setInputValue(id, value), [setInputValue])
 
     const handleSubmit = useCallback(
         ({ id, override }: { id: string; override?: string }) => {
