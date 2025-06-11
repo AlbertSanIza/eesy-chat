@@ -33,21 +33,6 @@ export const removeAll = internalMutation({
     }
 })
 
-export const listMessages = query({
-    args: {},
-    handler: async (ctx) => {
-        return await ctx.db.query('messages').collect()
-    }
-})
-
-export const clearMessages = mutation({
-    args: {},
-    handler: async (ctx) => {
-        const chats = await ctx.db.query('messages').collect()
-        await Promise.all(chats.map((chat) => ctx.db.delete(chat._id)))
-    }
-})
-
 export const getHistory = internalQuery({
     args: {},
     handler: async (ctx) => {
