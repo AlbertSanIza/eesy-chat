@@ -83,7 +83,12 @@ function RouteComponent() {
                 </div>
                 <div className="flex flex-col">
                     {suggestions[category].map((suggestion) => (
-                        <Button variant="ghost" key={suggestion} onClick={() => handleInputChange(`${suggestion} `)}>
+                        <Button
+                            variant="ghost"
+                            className="w-full text-left"
+                            key={suggestion}
+                            onClick={() => handleInputChange({ id: 'home', value: `${suggestion} ` })}
+                        >
                             {suggestion}
                         </Button>
                     ))}
