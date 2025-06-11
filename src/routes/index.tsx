@@ -8,6 +8,7 @@ import { useState, type ChangeEvent } from 'react'
 import Input from '@/components/input'
 import { Button } from '@/components/ui/button'
 import { api } from '@/convex/_generated/api'
+import { useChatStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/')({
@@ -38,9 +39,10 @@ const suggestions = {
 }
 
 function RouteComponent() {
+    const { updateDrivenIds } = useChatStore()
     const navigate = useNavigate({ from: '/' })
-    const { input, status, handleInputChange } = useChat()
     const createThread = useMutation(api.threads.create)
+    const { input, status, handleInputChange } = useChat()
     const [category, setCategory] = useState<'create' | 'explore' | 'code' | 'learn' | 'default'>('default')
 
     const handleCategorySelect = (option: 'create' | 'explore' | 'code' | 'learn') => {
@@ -48,7 +50,9 @@ function RouteComponent() {
     }
 
     const handleOnSubmit = async () => {
-        navigate({ to: `/${await createThread({ prompt: input.trim() })}` })
+        const threadId = await createThread({ prompt: input.trim() })
+        updateDrivenIds(threadId)
+        navigate({ to: `/${threadId}` })
     }
 
     return (
