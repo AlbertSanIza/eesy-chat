@@ -1,10 +1,11 @@
 import { useChat } from '@ai-sdk/react'
 
 import { MemoizedMarkdown } from '@/components/memoized-markdown'
+import type { Id } from '@/convex/_generated/dataModel'
 import { cn, getConvexSiteUrl } from '@/lib/utils'
 
-export function Messages() {
-    const { messages } = useChat({ id: 'test', api: `${getConvexSiteUrl()}/stream` })
+export function Messages({ threadId }: { threadId: Id<'threads'> }) {
+    const { messages } = useChat({ id: threadId, api: `${getConvexSiteUrl()}/stream`, initialMessages: [] })
 
     return (
         <div className="mx-auto flex max-w-5xl flex-col gap-6 px-12">
