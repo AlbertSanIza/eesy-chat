@@ -120,6 +120,10 @@
     }
 }
 
+.bg-sidebar {
+    @apply dark:bg-[url(/public/noise-light.png)];
+}
+
 .markdown h1 {
     @apply mb-4 text-3xl font-bold;
 }
