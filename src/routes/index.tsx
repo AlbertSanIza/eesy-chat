@@ -40,7 +40,7 @@ const suggestions = {
 function RouteComponent() {
     const navigate = useNavigate({ from: '/' })
     const createThread = useMutation(api.threads.create)
-    const { id, input, handleInputChange } = useAiChat({ id: 'home', url: `${getConvexSiteUrl()}/stream` })
+    const { input, handleInputChange } = useAiChat({ id: 'home', url: `${getConvexSiteUrl()}/stream` })
     const [category, setCategory] = useState<'create' | 'explore' | 'code' | 'learn' | 'default'>('default')
 
     const handleCategorySelect = (option: 'create' | 'explore' | 'code' | 'learn') => {
@@ -59,7 +59,7 @@ function RouteComponent() {
                 animate={{ opacity: input.length === 0 ? 1 : 0 }}
                 transition={{ duration: 0.1, ease: 'easeInOut' }}
             >
-                <div className="text-2xl font-semibold tracking-tight">How can I help you today? {id}</div>
+                <div className="text-2xl font-semibold tracking-tight">How can I help you today?</div>
                 <div className="flex gap-2">
                     <Button
                         variant="ghost"
