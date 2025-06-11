@@ -3,7 +3,9 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 
 import type { Id } from '@/convex/_generated/dataModel'
-import { getConvexSiteUrl } from '@/lib/utils'
+// import { getConvexSiteUrl } from '@/lib/utils'
+
+// const URL = `${getConvexSiteUrl()}/stream`
 
 const useChatStore = create<{
     instances: Record<
@@ -17,25 +19,25 @@ const useChatStore = create<{
     addMessage: (id: string, message: UseChatHelpers['messages'][number]) => void
 }>((set, get) => ({
     instances: {},
-    setInputValue: (id: string, value: string) => {
+    setInputValue: (threadId: string, value: string) => {
         const instances = get().instances
         set({
             instances: {
                 ...instances,
-                [id]: {
+                [threadId]: {
                     input: value,
-                    messages: instances[id]?.messages || []
+                    messages: instances[threadId]?.messages || []
                 }
             }
         })
     },
-    addMessage: (id: string, message: UseChatHelpers['messages'][number]) => {
+    addMessage: (treadId: string, message: UseChatHelpers['messages'][number]) => {
         const instances = get().instances
-        const currentInstance = instances[id] || { input: '', messages: [] }
+        const currentInstance = instances[treadId] || { input: '', messages: [] }
         set({
             instances: {
                 ...instances,
-                [id]: {
+                [treadId]: {
                     ...currentInstance,
                     messages: [...currentInstance.messages, message]
                 }
@@ -45,49 +47,47 @@ const useChatStore = create<{
 }))
 
 export interface UseChatProps {
-    id: string
+    threadId: string
     url?: string
 }
 
 export interface UseChatReturn {
-    id: Id<'threads'> | string
-    url: string
+    threadId: Id<'threads'> | string
     input: string
     messages: UseChatHelpers['messages']
     status: UseChatHelpers['status']
     handleInputChange: (value: string) => void
-    handleSubmit: (override?: string) => void
+    handleSubmit: ({ threadId, override }: { threadId: string; override?: string }) => void
 }
 
-export function useAiChat({ id = 'home', url = `${getConvexSiteUrl()}/stream` }: UseChatProps): UseChatReturn {
-    const { instances, setInputValue, addMessage, updateMessage, setMessages } = useChatStore()
+export function useAiChat({ threadId = 'home' }: UseChatProps): UseChatReturn {
+    const { instances, setInputValue, addMessage } = useChatStore()
 
-    const currentInstance = instances[id] || { input: '', messages: [] }
+    const currentInstance = instances[threadId] || { input: '', messages: [] }
 
-    const handleInputChange = useCallback((value: string) => setInputValue(id, value), [id, setInputValue])
+    const handleInputChange = useCallback((value: string) => setInputValue(threadId, value), [threadId, setInputValue])
 
     const handleSubmit = useCallback(
-        (override?: string) => {
-            const messageToSend = override || currentInstance.input
+        ({ threadId, override }: { threadId: string; override?: string }) => {
+            const messageToSend = override || instances[threadId].input
             if (!messageToSend.trim()) {
                 return
             }
-            addMessage(id, {
+            addMessage(threadId, {
                 id: `user-${Date.now()}`,
                 role: 'user',
                 content: messageToSend,
                 createdAt: new Date(),
                 parts: [{ type: 'text', text: messageToSend }]
             })
-            setInputValue(id, '')
+            setInputValue(threadId, '')
             // TODO: Add logic to send message to AI and handle streaming response
         },
-        [currentInstance.input, id, setInputValue, addMessage]
+        [addMessage, instances, setInputValue]
     )
 
     return {
-        id,
-        url,
+        threadId,
         input: currentInstance.input,
         messages: currentInstance.messages || [],
         status: 'ready',
