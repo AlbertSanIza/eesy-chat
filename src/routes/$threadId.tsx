@@ -27,7 +27,9 @@ function RouteComponent() {
                 {messages?.map((message) => (
                     <Fragment key={message._id}>
                         <div className="ml-auto w-fit rounded-lg border bg-sidebar px-3 py-2">{message.prompt}</div>
-                        <ServerMessage message={message} isDriven={drivenIds.has(message._id)} stopStreaming={() => {}} />
+                        <div className="markdown">
+                            <ServerMessage message={message} isDriven={drivenIds.has(message._id)} stopStreaming={() => {}} />
+                        </div>
                     </Fragment>
                 ))}
                 {(status === 'submitted' || status === 'streaming') && <LoaderCircleIcon className="size-4 animate-spin opacity-20" />}
