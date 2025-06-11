@@ -1,12 +1,14 @@
 import { useChat } from '@ai-sdk/react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useMutation } from 'convex/react'
 import { CodeIcon, GraduationCapIcon, NewspaperIcon, SparklesIcon } from 'lucide-react'
 import { motion } from 'motion/react'
+import { useState, type ChangeEvent } from 'react'
 
 import Input from '@/components/input'
 import { Button } from '@/components/ui/button'
-import { cn, getConvexSiteUrl } from '@/lib/utils'
-import { useState, type ChangeEvent } from 'react'
+import { api } from '@/convex/_generated/api'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/')({
     component: RouteComponent
@@ -36,11 +38,17 @@ const suggestions = {
 }
 
 function RouteComponent() {
-    const { input, status, handleInputChange, handleSubmit, stop } = useChat({ api: `${getConvexSiteUrl()}/stream` })
+    const navigate = useNavigate({ from: '/' })
+    const { input, status, handleInputChange } = useChat()
+    const createThread = useMutation(api.threads.create)
     const [category, setCategory] = useState<'create' | 'explore' | 'code' | 'learn' | 'default'>('default')
 
     const handleCategorySelect = (option: 'create' | 'explore' | 'code' | 'learn') => {
         setCategory(category === option ? 'default' : option)
+    }
+
+    const handleOnSubmit = async () => {
+        navigate({ to: `/${await createThread({ prompt: input.trim() })}` })
     }
 
     return (
@@ -94,7 +102,7 @@ function RouteComponent() {
                     ))}
                 </div>
             </motion.div>
-            <Input input={input} status={status} onInputChange={handleInputChange} onSubmit={handleSubmit} onStop={stop} />
+            <Input input={input} status={status} onInputChange={handleInputChange} onSubmit={handleOnSubmit} />
         </div>
     )
 }

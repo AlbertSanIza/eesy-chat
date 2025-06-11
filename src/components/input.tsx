@@ -1,12 +1,9 @@
 import { type UseChatHelpers } from '@ai-sdk/react'
-import { useNavigate, useParams } from '@tanstack/react-router'
-import { useMutation } from 'convex/react'
 import { LoaderCircleIcon, SendHorizontalIcon, SquareIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useSidebar } from '@/components/ui/sidebar'
-import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 
 export default function Input({
@@ -20,13 +17,10 @@ export default function Input({
     status: UseChatHelpers['status']
     onInputChange: UseChatHelpers['handleInputChange']
     onSubmit: UseChatHelpers['handleSubmit']
-    onStop: UseChatHelpers['stop']
+    onStop?: UseChatHelpers['stop']
 }) {
     const { open } = useSidebar()
-    const navigate = useNavigate()
-    const createThread = useMutation(api.threads.create)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
-    const { threadId } = useParams({ strict: false })
 
     useEffect(() => {
         if (input && textAreaRef.current && document.activeElement !== textAreaRef.current) {
@@ -36,9 +30,6 @@ export default function Input({
 
     const handleSubmit = async () => {
         textAreaRef.current?.style.setProperty('height', 'auto')
-        if (!threadId) {
-            navigate({ to: `/${await createThread({ prompt: input.trim() })}` })
-        }
         onSubmit()
     }
 
