@@ -19,14 +19,14 @@ function RouteComponent() {
     const messages = useQuery(api.messages.findAll, { threadId: threadId as Id<'threads'> })
     const [drivenIds, setDrivenIds] = useState<Set<string>>(new Set())
     const sendMessage = useMutation(api.messages.sendMessage)
-    const { messages: aiMessages, input, status, handleInputChange, handleSubmit, stop } = useChat({ api: `${getConvexSiteUrl()}/stream` })
+    const { messages: aiMessages, input, status, handleInputChange, stop } = useChat({ api: `${getConvexSiteUrl()}/stream` })
 
     return (
         <div className="w-full pt-8 pb-38">
             <div className="mx-auto flex max-w-5xl flex-col gap-6 px-12">
                 {messages?.map((message) => (
                     <Fragment key={message._id}>
-                        <div className="ml-auto w-fit rounded-lg border bg-sidebar px-3 py-2 text-right">{message.prompt}</div>
+                        <div className="ml-auto w-fit rounded-lg border bg-sidebar px-3 py-2">{message.prompt}</div>
                         <ServerMessage message={message} isDriven={drivenIds.has(message._id)} stopStreaming={() => {}} />
                     </Fragment>
                 ))}
