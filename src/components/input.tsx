@@ -15,7 +15,7 @@ export function Input() {
     const { threadId } = useParams({ strict: false })
     const createThread = useMutation(api.threads.create)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
-    const { input, status, handleInputChange, handleSubmit } = useAiChat({ id: threadId || 'home' })
+    const { input, status, handleInputChange, handleSubmit } = useAiChat({ threadId: threadId || 'home' })
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
@@ -24,14 +24,22 @@ export function Input() {
     }, [input, threadId])
 
     const handleOnSubmit = async () => {
-        if (!input.trim()) {
+        if (threadId) {
             return
         }
-        if (!threadId) {
-            navigate({ to: `/${await createThread({ prompt: input.trim() })}` })
-        }
-        textAreaRef.current?.style.setProperty('height', 'auto')
-        handleSubmit()
+        const newThreadId = await createThread({ prompt: input.trim() })
+        await navigate({ to: `/${newThreadId}` })
+        handleInputChange({ threadId: 'home', value: '' })
+
+        // const newThreadId = threadId || undefined
+        // if (!threadId) {
+        //     console.log('🚀 ~ handleOnSubmit ~ newThreadId:', newThreadId)
+        //     newThreadId = await createThread({ prompt: input.trim() })
+        //     await navigate({ to: `/${newThreadId}` })
+        // }
+        // textAreaRef.current?.style.setProperty('height', 'auto')
+        // console.log('🚀 ~ handleOnSubmit ~ newThreadId:', newThreadId)
+        // handleSubmit({ id: newThreadId })
     }
 
     return (
@@ -61,7 +69,7 @@ export function Input() {
                                 }
                             }}
                             onChange={(event) => {
-                                handleInputChange(event.target.value)
+                                handleInputChange({ threadId, value: event.target.value })
                                 textAreaRef.current?.style.setProperty('height', 'auto')
                                 textAreaRef.current?.style.setProperty('height', `${Math.min(event.target.scrollHeight, 5 * 24)}px`)
                             }}

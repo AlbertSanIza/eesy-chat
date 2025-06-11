@@ -19,25 +19,25 @@ const useChatStore = create<{
     addMessage: (id: string, message: UseChatHelpers['messages'][number]) => void
 }>((set, get) => ({
     instances: {},
-    setInputValue: (threadId: string, value: string) => {
+    setInputValue: (id: string, value: string) => {
         const instances = get().instances
         set({
             instances: {
                 ...instances,
-                [threadId]: {
+                [id]: {
                     input: value,
-                    messages: instances[threadId]?.messages || []
+                    messages: instances[id]?.messages || []
                 }
             }
         })
     },
-    addMessage: (treadId: string, message: UseChatHelpers['messages'][number]) => {
+    addMessage: (id: string, message: UseChatHelpers['messages'][number]) => {
         const instances = get().instances
-        const currentInstance = instances[treadId] || { input: '', messages: [] }
+        const currentInstance = instances[id] || { input: '', messages: [] }
         set({
             instances: {
                 ...instances,
-                [treadId]: {
+                [id]: {
                     ...currentInstance,
                     messages: [...currentInstance.messages, message]
                 }
@@ -47,47 +47,52 @@ const useChatStore = create<{
 }))
 
 export interface UseChatProps {
-    threadId: string
+    id: string
     url?: string
 }
 
 export interface UseChatReturn {
-    threadId: Id<'threads'> | string
+    id: Id<'threads'> | string
     input: string
     messages: UseChatHelpers['messages']
     status: UseChatHelpers['status']
-    handleInputChange: (value: string) => void
-    handleSubmit: ({ threadId, override }: { threadId: string; override?: string }) => void
+    handleInputChange: ({ id, value }: { id?: string; value: string }) => void
+    handleSubmit: ({ id, override }: { id: string; override?: string }) => void
 }
 
-export function useAiChat({ threadId = 'home' }: UseChatProps): UseChatReturn {
+export function useAiChat({ id = 'home' }: UseChatProps): UseChatReturn {
     const { instances, setInputValue, addMessage } = useChatStore()
 
-    const currentInstance = instances[threadId] || { input: '', messages: [] }
+    const currentInstance = instances[id] || { input: '', messages: [] }
 
-    const handleInputChange = useCallback((value: string) => setInputValue(threadId, value), [threadId, setInputValue])
+    const handleInputChange = useCallback(
+        ({ id, value }: { id?: string; value: string }) => {
+            setInputValue(id, value)
+        },
+        [setInputValue]
+    )
 
     const handleSubmit = useCallback(
-        ({ threadId, override }: { threadId: string; override?: string }) => {
-            const messageToSend = override || instances[threadId].input
+        ({ id, override }: { id: string; override?: string }) => {
+            const messageToSend = override || instances[id].input
             if (!messageToSend.trim()) {
                 return
             }
-            addMessage(threadId, {
+            addMessage(id, {
                 id: `user-${Date.now()}`,
                 role: 'user',
                 content: messageToSend,
                 createdAt: new Date(),
                 parts: [{ type: 'text', text: messageToSend }]
             })
-            setInputValue(threadId, '')
+            setInputValue(id, '')
             // TODO: Add logic to send message to AI and handle streaming response
         },
         [addMessage, instances, setInputValue]
     )
 
     return {
-        threadId,
+        id,
         input: currentInstance.input,
         messages: currentInstance.messages || [],
         status: 'ready',
