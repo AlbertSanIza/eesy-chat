@@ -13,7 +13,8 @@ export const stream = httpAction(async (_, request) => {
     const result = streamText({
         system: 'You are a helpful assistant. Respond to the user in Markdown format.',
         model: openrouter.chat('openai/gpt-4.1-nano'),
-        messages
+        messages,
+        experimental_transform: smoothStream({ chunking: 'word' })
     })
     const response = result.toDataStreamResponse()
     response.headers.set('Access-Control-Allow-Origin', '*')
