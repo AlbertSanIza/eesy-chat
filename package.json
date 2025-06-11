@@ -45,7 +45,7 @@
         "globals": "^16.2.0",
         "lucide-react": "^0.513.0",
         "marked": "^15.0.12",
-        "motion": "^12.16.0",
+        "motion": "^12.17.0",
         "prettier": "^3.5.3",
         "prettier-plugin-tailwindcss": "^0.6.12",
         "react-markdown": "^10.1.0",
