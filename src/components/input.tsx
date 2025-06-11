@@ -1,22 +1,32 @@
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { useMutation } from 'convex/react'
 import { LoaderCircleIcon, SendHorizontalIcon, SquareIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useSidebar } from '@/components/ui/sidebar'
-import type { Id } from '@/convex/_generated/dataModel'
+import { api } from '@/convex/_generated/api'
 import { useAiChat } from '@/hooks/use-ai-chat'
 import { cn } from '@/lib/utils'
 
-export function Input({ threadId }: { threadId?: Id<'threads'> }) {
-    const { input, status, handleInputChange, handleSubmit } = useAiChat({ id: threadId || 'home' })
+export function Input() {
     const { open } = useSidebar()
+    const navigate = useNavigate()
+    const { threadId } = useParams({ strict: false })
+    const createThread = useMutation(api.threads.create)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
+    const { input, status, handleInputChange, handleSubmit } = useAiChat({ id: threadId || 'home' })
 
     useEffect(() => {
         if (input && textAreaRef.current && document.activeElement !== textAreaRef.current) {
             textAreaRef.current.focus()
         }
     }, [input])
+
+    const handleOnSubmit = async () => {
+        navigate({ to: `/${await createThread({ prompt: input.trim() })}` })
+        handleSubmit()
+    }
 
     return (
         <div className="fixed bottom-0 left-0 flex w-full">
@@ -25,7 +35,7 @@ export function Input({ threadId }: { threadId?: Id<'threads'> }) {
                 <form
                     onSubmit={() => {
                         textAreaRef.current?.style.setProperty('height', 'auto')
-                        handleSubmit()
+                        handleOnSubmit()
                     }}
                     className="mx-auto max-w-2xl rounded-t-3xl border-x border-t bg-sidebar/80 px-1.5 pt-1.5 shadow-2xl shadow-sky-300 backdrop-blur-xs dark:shadow-none"
                 >
