@@ -4,7 +4,7 @@ import { useMutation, useQuery } from 'convex/react'
 import { LoaderCircleIcon } from 'lucide-react'
 import { Fragment, type ChangeEvent } from 'react'
 
-import Input from '@/components/input'
+import { Input } from '@/components/input'
 import { ServerMessage } from '@/components/ServerMessage'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
