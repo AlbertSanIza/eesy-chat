@@ -39,9 +39,9 @@ export default function Input({
             <div className="flex-1 px-8">
                 <form
                     onSubmit={handleSubmit}
-                    className="mx-auto max-w-xl rounded-t-2xl border-x border-t bg-sidebar/80 px-1.5 pt-1.5 shadow-2xl shadow-sky-300 backdrop-blur-xs dark:shadow-none"
+                    className="mx-auto max-w-2xl rounded-t-3xl border-x border-t bg-sidebar/80 px-1.5 pt-1.5 shadow-2xl shadow-sky-300 backdrop-blur-xs dark:shadow-none"
                 >
-                    <div className="rounded-t-lg border-x border-t bg-background/80 p-3">
+                    <div className="rounded-t-[18px] border-x border-t bg-background/80 p-3 shadow">
                         <textarea
                             rows={2}
                             ref={textAreaRef}
