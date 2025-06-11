@@ -71,7 +71,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
             <ShadSidebarMenuItem>
                 <SidebarMenuButton
                     isActive={threadId === thread._id || isEditing}
-                    className={cn('group/sidebar-menu-button m-0 py-0 transition-none', isEditing && 'm-0 p-0')}
+                    className={cn('group/sidebar-menu-button m-0 py-0 font-normal! transition-none', isEditing && 'm-0 p-0')}
                     asChild
                 >
                     <Link to={`/$threadId`} params={{ threadId: thread._id }}>
