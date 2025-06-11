@@ -23,8 +23,14 @@ export function Input() {
         }
     }, [input])
 
-    const handleOnSubmit = async () => {
-        navigate({ to: `/${await createThread({ prompt: input.trim() })}` })
+    const handleOnSubmit = () => {
+        // event.preventDefault()
+        // textAreaRef.current?.style.setProperty('height', 'auto')
+        // console.log('handleOnSubmit', input)
+        // if (!input.trim()) {
+        //     return
+        // }
+        // navigate({ to: `/${await createThread({ prompt: input.trim() })}` })
         handleSubmit()
     }
 
@@ -33,8 +39,8 @@ export function Input() {
             <div className={cn('hidden h-full transition-[width,height] duration-75 ease-linear md:block', open ? 'w-(--sidebar-width)' : 'w-0')} />
             <div className="flex-1 px-8">
                 <form
-                    onSubmit={() => {
-                        textAreaRef.current?.style.setProperty('height', 'auto')
+                    onSubmit={(event) => {
+                        event.preventDefault()
                         handleOnSubmit()
                     }}
                     className="mx-auto max-w-2xl rounded-t-3xl border-x border-t bg-sidebar/80 px-1.5 pt-1.5 shadow-2xl shadow-sky-300 backdrop-blur-xs dark:shadow-none"
@@ -51,8 +57,7 @@ export function Input() {
                                 if (event.key === 'Enter' && !event.shiftKey) {
                                     event.preventDefault()
                                     if (status === 'ready') {
-                                        textAreaRef.current?.style.setProperty('height', 'auto')
-                                        handleSubmit()
+                                        handleOnSubmit()
                                     }
                                 }
                             }}

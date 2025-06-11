@@ -1,5 +1,6 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 
+import { Input } from '@/components/input'
 import { AppSidebar } from '@/components/sidebar'
 import { AppSidebarTrigger } from '@/components/sidebar/trigger'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -18,6 +19,7 @@ function RootComponent() {
                 <AppSidebarTrigger />
                 <ThemeToggle />
                 <Outlet />
+                <Input />
             </SidebarProvider>
         </ThemeProvider>
     )

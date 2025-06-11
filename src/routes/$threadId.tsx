@@ -1,6 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 
-import { Input } from '@/components/input'
 import { Messages } from '@/components/messages'
 import type { Id } from '@/convex/_generated/dataModel'
 
@@ -13,7 +12,6 @@ function RouteComponent() {
     return (
         <div className="w-full pt-8 pb-38">
             <Messages threadId={threadId as Id<'threads'>} />
-            <Input />
         </div>
     )
 }

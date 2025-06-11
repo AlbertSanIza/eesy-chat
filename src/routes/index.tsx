@@ -3,7 +3,6 @@ import { CodeIcon, GraduationCapIcon, NewspaperIcon, SparklesIcon } from 'lucide
 import { motion } from 'motion/react'
 import { useState } from 'react'
 
-import { Input } from '@/components/input'
 import { Button } from '@/components/ui/button'
 import { useAiChat } from '@/hooks/use-ai-chat'
 import { cn } from '@/lib/utils'
@@ -90,7 +89,6 @@ function RouteComponent() {
                     ))}
                 </div>
             </motion.div>
-            <Input />
         </div>
     )
 }
