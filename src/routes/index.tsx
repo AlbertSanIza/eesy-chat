@@ -47,7 +47,7 @@ function RouteComponent() {
         <div className="w-full pt-8 pb-38">
             <motion.div
                 className="mx-auto flex size-full flex-col items-center justify-center gap-4 px-12"
-                initial={{ opacity: 0 }}
+                initial={{ opacity: input.length === 0 ? 1 : 0 }}
                 animate={{ opacity: input.length === 0 ? 1 : 0 }}
                 transition={{ duration: 0.1, ease: 'easeInOut' }}
             >
