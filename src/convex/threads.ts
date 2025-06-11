@@ -5,6 +5,8 @@ import { v } from 'convex/values'
 import { api, internal } from './_generated/api'
 import { action, internalAction, internalMutation, mutation, query } from './_generated/server'
 
+const openrouter = createOpenRouter()
+
 export const findAll = query({
     args: {},
     handler: async (ctx) =>
@@ -33,7 +35,6 @@ export const create = mutation({
 export const createInternal = internalAction({
     args: { threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { threadId, prompt }) => {
-        const openrouter = createOpenRouter()
         const response = await generateText({
             model: openrouter.chat('openai/gpt-4.1-nano'),
             system: 'You are a helpful assistant that generates a small title for a chat thread based on the provided user message. The title should be concise, descriptive and small.',
