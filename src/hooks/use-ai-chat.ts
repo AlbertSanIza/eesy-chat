@@ -1,3 +1,4 @@
+import type { UseChatHelpers } from '@ai-sdk/react'
 import { useCallback } from 'react'
 import { create } from 'zustand'
 
@@ -31,14 +32,14 @@ export interface UseChatProps {
 
 export interface UseChatReturn {
     id: Id<'threads'> | string
-    url?: string
+    url: string
     input: string
-    status: 'ready' | 'loading' | 'error'
+    status: UseChatHelpers['status']
     handleInputChange: (value: string) => void
     handleSubmit: (override: string) => void
 }
 
-export function useAiChat({ id = 'home', url }: UseChatProps): UseChatReturn {
+export function useAiChat({ id = 'home', url = '' }: UseChatProps): UseChatReturn {
     const { instances, setInputValue } = useChatStore()
 
     const currentInstance = instances[id] || { input: '' }
