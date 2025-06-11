@@ -13,5 +13,12 @@ export default defineSchema({
         threadId: v.id('threads'),
         streamId: StreamIdValidator,
         prompt: v.string()
-    }).index('by_stream', ['streamId'])
+    }).index('by_stream', ['streamId']),
+    streams: defineTable({
+        status: v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error'), v.literal('timeout'))
+    }).index('byStatus', ['status']),
+    chunks: defineTable({
+        streamId: v.id('streams'),
+        text: v.string()
+    }).index('byStream', ['streamId'])
 })
