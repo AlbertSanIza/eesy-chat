@@ -9,7 +9,7 @@ export function AppSidebar() {
     const sidebar = useSidebar()
 
     return (
-        <Sidebar className="dark:[&>div]:bg-[url(/public/noise-light.png)]">
+        <Sidebar>
             <SidebarHeader>
                 <h1 className="mt-0.5 mb-1 border-transparent text-center text-xl">eesy.chat</h1>
                 <Button asChild>
