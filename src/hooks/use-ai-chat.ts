@@ -36,7 +36,7 @@ export interface UseChatReturn {
     input: string
     status: UseChatHelpers['status']
     handleInputChange: (value: string) => void
-    handleSubmit: (override: string) => void
+    handleSubmit: (override?: string) => void
 }
 
 export function useAiChat({ id = 'home', url = '' }: UseChatProps): UseChatReturn {
@@ -47,7 +47,7 @@ export function useAiChat({ id = 'home', url = '' }: UseChatProps): UseChatRetur
     const handleInputChange = useCallback((value: string) => setInputValue(id, value), [id, setInputValue])
 
     const handleSubmit = useCallback(
-        (override: string) => {
+        (override?: string) => {
             const messageToSend = override || currentInstance.input
 
             if (!messageToSend.trim()) {
