@@ -3,6 +3,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 
 import type { Id } from '@/convex/_generated/dataModel'
+import { getConvexSiteUrl } from '@/lib/utils'
 
 const useChatStore = create<{
     instances: Record<
@@ -39,7 +40,7 @@ export interface UseChatReturn {
     handleSubmit: (override?: string) => void
 }
 
-export function useAiChat({ id = 'home', url = '' }: UseChatProps): UseChatReturn {
+export function useAiChat({ id = 'home', url = `${getConvexSiteUrl()}/stream` }: UseChatProps): UseChatReturn {
     const { instances, setInputValue } = useChatStore()
 
     const currentInstance = instances[id] || { input: '' }
