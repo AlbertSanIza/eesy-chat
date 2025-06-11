@@ -48,22 +48,6 @@ export const clearMessages = mutation({
     }
 })
 
-export const sendMessage = mutation({
-    args: {
-        threadId: v.id('threads'),
-        prompt: v.string()
-    },
-    handler: async (ctx, args) => {
-        const streamId = await streamingComponent.createStream(ctx)
-        const chatId = await ctx.db.insert('messages', {
-            threadId: args.threadId,
-            prompt: args.prompt,
-            streamId
-        })
-        return chatId
-    }
-})
-
 export const getHistory = internalQuery({
     args: {},
     handler: async (ctx) => {

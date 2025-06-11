@@ -29,7 +29,7 @@ export default function ChatWindow({ threadId }: { threadId: string }) {
         [messagesEndRef]
     )
 
-    const sendMessage = useMutation(api.messages.sendMessage)
+    const createMessage = useMutation(api.messages.create)
 
     if (!messages) return null
 
@@ -64,15 +64,12 @@ export default function ChatWindow({ threadId }: { threadId: string }) {
                 <form
                     onSubmit={async (e) => {
                         e.preventDefault()
-                        if (!inputValue.trim()) return
-
+                        if (!inputValue.trim()) {
+                            return
+                        }
                         setInputValue('')
 
-                        const chatId = await sendMessage({
-                            prompt: inputValue,
-                            threadId: threadId as Id<'threads'>
-                        })
-
+                        const chatId = await createMessage({ prompt: inputValue, threadId: threadId as Id<'threads'> })
                         setDrivenIds((prev) => {
                             prev.add(chatId)
                             return prev

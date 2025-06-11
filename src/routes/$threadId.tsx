@@ -15,10 +15,10 @@ export const Route = createFileRoute('/$threadId')({
 })
 function RouteComponent() {
     const { threadId } = useParams({ from: Route.fullPath })
-    const sendMessage = useMutation(api.messages.sendMessage)
+    const createMessage = useMutation(api.messages.create)
     const [drivenIds, setDrivenIds] = useState<Set<string>>(new Set())
     const messages = useQuery(api.messages.findAll, { threadId: threadId as Id<'threads'> })
-    const { input, status, handleInputChange, stop } = useChat({ api: `${getConvexSiteUrl()}/stream` })
+    const { input, status, handleInputChange } = useChat({ api: `${getConvexSiteUrl()}/stream` })
 
     return (
         <div className="w-full pt-8 pb-38">
@@ -38,7 +38,7 @@ function RouteComponent() {
                 status={status}
                 onInputChange={handleInputChange}
                 onSubmit={async () => {
-                    const chatId = await sendMessage({ prompt: input, threadId: threadId as Id<'threads'> })
+                    const chatId = await createMessage({ prompt: input, threadId: threadId as Id<'threads'> })
                     setDrivenIds((prev) => {
                         prev.add(chatId)
                         return prev
