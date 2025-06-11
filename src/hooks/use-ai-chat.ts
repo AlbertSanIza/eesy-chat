@@ -50,11 +50,9 @@ export function useAiChat({ id = 'home', url = `${getConvexSiteUrl()}/stream` }:
     const handleSubmit = useCallback(
         (override?: string) => {
             const messageToSend = override || currentInstance.input
-
             if (!messageToSend.trim()) {
                 return
             }
-
             setInputValue(id, '')
         },
         [currentInstance.input, id, setInputValue]

@@ -15,22 +15,22 @@ export function Input() {
     const { threadId } = useParams({ strict: false })
     const createThread = useMutation(api.threads.create)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
-    const { id, url, input, status, handleInputChange, handleSubmit } = useAiChat({ id: threadId || 'home' })
+    const { input, status, handleInputChange, handleSubmit } = useAiChat({ id: threadId || 'home' })
 
     useEffect(() => {
-        if (input && textAreaRef.current && document.activeElement !== textAreaRef.current) {
+        if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
             textAreaRef.current.focus()
         }
-    }, [input])
+    }, [input, threadId])
 
-    const handleOnSubmit = () => {
-        // event.preventDefault()
-        // textAreaRef.current?.style.setProperty('height', 'auto')
-        // console.log('handleOnSubmit', input)
-        // if (!input.trim()) {
-        //     return
-        // }
-        // navigate({ to: `/${await createThread({ prompt: input.trim() })}` })
+    const handleOnSubmit = async () => {
+        if (!input.trim()) {
+            return
+        }
+        if (!threadId) {
+            navigate({ to: `/${await createThread({ prompt: input.trim() })}` })
+        }
+        textAreaRef.current?.style.setProperty('height', 'auto')
         handleSubmit()
     }
 
@@ -45,7 +45,6 @@ export function Input() {
                     }}
                     className="mx-auto max-w-2xl rounded-t-3xl border-x border-t bg-sidebar/80 px-1.5 pt-1.5 shadow-2xl shadow-sky-300 backdrop-blur-xs dark:shadow-none"
                 >
-                    {id} - {url}
                     <div className="rounded-t-[18px] border-x border-t bg-background/80 p-3 shadow">
                         <textarea
                             rows={2}
