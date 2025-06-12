@@ -12,7 +12,7 @@ export function AppSidebarTrigger() {
         <div
             className={cn(
                 'fixed top-3 left-3 z-10 mt-0 rounded-lg border bg-sidebar p-1 transition-all',
-                open && !isMobile ? 'mt-3.5 border-transparent bg-transparent' : ''
+                open && !isMobile ? 'mt-3 border-transparent bg-transparent' : ''
             )}
         >
             <SidebarTrigger className="size-7" size="icon" variant="ghost" />
