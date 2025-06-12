@@ -3,11 +3,9 @@ import { Link } from '@tanstack/react-router'
 import { AppSidebarContent } from '@/components/sidebar/content'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton, SidebarRail, useSidebar } from '@/components/ui/sidebar'
+import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
 
 export function AppSidebar() {
-    const sidebar = useSidebar()
-
     return (
         <Sidebar variant="floating">
             <SidebarHeader>
@@ -28,7 +26,6 @@ export function AppSidebar() {
                     </Link>
                 </SidebarMenuButton>
             </SidebarFooter>
-            {sidebar.state === 'expanded' && <SidebarRail />}
         </Sidebar>
     )
 }
