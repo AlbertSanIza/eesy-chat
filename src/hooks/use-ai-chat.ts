@@ -1,6 +1,7 @@
 import type { UseChatHelpers } from '@ai-sdk/react'
 import { useCallback } from 'react'
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 import type { Id } from '@/convex/_generated/dataModel'
 import { getConvexSiteUrl } from '@/lib/utils'
@@ -20,72 +21,79 @@ const useChatStore = create<{
     addMessage: (id: string, message: UseChatHelpers['messages'][number]) => void
     setStatus: (id: string, status: UseChatHelpers['status']) => void
     updateLastMessage: (id: string, content: string) => void
-}>((set, get) => ({
-    instances: {},
-    setInputValue: (id: string, value: string) => {
-        const instances = get().instances
-        set({
-            instances: {
-                ...instances,
-                [id]: {
-                    input: value,
-                    messages: instances[id]?.messages || [],
-                    status: instances[id]?.status || 'ready'
+}>()(
+    persist(
+        (set, get) => ({
+            instances: {},
+            setInputValue: (id: string, value: string) => {
+                const instances = get().instances
+                set({
+                    instances: {
+                        ...instances,
+                        [id]: {
+                            input: value,
+                            messages: instances[id]?.messages || [],
+                            status: instances[id]?.status || 'ready'
+                        }
+                    }
+                })
+            },
+            addMessage: (id: string, message: UseChatHelpers['messages'][number]) => {
+                const instances = get().instances
+                const currentInstance = instances[id] || { input: '', messages: [], status: 'ready' }
+                set({
+                    instances: {
+                        ...instances,
+                        [id]: {
+                            ...currentInstance,
+                            messages: [...currentInstance.messages, message]
+                        }
+                    }
+                })
+            },
+            setStatus: (id: string, status: UseChatHelpers['status']) => {
+                const instances = get().instances
+                const currentInstance = instances[id] || { input: '', messages: [], status: 'ready' }
+                set({
+                    instances: {
+                        ...instances,
+                        [id]: {
+                            ...currentInstance,
+                            status
+                        }
+                    }
+                })
+            },
+            updateLastMessage: (id: string, content: string) => {
+                const instances = get().instances
+                const currentInstance = instances[id] || { input: '', messages: [], status: 'ready' }
+                const messages = [...currentInstance.messages]
+                if (messages.length > 0) {
+                    const lastMessage = messages[messages.length - 1]
+                    if (lastMessage.role === 'assistant') {
+                        messages[messages.length - 1] = {
+                            ...lastMessage,
+                            content,
+                            parts: [{ type: 'text', text: content }]
+                        }
+                    }
                 }
+                set({
+                    instances: {
+                        ...instances,
+                        [id]: {
+                            ...currentInstance,
+                            messages
+                        }
+                    }
+                })
             }
-        })
-    },
-    addMessage: (id: string, message: UseChatHelpers['messages'][number]) => {
-        const instances = get().instances
-        const currentInstance = instances[id] || { input: '', messages: [], status: 'ready' }
-        set({
-            instances: {
-                ...instances,
-                [id]: {
-                    ...currentInstance,
-                    messages: [...currentInstance.messages, message]
-                }
-            }
-        })
-    },
-    setStatus: (id: string, status: UseChatHelpers['status']) => {
-        const instances = get().instances
-        const currentInstance = instances[id] || { input: '', messages: [], status: 'ready' }
-        set({
-            instances: {
-                ...instances,
-                [id]: {
-                    ...currentInstance,
-                    status
-                }
-            }
-        })
-    },
-    updateLastMessage: (id: string, content: string) => {
-        const instances = get().instances
-        const currentInstance = instances[id] || { input: '', messages: [], status: 'ready' }
-        const messages = [...currentInstance.messages]
-        if (messages.length > 0) {
-            const lastMessage = messages[messages.length - 1]
-            if (lastMessage.role === 'assistant') {
-                messages[messages.length - 1] = {
-                    ...lastMessage,
-                    content,
-                    parts: [{ type: 'text', text: content }]
-                }
-            }
+        }),
+        {
+            name: 'chat-store'
         }
-        set({
-            instances: {
-                ...instances,
-                [id]: {
-                    ...currentInstance,
-                    messages
-                }
-            }
-        })
-    }
-}))
+    )
+)
 
 export interface UseChatReturn {
     id: Id<'threads'> | string
