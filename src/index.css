@@ -140,10 +140,10 @@
     @apply mb-4;
 }
 .markdown ul {
-    @apply mb-4 list-inside list-disc;
+    @apply mb-4 list-outside list-disc;
 }
 .markdown ol {
-    @apply mb-4 list-inside list-decimal;
+    @apply mb-4 list-outside list-decimal;
 }
 .markdown hr {
     @apply my-12;
