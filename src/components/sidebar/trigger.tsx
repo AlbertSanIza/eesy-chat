@@ -15,7 +15,7 @@ export function AppSidebarTrigger() {
                 open && !isMobile ? 'mt-3 border-transparent bg-transparent' : ''
             )}
         >
-            <SidebarTrigger className="size-7" size="icon" variant="ghost" />
+            <SidebarTrigger className="size-7 text-sidebar-foreground" size="icon" variant="ghost" />
             {(!open || isMobile) && (
                 <Button size="icon" variant="ghost" className="size-7 transition-none" asChild>
                     <Link to="/">
