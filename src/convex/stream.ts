@@ -14,7 +14,7 @@ export const stream = httpAction(async (_, request) => {
         experimental_transform: smoothStream({ chunking: 'word' })
     })
     result.consumeStream()
-    const response = result.toDataStreamResponse()
+    const response = result.toTextStreamResponse()
     response.headers.set('Access-Control-Allow-Origin', '*')
     response.headers.set('Vary', 'Origin')
     return response

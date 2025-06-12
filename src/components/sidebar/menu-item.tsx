@@ -19,8 +19,8 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator,
 import { SidebarMenuItem as ShadSidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar'
 import { api } from '@/convex/_generated/api'
 import type { Doc } from '@/convex/_generated/dataModel'
-import { cn, getConvexSiteUrl } from '@/lib/utils'
-import { useChat } from '@ai-sdk/react'
+import { useAiChat } from '@/hooks/use-ai-chat'
+import { cn } from '@/lib/utils'
 
 export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     const navigate = useNavigate()
@@ -32,7 +32,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     const [inputValue, setInputValue] = useState(thread.name)
     const toggleThreadPin = useMutation(api.threads.togglePin)
     const [optimisticName, setOptimisticName] = useState<string | null>(null)
-    const { status } = useChat({ id: thread._id, api: `${getConvexSiteUrl()}/stream`, initialMessages: [] })
+    const { status } = useAiChat({ id: thread._id })
 
     useEffect(() => {
         if (optimisticName && thread.name === optimisticName) {
