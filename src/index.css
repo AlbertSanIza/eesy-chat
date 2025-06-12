@@ -101,7 +101,7 @@
     --chart-3: oklch(0.769 0.188 70.08);
     --chart-4: oklch(0.627 0.265 303.9);
     --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(29.3% 0.066 243.157 / 30%);
+    --sidebar: oklch(20.8% 0.042 265.755);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.488 0.243 264.376);
     --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -118,6 +118,10 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+.clerk-user-button {
+    @apply [&>div]:w-full [&>div>button]:w-full [&>div>button]:justify-start [&>div>button]:rounded-md [&>div>button]:p-2 [&>div>button]:text-sidebar-foreground [&>div>button]:hover:bg-sidebar-accent [&>div>button>span]:flex-row-reverse [&>div>button>span>span]:p-0 [&>div>button>span>span]:text-sm [&>div>button>span>span]:font-normal;
 }
 
 .bg-sidebar {
