@@ -109,7 +109,7 @@ export function useAiChat({ id = 'home' }: { id: string }): UseChatReturn {
             if (!messageToSend.trim()) {
                 return
             }
-
+            setStatus(id, 'submitted')
             addMessage(id, {
                 id: `user-${Date.now()}`,
                 role: 'user',
@@ -118,7 +118,6 @@ export function useAiChat({ id = 'home' }: { id: string }): UseChatReturn {
                 parts: [{ type: 'text', text: messageToSend }]
             })
             setInputValue(id, '')
-            setStatus(id, 'streaming')
 
             const assistantMessageId = `assistant-${Date.now()}`
             addMessage(id, {
@@ -149,6 +148,7 @@ export function useAiChat({ id = 'home' }: { id: string }): UseChatReturn {
                 const decoder = new TextDecoder()
                 let accumulatedContent = ''
 
+                setStatus(id, 'streaming')
                 while (true) {
                     const { done, value } = await reader.read()
                     if (done) {
