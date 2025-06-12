@@ -9,7 +9,7 @@ export function AppSidebar() {
     const sidebar = useSidebar()
 
     return (
-        <Sidebar>
+        <Sidebar variant="floating">
             <SidebarHeader>
                 <h1 className="mt-[7px] mb-2 border-transparent text-center text-xl">eesy.chat</h1>
                 <Button asChild>
