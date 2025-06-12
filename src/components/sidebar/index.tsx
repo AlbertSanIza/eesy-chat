@@ -4,6 +4,7 @@ import { AppSidebarContent } from '@/components/sidebar/content'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
 
 export function AppSidebar() {
     return (
@@ -25,6 +26,12 @@ export function AppSidebar() {
                         Albert Sanchez
                     </Link>
                 </SidebarMenuButton>
+                <SignedOut>
+                    <SignInButton />
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                </SignedIn>
             </SidebarFooter>
         </Sidebar>
     )
