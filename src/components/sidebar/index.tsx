@@ -11,7 +11,7 @@ export function AppSidebar() {
     return (
         <Sidebar variant="floating">
             <SidebarHeader>
-                <h1 className="mt-[7px] mb-2 border-transparent text-center text-xl">eesy.chat</h1>
+                <h1 className="my-2 border-transparent text-center text-xl font-light">eesy.chat</h1>
                 <Button asChild>
                     <Link to="/">New Chat</Link>
                 </Button>
