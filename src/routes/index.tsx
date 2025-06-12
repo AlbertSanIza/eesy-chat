@@ -50,7 +50,7 @@ function RouteComponent() {
                 animate={{ opacity: input.length === 0 ? 1 : 0 }}
                 transition={{ duration: 0.1, ease: 'easeInOut' }}
             >
-                <div className="text-2xl font-semibold tracking-tight">How can I help you today?</div>
+                <div className="text-3xl font-semibold tracking-tight">How can I help you today?</div>
                 <div className="flex gap-2">
                     <Button
                         variant="ghost"
@@ -83,12 +83,7 @@ function RouteComponent() {
                 </div>
                 <div className="flex flex-col">
                     {suggestions[category].map((suggestion) => (
-                        <Button
-                            variant="ghost"
-                            className="w-full text-left"
-                            key={suggestion}
-                            onClick={() => handleInputChange({ id: 'home', value: `${suggestion} ` })}
-                        >
+                        <Button variant="ghost" key={suggestion} onClick={() => handleInputChange({ id: 'home', value: `${suggestion} ` })}>
                             {suggestion}
                         </Button>
                     ))}

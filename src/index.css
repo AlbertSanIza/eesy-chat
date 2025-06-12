@@ -79,7 +79,7 @@
 .dark {
     color-scheme: dark;
     --background: oklch(20.5% 0 0);
-    --foreground: oklch(0.985 0 0);
+    --foreground: oklch(98.4% 0.003 247.858);
     --card: oklch(0.205 0 0);
     --card-foreground: oklch(0.985 0 0);
     --popover: oklch(0.205 0 0);
@@ -90,7 +90,7 @@
     --secondary-foreground: oklch(0.985 0 0);
     --muted: oklch(0.269 0 0);
     --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
+    --accent: oklch(74.6% 0.16 232.661 / 40%);
     --accent-foreground: oklch(0.985 0 0);
     --destructive: oklch(0.704 0.191 22.216);
     --border: oklch(39.1% 0.09 240.876 / 80%);
