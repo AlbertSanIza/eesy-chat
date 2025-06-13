@@ -8,11 +8,10 @@ import { createRoot } from 'react-dom/client'
 import '@/index.css'
 import { routeTree } from '@/lib/route-tree.gen'
 
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string)
 const router = createRouter({ routeTree })
 
-if (!PUBLISHABLE_KEY) {
+if (!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) {
     throw new Error('Missing Publishable Key')
 }
 
@@ -24,7 +23,7 @@ declare module '@tanstack/react-router' {
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+        <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY} afterSignOutUrl="/">
             <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
                 <RouterProvider router={router} />
             </ConvexProviderWithClerk>
