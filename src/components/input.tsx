@@ -30,9 +30,11 @@ export function Input() {
             return
         }
         const newThreadId = await createThread({ prompt: input.trim() })
-        handleSubmit({ id: newThreadId, override: newInput })
-        await navigate({ to: `/${newThreadId}` })
-        handleInputChange({ id: 'home', value: '' })
+        if (newThreadId) {
+            handleSubmit({ id: newThreadId.toString(), override: newInput })
+            await navigate({ to: `/${newThreadId}` })
+            handleInputChange({ id: 'home', value: '' })
+        }
     }
 
     return (
