@@ -3,11 +3,15 @@ import { Link } from '@tanstack/react-router'
 import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 
 import { AppSidebarContent } from '@/components/sidebar/content'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useCachedUser } from '@/hooks/use-cached-user'
 
 export function AppSidebar() {
+    const { user } = useCachedUser()
+
     return (
         <Sidebar variant="floating">
             <SidebarHeader>
@@ -29,9 +33,21 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                 </Unauthenticated>
                 <AuthLoading>
-                    <div className="flex items-center gap-2 p-2 opacity-50">
-                        <Skeleton className="size-7 min-w-7 rounded-full" />
-                        <Skeleton className="h-5 w-2/3 rounded-full" />
+                    <div className="pointer-events-none top-0 flex items-center gap-2 p-2 opacity-50">
+                        {user ? (
+                            <>
+                                <Avatar className="size-7">
+                                    <AvatarImage src={user.imageUrl} />
+                                    <AvatarFallback>CN</AvatarFallback>
+                                </Avatar>
+                                <div className="text-sm">{user.fullName}</div>
+                            </>
+                        ) : (
+                            <>
+                                <Skeleton className="size-7 min-w-7 rounded-full" />
+                                <Skeleton className="h-5 w-2/3 rounded-full" />
+                            </>
+                        )}
                     </div>
                 </AuthLoading>
             </SidebarFooter>
