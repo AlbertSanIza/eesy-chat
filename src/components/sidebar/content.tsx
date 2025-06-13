@@ -2,9 +2,8 @@ import { useMemo } from 'react'
 
 import { AppSidebarMenuItem } from '@/components/sidebar/menu-item'
 import { SidebarContent as ShadSidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu } from '@/components/ui/sidebar'
-import { api } from '@/convex/_generated/api'
 import type { Doc } from '@/convex/_generated/dataModel'
-import { useCachedQuery } from '@/hooks/use-cached-query'
+import { useStore } from '@/lib/store'
 
 interface GroupedThreads {
     [key: string]: Doc<'threads'>[]
@@ -43,7 +42,7 @@ function getTimeGroup(timestamp: number): string {
 }
 
 export function AppSidebarContent() {
-    const threads = useCachedQuery(api.threads.findAll)
+    const { threads } = useStore()
 
     const groupedThreads = useMemo(() => {
         if (!threads) {
