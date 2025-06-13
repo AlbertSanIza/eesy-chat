@@ -11,6 +11,7 @@ export const stream = httpAction(async (_, request) => {
         system: 'You are a helpful assistant. Respond to the user in Markdown format.',
         model: openrouter.chat('openai/gpt-4.1-nano'),
         messages,
+        // onChunk: (chunk) => {},
         experimental_transform: smoothStream({ chunking: 'word' })
     })
     result.consumeStream()

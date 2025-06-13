@@ -1,8 +1,8 @@
-import { SignInButton, UserButton } from '@clerk/clerk-react'
+import { SignInButton } from '@clerk/clerk-react'
 import { Link } from '@tanstack/react-router'
 import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
-import { BotMessageSquareIcon } from 'lucide-react'
 
+import { ClerkUserButton } from '@/components/clerk-user-button'
 import { AppSidebarContent } from '@/components/sidebar/content'
 import { Button } from '@/components/ui/button'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
@@ -20,15 +20,7 @@ export function AppSidebar() {
             <AppSidebarContent />
             <SidebarFooter>
                 <Authenticated>
-                    <div className="clerk-user-button">
-                        <UserButton showName>
-                            <UserButton.UserProfilePage label="Settings" labelIcon={<BotMessageSquareIcon className="size-4" />} url="terms">
-                                <div>
-                                    <h1 className="-mt-[1px] border-b border-gray-200 pb-[15px] text-[17px] leading-6 font-bold text-inherit">Settings</h1>
-                                </div>
-                            </UserButton.UserProfilePage>
-                        </UserButton>
-                    </div>
+                    <ClerkUserButton />
                 </Authenticated>
                 <Unauthenticated>
                     <SidebarMenuButton size="lg" className="cursor-pointer" asChild>
