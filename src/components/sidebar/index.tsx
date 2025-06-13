@@ -5,7 +5,7 @@ import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import { AppSidebarContent } from '@/components/sidebar/content'
 import { Button } from '@/components/ui/button'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
-import { Loader2Icon } from 'lucide-react'
+import { Skeleton } from '../ui/skeleton'
 
 export function AppSidebar() {
     return (
@@ -29,7 +29,10 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                 </Unauthenticated>
                 <AuthLoading>
-                    <Loader2Icon className="m-2 mb-[15px] size-4 animate-spin" />
+                    <div className="flex items-center gap-2 p-2">
+                        <Skeleton className="size-7 rounded-full" />
+                        <Skeleton className="h-[20px] w-[100px] rounded-full" />
+                    </div>
                 </AuthLoading>
             </SidebarFooter>
         </Sidebar>
