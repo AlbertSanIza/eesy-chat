@@ -1,8 +1,7 @@
-import { SignInButton } from '@clerk/clerk-react'
+import { SignInButton, UserButton } from '@clerk/clerk-react'
 import { Link } from '@tanstack/react-router'
 import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 
-import { ClerkUserButton } from '@/components/clerk-user-button'
 import { AppSidebarContent } from '@/components/sidebar/content'
 import { Button } from '@/components/ui/button'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
@@ -20,7 +19,9 @@ export function AppSidebar() {
             <AppSidebarContent />
             <SidebarFooter>
                 <Authenticated>
-                    <ClerkUserButton />
+                    <div className="clerk-user-button">
+                        <UserButton showName />
+                    </div>
                 </Authenticated>
                 <Unauthenticated>
                     <SidebarMenuButton size="lg" className="cursor-pointer" asChild>
