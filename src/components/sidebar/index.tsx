@@ -29,9 +29,9 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                 </Unauthenticated>
                 <AuthLoading>
-                    <div className="flex items-center gap-2 p-2">
-                        <Skeleton className="size-7 rounded-full" />
-                        <Skeleton className="h-[20px] w-[100px] rounded-full" />
+                    <div className="flex items-center gap-2 p-2 opacity-50">
+                        <Skeleton className="size-7 min-w-7 rounded-full" />
+                        <Skeleton className="h-5 w-2/3 rounded-full" />
                     </div>
                 </AuthLoading>
             </SidebarFooter>
