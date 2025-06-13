@@ -44,6 +44,7 @@
         "eslint-plugin-react-hooks": "^5.2.0",
         "eslint-plugin-react-refresh": "^0.4.20",
         "globals": "^16.2.0",
+        "idb": "^8.0.3",
         "lucide-react": "^0.513.0",
         "marked": "^15.0.12",
         "motion": "^12.17.3",
