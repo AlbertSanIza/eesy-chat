@@ -1,4 +1,3 @@
-import type { useUser } from '@clerk/clerk-react'
 import type { FunctionReturnType } from 'convex/server'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
@@ -6,17 +5,17 @@ import { persist } from 'zustand/middleware'
 import type { api } from '@/convex/_generated/api'
 
 export const useStore = create<{
-    user: ReturnType<typeof useUser>['user']
+    user: { fullName?: string; imageUrl?: string }
     threads: FunctionReturnType<typeof api.threads.findAll>
-    setUser: (user: ReturnType<typeof useUser>['user']) => void
+    setUser: ({ fullName, imageUrl }: { fullName?: string; imageUrl?: string }) => void
     setThreads: (threads: FunctionReturnType<typeof api.threads.findAll>) => void
 }>()(
     persist(
         (set) => ({
-            user: null,
+            user: {},
             threads: [],
-            setUser: (user) => {
-                set({ user })
+            setUser: ({ fullName, imageUrl }) => {
+                set({ user: { fullName, imageUrl } })
             },
             setThreads: (threads: FunctionReturnType<typeof api.threads.findAll>) => {
                 set({ threads })

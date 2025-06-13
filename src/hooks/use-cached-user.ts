@@ -4,12 +4,12 @@ import { useEffect } from 'react'
 import { useStore } from '@/lib/store'
 
 export function useCachedUser() {
-    const { user } = useUser()
+    const { user, isLoaded } = useUser()
     const { setUser } = useStore()
 
     useEffect(() => {
-        if (user) {
-            setUser(user)
+        if (isLoaded) {
+            setUser({ fullName: user?.fullName || undefined, imageUrl: user?.imageUrl })
         }
-    }, [setUser, user])
+    }, [isLoaded, setUser, user])
 }
