@@ -1,6 +1,6 @@
 import { Moon, Sun, SunMoonIcon } from 'lucide-react'
 
-import { useTheme } from '@/components/theme-provider'
+import { useTheme, type Theme } from '@/components/theme-provider'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -8,13 +8,16 @@ export function ThemeToggle() {
     const { theme, setTheme } = useTheme()
 
     const cycleTheme = () => {
-        if (theme === 'light') {
-            setTheme('dark')
-        } else if (theme === 'dark') {
-            setTheme('system')
-        } else {
-            setTheme('light')
+        const newTheme: Theme = 'light'
+        switch (theme) {
+            case 'light':
+                setTheme('dark')
+                break
+            case 'dark':
+                setTheme('system')
+                break
         }
+        setTheme(newTheme)
     }
 
     return (
