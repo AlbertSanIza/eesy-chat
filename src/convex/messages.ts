@@ -1,5 +1,6 @@
 import { v } from 'convex/values'
 
+import { internal } from './_generated/api'
 import { internalMutation, mutation, query } from './_generated/server'
 
 export const findAll = query({
@@ -27,6 +28,7 @@ export const removeAll = internalMutation({
             .query('messages')
             .filter((q) => q.eq(q.field('threadId'), threadId))
             .collect()
+        await ctx.scheduler.runAfter(0, internal.streams.removeAll, { ids: messages.map((message) => message.streamId) })
         await Promise.all(messages.map((message) => ctx.db.delete(message._id)))
     }
 })
