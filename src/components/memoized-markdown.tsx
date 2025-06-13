@@ -31,7 +31,7 @@ export const CodeHighlight = ({ className, children, node, ...props }: CodeHighl
                     onClick={() => {
                         navigator.clipboard.writeText(children as string)
                         setCopied(true)
-                        setTimeout(() => setCopied(false), 2000)
+                        setTimeout(() => setCopied(false), 1000)
                     }}
                 >
                     <CheckIcon className={`transition-opacity ${copied ? 'opacity-100' : 'opacity-0'}`} />
