@@ -54,28 +54,28 @@ function RouteComponent() {
                 <div className="flex gap-2">
                     <Button
                         variant="ghost"
-                        className={cn('border', category !== 'create' && 'border-transparent')}
                         onClick={() => handleCategorySelect('create')}
+                        className={cn('border', category !== 'create' && 'border-transparent')}
                     >
                         <SparklesIcon />
                         Create
                     </Button>
                     <Button
                         variant="ghost"
-                        className={cn('border', category !== 'explore' && 'border-transparent')}
                         onClick={() => handleCategorySelect('explore')}
+                        className={cn('border', category !== 'explore' && 'border-transparent')}
                     >
                         <NewspaperIcon />
                         Explore
                     </Button>
-                    <Button variant="ghost" className={cn('border', category !== 'code' && 'border-transparent')} onClick={() => handleCategorySelect('code')}>
+                    <Button variant="ghost" onClick={() => handleCategorySelect('code')} className={cn('border', category !== 'code' && 'border-transparent')}>
                         <CodeIcon />
                         Code
                     </Button>
                     <Button
                         variant="ghost"
-                        className={cn('border', category !== 'learn' && 'border-transparent')}
                         onClick={() => handleCategorySelect('learn')}
+                        className={cn('border', category !== 'learn' && 'border-transparent')}
                     >
                         <GraduationCapIcon />
                         Learn
