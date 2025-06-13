@@ -167,9 +167,6 @@
 .markdown th {
     @apply border p-2;
 }
-.markdown pre {
-    @apply mb-4;
-}
 .markdown code:not(pre code) {
     @apply rounded bg-accent px-1 font-mono text-sm;
 }

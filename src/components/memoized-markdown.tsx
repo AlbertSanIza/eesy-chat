@@ -1,28 +1,46 @@
-import { Button } from '@/components/ui/button'
 import { marked } from 'marked'
-import { type ClassAttributes, type HTMLAttributes, memo, useMemo } from 'react'
-import ReactMarkdown, { type ExtraProps } from 'react-markdown'
-import ShikiHighlighter, { isInlineCode } from 'react-shiki'
+import type { JSX, ReactNode } from 'react'
+import { memo, useMemo } from 'react'
+import ReactMarkdown from 'react-markdown'
+import ShikiHighlighter, { isInlineCode, type Element } from 'react-shiki'
 import remarkGfm from 'remark-gfm'
 
-const CodeHighlight = ({ className, children, node, ...props }: ClassAttributes<HTMLElement> & HTMLAttributes<HTMLElement> & ExtraProps) => {
-    const code = String(children).trim()
+import { Button } from '@/components/ui/button'
+import { CopyIcon } from 'lucide-react'
+
+interface CodeHighlightProps {
+    className?: string | undefined
+    children?: ReactNode | undefined
+    node?: Element | undefined
+}
+
+export const CodeHighlight = ({ className, children, node, ...props }: CodeHighlightProps): JSX.Element => {
     const match = className?.match(/language-(\w+)/)
     const language = match ? match[1] : undefined
-    const isInline = node ? isInlineCode(node) : undefined
+    const isInline: boolean | undefined = node ? isInlineCode(node) : undefined
 
     return !isInline ? (
-        <div className="relative">
-            <Button className="absolute top-4 right-0 z-10 text-xs" size="sm" variant="link" onClick={() => navigator.clipboard.writeText(code)}>
-                copy
-            </Button>
-            <ShikiHighlighter defaultColor="light-dark()" language={language} theme={{ light: 'github-light', dark: 'github-dark' }} {...props} showLineNumbers>
-                {code}
+        <div className="mb-4 overflow-hidden rounded-lg border bg-sidebar">
+            <div className="flex items-center justify-between p-1 pl-4 text-sm">
+                {language}
+                <Button className="text-xs" size="icon" variant="ghost" onClick={() => navigator.clipboard.writeText(children as string)}>
+                    <CopyIcon />
+                </Button>
+            </div>
+            <ShikiHighlighter
+                defaultColor="light-dark()"
+                language={language}
+                showLanguage={false}
+                theme={{ light: 'github-light', dark: 'github-dark' }}
+                showLineNumbers
+                {...props}
+            >
+                {String(children)}
             </ShikiHighlighter>
         </div>
     ) : (
         <code className={className} {...props}>
-            {code}
+            {children}
         </code>
     )
 }
