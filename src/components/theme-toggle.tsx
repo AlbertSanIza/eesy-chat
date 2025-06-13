@@ -8,13 +8,13 @@ export function ThemeToggle() {
     const { theme, setTheme } = useTheme()
 
     const cycleTheme = () => {
-        const newTheme: Theme = 'light'
+        let newTheme: Theme = 'light'
         switch (theme) {
             case 'light':
-                setTheme('dark')
+                newTheme = 'dark'
                 break
             case 'dark':
-                setTheme('system')
+                newTheme = 'system'
                 break
         }
         setTheme(newTheme)
