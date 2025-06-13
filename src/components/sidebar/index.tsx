@@ -5,24 +5,32 @@ import { Unauthenticated } from 'convex/react'
 import { AppSidebarContent } from '@/components/sidebar/content'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
+import { SearchIcon } from 'lucide-react'
 
 export function AppSidebar() {
-    const { user } = useStore()
+    const { user, threadSearch, setThreadSearch } = useStore()
     const { isLoaded, isSignedIn } = useUser()
 
     return (
         <Sidebar variant="floating">
-            <SidebarHeader>
+            <SidebarHeader className="pb-0">
                 <h1 className="my-1.5 border-transparent text-center text-xl font-light">eesy.chat</h1>
                 <Button asChild>
                     <Link to="/">New Chat</Link>
                 </Button>
-                <Input />
+                <div className="mt-4 flex items-center gap-2 border-b pb-1">
+                    <SearchIcon className="size-4 min-w-4 text-muted-foreground" />
+                    <input
+                        placeholder="Search your threads..."
+                        className="w-full text-base leading-6 outline-none"
+                        value={threadSearch}
+                        onChange={(event) => setThreadSearch(event.target.value)}
+                    />
+                </div>
             </SidebarHeader>
             <AppSidebarContent />
             <SidebarFooter className="relative">
