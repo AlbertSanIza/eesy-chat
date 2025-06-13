@@ -1,4 +1,4 @@
-import { useEesyChatStore } from '@/lib/store/use-eesy-chat-store'
+import { useEesyChatStore } from '@/lib/store/eesy-chat-store'
 
 export const useThreads = () => {
     const { threads, addThread, updateThread, deleteThread, getThread } = useEesyChatStore()
