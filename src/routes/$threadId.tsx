@@ -1,9 +1,8 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
-import { useQuery } from 'convex/react'
+import { createFileRoute, Navigate, useParams } from '@tanstack/react-router'
 
 import { Messages } from '@/components/messages'
-import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
+import { useStore } from '@/lib/store'
 
 export const Route = createFileRoute('/$threadId')({
     component: RouteComponent
@@ -11,7 +10,11 @@ export const Route = createFileRoute('/$threadId')({
 
 function RouteComponent() {
     const { threadId } = useParams({ from: Route.fullPath })
-    const thread = useQuery(api.threads.findOne, { id: threadId as Id<'threads'> })
+    const thread = useStore(({ threads }) => threads.find((thread) => thread._id === threadId))
+
+    if (!thread) {
+        return <Navigate to="/" />
+    }
 
     return (
         <div className="w-full pt-14 pb-33 sm:pt-8">
