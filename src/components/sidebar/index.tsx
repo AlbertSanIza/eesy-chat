@@ -5,6 +5,7 @@ import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import { AppSidebarContent } from '@/components/sidebar/content'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCachedUser } from '@/hooks/use-cached-user'
@@ -19,6 +20,7 @@ export function AppSidebar() {
                 <Button asChild>
                     <Link to="/">New Chat</Link>
                 </Button>
+                <Input />
             </SidebarHeader>
             <AppSidebarContent />
             <SidebarFooter>
