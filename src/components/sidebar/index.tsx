@@ -1,9 +1,11 @@
+import { SignInButton, UserButton } from '@clerk/clerk-react'
 import { Link } from '@tanstack/react-router'
+import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 
 import { AppSidebarContent } from '@/components/sidebar/content'
 import { Button } from '@/components/ui/button'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
+import { Loader2Icon } from 'lucide-react'
 
 export function AppSidebar() {
     return (
@@ -16,16 +18,19 @@ export function AppSidebar() {
             </SidebarHeader>
             <AppSidebarContent />
             <SidebarFooter>
-                <SignedIn>
+                <Authenticated>
                     <div className="clerk-user-button">
-                        <UserButton appearance={{ layout: {} }} showName />
+                        <UserButton showName />
                     </div>
-                </SignedIn>
-                <SignedOut>
-                    <SidebarMenuButton size="lg" asChild>
+                </Authenticated>
+                <Unauthenticated>
+                    <SidebarMenuButton size="lg" className="cursor-pointer" asChild>
                         <SignInButton />
                     </SidebarMenuButton>
-                </SignedOut>
+                </Unauthenticated>
+                <AuthLoading>
+                    <Loader2Icon className="m-2 mb-[15px] size-4 animate-spin" />
+                </AuthLoading>
             </SidebarFooter>
         </Sidebar>
     )
