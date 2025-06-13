@@ -9,12 +9,17 @@ const openrouter = createOpenRouter()
 
 export const findAll = query({
     args: {},
-    handler: async (ctx) =>
-        await ctx.db
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            throw new Error('Unauthorized')
+        }
+        return await ctx.db
             .query('threads')
-            .filter((q) => q.eq(q.field('user'), 'albert'))
+            .filter((q) => q.eq(q.field('user'), identity.subject))
             .order('desc')
             .collect()
+    }
 })
 
 export const findOne = query({
