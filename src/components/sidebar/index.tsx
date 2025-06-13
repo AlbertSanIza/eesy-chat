@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useCachedUser } from '@/hooks/use-cached-user'
+import { useStore } from '@/lib/store'
 
 export function AppSidebar() {
-    const { user } = useCachedUser()
+    const { user } = useStore()
 
     return (
         <Sidebar variant="floating">
