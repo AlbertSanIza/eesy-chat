@@ -12,7 +12,7 @@ export const findAll = query({
     handler: async (ctx) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
-            throw new Error('Unauthorized')
+            return []
         }
         return await ctx.db
             .query('threads')
@@ -24,7 +24,13 @@ export const findAll = query({
 
 export const findOne = query({
     args: { id: v.id('threads') },
-    handler: async (ctx, { id }) => await ctx.db.get(id)
+    handler: async (ctx, { id }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return null
+        }
+        return await ctx.db.get(id)
+    }
 })
 
 export const create = mutation({
