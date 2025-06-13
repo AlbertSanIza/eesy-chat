@@ -120,14 +120,16 @@
     }
 }
 
-.clerk-user-button {
-    @apply [&>div]:w-full [&>div>button]:w-full [&>div>button]:justify-start [&>div>button]:rounded-md [&>div>button]:p-2 [&>div>button]:text-sidebar-foreground [&>div>button]:hover:bg-sidebar-accent [&>div>button>span]:flex-row-reverse [&>div>button>span>span]:p-0 [&>div>button>span>span]:text-sm [&>div>button>span>span]:font-normal;
-}
-
 .bg-sidebar {
     @apply data-[slot]:dark:bg-[url(/noise-light.png)];
 }
 
+/* Clerk */
+.clerk-user-button {
+    @apply [&>div]:w-full [&>div>button]:w-full [&>div>button]:justify-start [&>div>button]:rounded-md [&>div>button]:p-2 [&>div>button]:text-sidebar-foreground [&>div>button]:hover:bg-sidebar-accent [&>div>button>span]:flex-row-reverse [&>div>button>span>span]:p-0 [&>div>button>span>span]:text-sm [&>div>button>span>span]:font-normal;
+}
+
+/* Markdown */
 .markdown h1 {
     @apply mb-4 text-3xl font-bold;
 }
