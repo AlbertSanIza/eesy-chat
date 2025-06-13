@@ -42,15 +42,25 @@ function getTimeGroup(timestamp: number): string {
 }
 
 export function AppSidebarContent() {
-    const { threads } = useStore()
+    const { threads, threadSearch } = useStore()
 
     const groupedThreads = useMemo(() => {
         if (!threads) {
             return {}
         }
+
+        let filteredThreads = threads
+        if (threadSearch && threadSearch.trim()) {
+            const searchTerms = threadSearch.trim().toLowerCase().split(/\s+/)
+            filteredThreads = threads.filter((thread) => {
+                const threadName = thread.name.toLowerCase()
+                return searchTerms.every((term) => threadName.includes(term))
+            })
+        }
+
         const groups: GroupedThreads = {}
-        const pinnedThreads = threads.filter((thread) => thread.pinned)
-        const unpinnedThreads = threads.filter((thread) => !thread.pinned)
+        const pinnedThreads = filteredThreads.filter((thread) => thread.pinned)
+        const unpinnedThreads = filteredThreads.filter((thread) => !thread.pinned)
         if (pinnedThreads.length > 0) {
             groups['Pinned'] = pinnedThreads
         }
@@ -62,7 +72,7 @@ export function AppSidebarContent() {
             groups[group].push(thread)
         })
         return groups
-    }, [threads])
+    }, [threadSearch, threads])
 
     const groupOrder = ['Pinned', 'Today', 'Yesterday']
     const sortedGroups = Object.keys(groupedThreads).sort((a, b) => {
