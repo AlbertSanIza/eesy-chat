@@ -19,7 +19,6 @@ function RouteComponent() {
     return (
         <div className="w-full pt-14 pb-33 sm:pt-8">
             <div className="mx-auto flex max-w-5xl flex-col gap-6 px-6 sm:px-14">
-                {JSON.stringify(thread)}
                 <Messages threadId={threadId as Id<'threads'>} />
             </div>
         </div>

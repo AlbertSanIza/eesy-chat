@@ -22,17 +22,6 @@ export const findAll = query({
     }
 })
 
-export const findOne = query({
-    args: { id: v.id('threads') },
-    handler: async (ctx, { id }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return null
-        }
-        return await ctx.db.get(id)
-    }
-})
-
 export const create = mutation({
     args: { prompt: v.string() },
     handler: async (ctx, { prompt }) => {
