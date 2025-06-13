@@ -36,7 +36,11 @@ export const findOne = query({
 export const create = mutation({
     args: { prompt: v.string() },
     handler: async (ctx, { prompt }) => {
-        const threadId = await ctx.db.insert('threads', { name: 'New Thread', user: 'albert', pinned: false, updateTime: Date.now() })
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return null
+        }
+        const threadId = await ctx.db.insert('threads', { name: 'New Thread', user: identity.subject, pinned: false, updateTime: Date.now() })
         await ctx.scheduler.runAfter(0, internal.threads.createInternal, { threadId, prompt })
         await ctx.scheduler.runAfter(0, api.messages.create, { threadId, prompt })
         return threadId
