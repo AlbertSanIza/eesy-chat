@@ -6,6 +6,7 @@ import type { Id } from '@/convex/_generated/dataModel'
 export const Route = createFileRoute('/$threadId')({
     component: RouteComponent
 })
+
 function RouteComponent() {
     const { threadId } = useParams({ from: Route.fullPath })
 
