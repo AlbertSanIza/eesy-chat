@@ -218,7 +218,7 @@ function Sidebar({
                 <div
                     data-sidebar="sidebar"
                     data-slot="sidebar-inner"
-                    className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm"
+                    className="flex h-full w-full flex-col bg-linear-to-t from-[#F1DAF4] to-[#F3E7F5] group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm dark:from-[#0F0A0D] dark:to-[#1D161A]"
                 >
                     {children}
                 </div>
