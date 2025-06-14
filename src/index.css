@@ -116,7 +116,7 @@
         @apply border-border outline-ring/50;
     }
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-foreground [&>div]:data-floating-ui-inert:pointer-events-none [&>div]:data-floating-ui-portal:pointer-events-auto;
     }
 }
 
