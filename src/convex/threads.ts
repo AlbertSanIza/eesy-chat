@@ -29,7 +29,7 @@ export const create = mutation({
         if (identity === null) {
             return null
         }
-        const threadId = await ctx.db.insert('threads', { name: 'New Thread', user: identity.subject, pinned: false, updateTime: Date.now() })
+        const threadId = await ctx.db.insert('threads', { name: 'New Thread', user: identity.subject, pinned: false, shared: false, updateTime: Date.now() })
         await ctx.scheduler.runAfter(0, internal.threads.createInternal, { threadId, prompt })
         await ctx.scheduler.runAfter(0, api.messages.send, { threadId, prompt })
         return threadId
@@ -78,6 +78,21 @@ export const togglePin = mutation({
             return
         }
         await ctx.db.patch(id, { pinned: !thread?.pinned })
+    }
+})
+
+export const toggleShared = mutation({
+    args: { id: v.id('threads') },
+    handler: async (ctx, { id }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return
+        }
+        const thread = await ctx.db.get(id)
+        if (!thread || thread.user !== identity.subject) {
+            return
+        }
+        await ctx.db.patch(id, { shared: !thread?.shared })
     }
 })
 
