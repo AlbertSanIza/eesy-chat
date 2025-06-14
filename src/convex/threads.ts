@@ -51,6 +51,10 @@ export const createInternal = internalAction({
 export const rename = action({
     args: { id: v.id('threads'), name: v.string() },
     handler: async (ctx, { id, name }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return
+        }
         await ctx.scheduler.runAfter(0, internal.threads.renameInternal, { id, name })
     }
 })
@@ -65,14 +69,29 @@ export const renameInternal = internalMutation({
 export const togglePin = mutation({
     args: { id: v.id('threads') },
     handler: async (ctx, { id }) => {
-        const memory = await ctx.db.get(id)
-        await ctx.db.patch(id, { pinned: !memory?.pinned })
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return
+        }
+        const thread = await ctx.db.get(id)
+        if (!thread || thread.user !== identity.subject) {
+            return
+        }
+        await ctx.db.patch(id, { pinned: !thread?.pinned })
     }
 })
 
 export const remove = mutation({
     args: { id: v.id('threads') },
     handler: async (ctx, { id }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return
+        }
+        const thread = await ctx.db.get(id)
+        if (!thread || thread.user !== identity.subject) {
+            return
+        }
         await ctx.scheduler.runAfter(0, internal.messages.removeAll, { threadId: id })
         await ctx.db.delete(id)
     }
