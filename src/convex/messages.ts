@@ -12,7 +12,7 @@ export const findAll = query({
             .collect()
 })
 
-export const create = mutation({
+export const send = mutation({
     args: { threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { threadId, prompt }) => {
         const streamId = await ctx.db.insert('streams', { status: 'pending' })
