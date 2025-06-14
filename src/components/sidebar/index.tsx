@@ -22,11 +22,11 @@ export function AppSidebar() {
                 <Button asChild>
                     <Link to="/">New Chat</Link>
                 </Button>
-                <div className="mt-4 flex items-center gap-2 border-b pb-1">
-                    <SearchIcon className="size-4 min-w-4 text-sidebar-foreground" />
+                <div className="mx-2 mt-3 flex items-center gap-1 border-b border-sidebar-border pb-1">
+                    <SearchIcon className="size-3! min-w-4 text-sidebar-foreground" />
                     <input
                         placeholder="Search your threads..."
-                        className="w-full text-base leading-6 outline-none"
+                        className="w-full text-sm leading-6 outline-none"
                         value={threadSearch}
                         onChange={(event) => setThreadSearch(event.target.value)}
                     />
