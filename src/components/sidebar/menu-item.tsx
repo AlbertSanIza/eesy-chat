@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useAction, useMutation } from 'convex/react'
-import { Loader2Icon, PinIcon, PinOffIcon, TextCursorIcon, Trash2Icon, XIcon } from 'lucide-react'
+import { LinkIcon, Loader2Icon, PinIcon, PinOffIcon, TextCursorIcon, Trash2Icon, UnlinkIcon, XIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import {
@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils'
 export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     const navigate = useNavigate()
     const inputRef = useRef<HTMLInputElement>(null)
+    const { status } = useAiChat({ id: thread._id })
     const { threadId } = useParams({ strict: false })
     const [isEditing, setIsEditing] = useState(false)
     const renameThread = useAction(api.threads.rename)
@@ -32,7 +33,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     const [inputValue, setInputValue] = useState(thread.name)
     const toggleThreadPin = useMutation(api.threads.togglePin)
     const [optimisticName, setOptimisticName] = useState<string | null>(null)
-    const { status } = useAiChat({ id: thread._id })
+    const toggleSharedThread = useMutation(api.threads.toggleShared)
 
     useEffect(() => {
         if (optimisticName && thread.name === optimisticName) {
@@ -69,7 +70,13 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     const displayName = optimisticName ?? thread.name
 
     return (
-        <ThreadContextMenu thread={thread} onEdit={onEdit} onDelete={handleOnDelete} onTogglePin={() => toggleThreadPin({ id: thread._id })}>
+        <ThreadContextMenu
+            thread={thread}
+            onEdit={onEdit}
+            onDelete={handleOnDelete}
+            onTogglePin={() => toggleThreadPin({ id: thread._id })}
+            onToggleShare={() => toggleSharedThread({ id: thread._id })}
+        >
             <ShadSidebarMenuItem>
                 <SidebarMenuButton
                     isActive={threadId === thread._id || isEditing}
@@ -77,6 +84,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
                     asChild
                 >
                     <Link to={`/$threadId`} params={{ threadId: thread._id }}>
+                        {!isEditing && thread.shared && <LinkIcon className="" />}
                         {isEditing && (
                             <input
                                 className="h-full w-full rounded px-2 pb-[1px] outline-none"
@@ -138,15 +146,24 @@ function ThreadContextMenu({
     thread,
     onEdit,
     onTogglePin,
+    onToggleShare,
     onDelete,
     children
 }: {
     thread: Doc<'threads'>
     onEdit: () => void
     onTogglePin: () => void
+    onToggleShare: () => void
     onDelete: () => void
     children: React.ReactNode
 }) {
+    const handleShareToggle = () => {
+        if (thread.shared) {
+            navigator.clipboard.writeText(`${window.location.origin}/shared/${thread._id}`)
+        }
+        onToggleShare()
+    }
+
     return (
         <ContextMenu>
             <ContextMenuTrigger>{children}</ContextMenuTrigger>
@@ -158,6 +175,10 @@ function ThreadContextMenu({
                 <ContextMenuItem onClick={onTogglePin}>
                     {thread.pinned ? <PinOffIcon /> : <PinIcon />}
                     {thread.pinned ? 'Unpin' : 'Pin'}
+                </ContextMenuItem>
+                <ContextMenuItem onClick={handleShareToggle}>
+                    {thread.shared ? <UnlinkIcon /> : <LinkIcon />}
+                    {thread.shared ? 'Unshare' : 'Share'}
                 </ContextMenuItem>
                 {!thread.pinned && <ContextMenuSeparator />}
                 {!thread.pinned && (
