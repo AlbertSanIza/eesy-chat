@@ -145,10 +145,13 @@
     @apply mb-4;
 }
 .markdown ul {
-    @apply mb-4 ml-8 list-outside list-disc;
+    @apply mb-4 ml-8 list-outside list-disc marker:text-[#C4739D] dark:marker:text-[#DC749E];
 }
 .markdown ol {
     @apply mb-4 list-outside list-decimal;
+}
+.markdown li {
+    @apply mb-2;
 }
 .markdown hr {
     @apply my-12 dark:border-[#DC749E];
@@ -157,14 +160,17 @@
     @apply text-blue-500 hover:underline;
 }
 .markdown table {
-    @apply mb-4 w-full table-auto border-collapse;
+    @apply w-full table-auto border-collapse;
 }
 .markdown th {
-    @apply bg-sidebar dark:bg-[#1F1A24];
+    @apply border-b bg-sidebar dark:bg-[#1F1A24];
 }
 .markdown td,
 .markdown th {
-    @apply border p-2 text-sm;
+    @apply p-2 text-left text-sm;
+}
+.markdown tr {
+    @apply border-b last:border-b-0 hover:bg-[#F2CEE2] dark:hover:bg-[#322C36];
 }
 .markdown code:not(pre code) {
     @apply rounded bg-accent px-1 font-mono text-sm;
