@@ -21,7 +21,7 @@ export const CodeHighlight = ({ className, children, node, ...props }: CodeHighl
     const isInline: boolean | undefined = node ? isInlineCode(node) : undefined
 
     return !isInline ? (
-        <div className="mb-4 overflow-hidden rounded-lg border dark:bg-[#1F1A24] [&>pre>pre]:rounded-t-lg!">
+        <div className="mb-4 overflow-hidden rounded-lg border bg-sidebar dark:bg-[#372D3D] [&_.shiki]:bg-transparent! [&>pre>pre]:rounded-t-lg!">
             <div className="flex items-center justify-between p-1 pl-4 text-sm">
                 {language}
                 <Button
@@ -43,8 +43,9 @@ export const CodeHighlight = ({ className, children, node, ...props }: CodeHighl
                 language={language}
                 showLanguage={false}
                 theme={{ light: 'github-light', dark: 'github-dark' }}
-                addDefaultStyles={true}
+                addDefaultStyles={false}
                 showLineNumbers
+                className="rounded-none border-t bg-[#F5ECF9] p-2 text-sm dark:bg-[#1B161F]"
                 {...props}
             >
                 {String(children)}
@@ -65,7 +66,17 @@ function parseMarkdownIntoBlocks(markdown: string): string[] {
 const MemoizedMarkdownBlock = memo(
     ({ content }: { content: string }) => {
         return (
-            <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ code: CodeHighlight }}>
+            <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                    code: CodeHighlight,
+                    table: ({ children }) => (
+                        <div className="overflow-hidden rounded-lg border">
+                            <table>{children}</table>
+                        </div>
+                    )
+                }}
+            >
                 {content}
             </ReactMarkdown>
         )
