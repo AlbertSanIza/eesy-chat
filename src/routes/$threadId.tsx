@@ -1,4 +1,4 @@
-import { createFileRoute, Navigate, useParams } from '@tanstack/react-router'
+import { createFileRoute, useParams } from '@tanstack/react-router'
 
 import { Messages } from '@/components/messages'
 import type { Id } from '@/convex/_generated/dataModel'
@@ -13,7 +13,7 @@ function RouteComponent() {
     const thread = useStore(({ threads }) => threads.find((thread) => thread._id === threadId))
 
     if (!thread) {
-        return <Navigate to="/" />
+        return 'Loading...'
     }
 
     return (
