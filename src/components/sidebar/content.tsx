@@ -1,3 +1,4 @@
+import { PinIcon } from 'lucide-react'
 import { useMemo } from 'react'
 
 import { AppSidebarMenuItem } from '@/components/sidebar/menu-item'
@@ -90,10 +91,13 @@ export function AppSidebarContent() {
     })
 
     return (
-        <ShadSidebarContent>
+        <ShadSidebarContent className="gap-0">
             {sortedGroups.map((groupTitle) => (
                 <SidebarGroup key={groupTitle}>
-                    <SidebarGroupLabel>{groupTitle}</SidebarGroupLabel>
+                    <SidebarGroupLabel className="text-[#560E2B] dark:text-[#C46195]">
+                        {groupTitle === 'Pinned' && <PinIcon className="mr-1 size-3!" />}
+                        {groupTitle}
+                    </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {groupedThreads[groupTitle].map((thread) => (

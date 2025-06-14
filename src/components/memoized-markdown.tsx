@@ -21,7 +21,7 @@ export const CodeHighlight = ({ className, children, node, ...props }: CodeHighl
     const isInline: boolean | undefined = node ? isInlineCode(node) : undefined
 
     return !isInline ? (
-        <div className="mb-4 overflow-hidden rounded-lg border bg-sidebar [&>pre>pre]:rounded-t-lg!">
+        <div className="mb-4 overflow-hidden rounded-lg border dark:bg-[#1F1A24] [&>pre>pre]:rounded-t-lg!">
             <div className="flex items-center justify-between p-1 pl-4 text-sm">
                 {language}
                 <Button

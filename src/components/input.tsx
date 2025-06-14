@@ -73,14 +73,14 @@ export function Input() {
                         <div className="flex items-center justify-between">
                             <div>Model Selection Here!</div>
                             {status === 'ready' && (
-                                <Button size="icon" type="submit">
+                                <Button size="icon" type="submit" className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary">
                                     <SendHorizontalIcon />
                                 </Button>
                             )}
                             {(status === 'submitted' || status === 'streaming') && (
                                 <div className="flex items-center gap-2">
                                     <LoaderCircleIcon className="size-4 animate-spin opacity-50" />
-                                    <Button size="icon" onClick={stop}>
+                                    <Button size="icon" className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary" onClick={stop}>
                                         <SquareIcon />
                                     </Button>
                                 </div>

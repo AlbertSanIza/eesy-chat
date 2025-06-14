@@ -19,7 +19,7 @@ export function AppSidebar() {
         <Sidebar variant="floating">
             <SidebarHeader className="pb-0">
                 <h1 className="my-1.5 border-transparent text-center text-xl font-light">eesy.chat</h1>
-                <Button asChild>
+                <Button className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary" asChild>
                     <Link to="/">New Chat</Link>
                 </Button>
                 <div className="mx-2 mt-3 flex items-center gap-1 border-b border-sidebar-border pb-1">
