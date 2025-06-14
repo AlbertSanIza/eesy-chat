@@ -10,7 +10,9 @@ export function Messages({ threadId }: { threadId: Id<'threads'> }) {
         <div
             key={message.id}
             className={cn(
-                message.role === 'user' ? 'ml-auto w-fit rounded-lg border bg-sidebar px-4 py-3 text-right text-[#492C61] dark:bg-[#2C2632]' : 'markdown'
+                message.role === 'user'
+                    ? 'ml-auto w-fit rounded-lg border bg-sidebar px-4 py-3 text-right text-[#492C61] dark:bg-[#2C2632] dark:text-[#F2EBFA]'
+                    : 'markdown'
             )}
         >
             <MemoizedMarkdown id={message.id} content={message.content} />
