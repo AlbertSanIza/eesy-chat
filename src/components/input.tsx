@@ -6,16 +6,18 @@ import { useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { useSidebar } from '@/components/ui/sidebar'
 import { api } from '@/convex/_generated/api'
+import type { Id } from '@/convex/_generated/dataModel'
 import { useAiChat } from '@/hooks/use-ai-chat'
 import { cn } from '@/lib/utils'
 
 export function Input() {
     const { open } = useSidebar()
     const navigate = useNavigate()
+    const send = useMutation(api.messages.send)
     const { threadId } = useParams({ strict: false })
     const createThread = useMutation(api.threads.create)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
-    const { input, status, handleInputChange, handleSubmit } = useAiChat({ id: threadId || 'home' })
+    const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
@@ -26,12 +28,14 @@ export function Input() {
     const handleOnSubmit = async (newInput: string) => {
         textAreaRef.current?.style.setProperty('height', 'auto')
         if (threadId) {
-            handleSubmit({ id: threadId, override: newInput })
+            // handleSubmit({ id: threadId, override: newInput })
+            send({ threadId: threadId as Id<'threads'>, prompt: newInput.trim() })
+            handleInputChange({ id: threadId, value: '' })
             return
         }
         const newThreadId = await createThread({ prompt: input.trim() })
         if (newThreadId) {
-            handleSubmit({ id: newThreadId.toString(), override: newInput })
+            // handleSubmit({ id: newThreadId.toString(), override: newInput })
             await navigate({ to: `/${newThreadId}` })
             handleInputChange({ id: 'home', value: '' })
         }
