@@ -46,7 +46,7 @@ export function Input() {
                         event.preventDefault()
                         handleOnSubmit(input)
                     }}
-                    className="z-50 mx-auto max-w-2xl rounded-t-3xl border-x border-t bg-sidebar/80 px-1.5 pt-1.5 shadow-2xl shadow-sky-300 backdrop-blur-sm dark:shadow-none"
+                    className="z-50 mx-auto max-w-2xl rounded-t-3xl border-x border-t bg-sidebar/80 px-1.5 pt-1.5 shadow-2xl shadow-pink-300 backdrop-blur-sm dark:shadow-none"
                 >
                     <div className="rounded-t-[18px] border-x border-t bg-background/80 p-3 shadow">
                         <textarea
