@@ -162,12 +162,13 @@
 .markdown table {
     @apply w-full table-auto border-collapse;
 }
-.markdown th {
-    @apply border-b bg-sidebar dark:bg-[#1F1A24];
-}
-.markdown td,
-.markdown th {
+
+.markdown th,
+.markdown td {
     @apply p-2 text-left text-sm;
+}
+.markdown th {
+    @apply border-b bg-sidebar py-3 dark:bg-[#1F1A24];
 }
 .markdown tr {
     @apply border-b last:border-b-0 hover:bg-[#F2CEE2] dark:hover:bg-[#322C36];
