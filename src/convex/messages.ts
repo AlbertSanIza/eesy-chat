@@ -5,11 +5,16 @@ import { internalMutation, internalQuery, mutation, query } from './_generated/s
 
 export const findAll = query({
     args: { threadId: v.id('threads') },
-    handler: async (ctx, { threadId }) =>
-        await ctx.db
+    handler: async (ctx, { threadId }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return []
+        }
+        return await ctx.db
             .query('messages')
             .filter((q) => q.eq(q.field('threadId'), threadId))
             .collect()
+    }
 })
 
 export const send = mutation({
