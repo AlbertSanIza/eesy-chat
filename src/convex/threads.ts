@@ -2,7 +2,7 @@ import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { generateText } from 'ai'
 import { v } from 'convex/values'
 
-import { api, internal } from './_generated/api'
+import { internal } from './_generated/api'
 import { action, internalAction, internalMutation, mutation, query } from './_generated/server'
 
 const openrouter = createOpenRouter()
@@ -31,7 +31,7 @@ export const create = mutation({
         }
         const threadId = await ctx.db.insert('threads', { name: 'New Thread', user: identity.subject, pinned: false, shared: false, updateTime: Date.now() })
         await ctx.scheduler.runAfter(0, internal.threads.createInternal, { threadId, prompt })
-        await ctx.scheduler.runAfter(0, api.messages.sendInternal, { threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.messages.sendInternal, { threadId, prompt })
         return threadId
     }
 })
