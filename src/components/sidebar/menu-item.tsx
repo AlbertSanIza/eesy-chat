@@ -109,12 +109,17 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
                                     event.stopPropagation()
                                 }}
                             >
-                                <Button size="icon" variant="ghost" className="size-6 hover:bg-sidebar" onClick={() => toggleThreadPin({ id: thread._id })}>
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="size-6 hover:bg-sidebar dark:hover:bg-sidebar"
+                                    onClick={() => toggleThreadPin({ id: thread._id })}
+                                >
                                     {thread.pinned ? <PinOffIcon className="size-4" /> : <PinIcon className="size-4" />}
                                 </Button>
                                 {!thread.pinned && (
                                     <DeleteThreadDialog thread={thread} onDelete={handleOnDelete}>
-                                        <Button size="icon" variant="ghost" className="size-6 hover:bg-sidebar">
+                                        <Button size="icon" variant="ghost" className="size-6 hover:bg-sidebar dark:hover:bg-sidebar">
                                             <XIcon className="size-4" />
                                         </Button>
                                     </DeleteThreadDialog>
