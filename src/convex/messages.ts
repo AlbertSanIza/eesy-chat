@@ -1,7 +1,7 @@
 import { v } from 'convex/values'
 
-import { internal } from './_generated/api'
-import { internalMutation, mutation, query } from './_generated/server'
+import { api, internal } from './_generated/api'
+import { internalMutation, internalQuery, mutation, query } from './_generated/server'
 
 export const findAll = query({
     args: { threadId: v.id('threads') },
