@@ -55,7 +55,7 @@ function RouteComponent() {
                     <Button
                         variant="ghost"
                         onClick={() => handleCategorySelect('create')}
-                        className={cn('border', category !== 'create' && 'border-transparent')}
+                        className={cn('border hover:bg-[#F5DCEF] dark:hover:bg-[#2C2632]', category !== 'create' && 'border-transparent')}
                     >
                         <SparklesIcon />
                         Create
@@ -63,19 +63,23 @@ function RouteComponent() {
                     <Button
                         variant="ghost"
                         onClick={() => handleCategorySelect('explore')}
-                        className={cn('border', category !== 'explore' && 'border-transparent')}
+                        className={cn('border hover:bg-[#F5DCEF] dark:hover:bg-[#2C2632]', category !== 'explore' && 'border-transparent')}
                     >
                         <NewspaperIcon />
                         Explore
                     </Button>
-                    <Button variant="ghost" onClick={() => handleCategorySelect('code')} className={cn('border', category !== 'code' && 'border-transparent')}>
+                    <Button
+                        variant="ghost"
+                        onClick={() => handleCategorySelect('code')}
+                        className={cn('border hover:bg-[#F5DCEF] dark:hover:bg-[#2C2632]', category !== 'code' && 'border-transparent')}
+                    >
                         <CodeIcon />
                         Code
                     </Button>
                     <Button
                         variant="ghost"
                         onClick={() => handleCategorySelect('learn')}
-                        className={cn('border', category !== 'learn' && 'border-transparent')}
+                        className={cn('border hover:bg-[#F5DCEF] dark:hover:bg-[#2C2632]', category !== 'learn' && 'border-transparent')}
                     >
                         <GraduationCapIcon />
                         Learn
@@ -83,7 +87,12 @@ function RouteComponent() {
                 </div>
                 <div className="flex flex-col">
                     {suggestions[category].map((suggestion) => (
-                        <Button variant="ghost" key={suggestion} onClick={() => handleInputChange({ id: 'home', value: `${suggestion} ` })}>
+                        <Button
+                            variant="ghost"
+                            className="hover:bg-[#F5DCEF] dark:hover:bg-[#2C2632]"
+                            key={suggestion}
+                            onClick={() => handleInputChange({ id: 'home', value: `${suggestion} ` })}
+                        >
                             {suggestion}
                         </Button>
                     ))}
