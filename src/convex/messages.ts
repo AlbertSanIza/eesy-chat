@@ -1,7 +1,7 @@
 import { v } from 'convex/values'
 
-import { api, internal } from './_generated/api'
-import { internalMutation, internalQuery, mutation, query } from './_generated/server'
+import { internal } from './_generated/api'
+import { internalMutation, mutation, query } from './_generated/server'
 
 export const findAll = query({
     args: { threadId: v.id('threads') },
@@ -20,9 +20,19 @@ export const findAll = query({
 export const send = mutation({
     args: { threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { threadId, prompt }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return null
+        }
+        await ctx.scheduler.runAfter(0, internal.messages.sendInternal, { threadId, prompt })
+    }
+})
+
+export const sendInternal = internalMutation({
+    args: { threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { threadId, prompt }) => {
         const streamId = await ctx.db.insert('streams', { status: 'pending' })
-        const messageId = await ctx.db.insert('messages', { threadId, streamId, prompt })
-        return messageId
+        await ctx.db.insert('messages', { threadId, streamId, prompt })
     }
 })
 
