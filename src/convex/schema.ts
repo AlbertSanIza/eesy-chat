@@ -18,5 +18,11 @@ export default defineSchema({
     chunks: defineTable({
         messageId: v.id('messages'),
         text: v.string()
-    }).index('by_message', ['messageId'])
+    }).index('by_message', ['messageId']),
+    models: defineTable({
+        openRouterId: v.string(),
+        provider: v.string(),
+        label: v.string(),
+        enabled: v.boolean()
+    })
 })
