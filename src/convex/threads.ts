@@ -111,3 +111,10 @@ export const remove = mutation({
         await ctx.db.delete(id)
     }
 })
+
+export const updateTime = internalMutation({
+    args: { threadId: v.id('threads') },
+    handler: async (ctx, { threadId }) => {
+        await ctx.db.patch(threadId, { updateTime: Date.now() })
+    }
+})
