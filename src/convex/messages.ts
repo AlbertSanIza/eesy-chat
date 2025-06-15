@@ -55,15 +55,6 @@ export const create = internalMutation({
     handler: async (ctx, { threadId, prompt }) => await ctx.db.insert('messages', { threadId, status: 'pending', model: 'openai/gpt-4.1-nano', prompt })
 })
 
-// export const sendInternal = internalMutation({
-//     args: { threadId: v.id('threads'), prompt: v.string() },
-//     handler: async (ctx, { threadId, prompt }) => {
-//         // const streamId = await ctx.db.insert('streams', { status: 'pending' })
-//         await ctx.db.insert('messages', { threadId, status: 'pending', model: '', prompt })
-//         await ctx.scheduler.runAfter(0, internal.threads.updateTime, { threadId })
-//     }
-// })
-
 export const getHistory = internalQuery({
     args: { threadId: v.id('threads') },
     handler: async (ctx, { threadId }): Promise<Message[]> => {
