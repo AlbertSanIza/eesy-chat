@@ -13,10 +13,6 @@ export const Route = createFileRoute('/shared/$threadId')({
 function RouteComponent() {
     const { threadId } = useParams({ from: Route.fullPath })
 
-    if (!threadId) {
-        throw new Error('Thread ID is required')
-    }
-
     const thread = useQuery(api.shared.thread, { threadId: threadId as Id<'threads'> })
 
     if (!thread) {
