@@ -11,6 +11,6 @@ export const thread = query({
         if (!thread || !thread.shared) {
             return { name: null, messages: [] }
         }
-        return { name: thread.name, messages: await ctx.runQuery(internal.messages.getHistory, { threadId }) }
+        return { name: thread.name, messages: await ctx.runQuery(internal.messages.history, { threadId }) }
     }
 })

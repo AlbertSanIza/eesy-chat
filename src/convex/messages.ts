@@ -18,6 +18,27 @@ export const findAll = query({
     }
 })
 
+export const history = internalQuery({
+    args: { threadId: v.id('threads') },
+    handler: async (ctx, { threadId }): Promise<Message[]> => {
+        const messages = await ctx.db
+            .query('messages')
+            .filter((q) => q.eq(q.field('threadId'), threadId))
+            .collect()
+        const joined = await Promise.all(
+            messages.map(async (message) => ({ message, response: await ctx.runQuery(internal.messages.body, { messageId: message._id }) }))
+        )
+        return joined.flatMap((item) => {
+            const user: Message = { id: item.message._id, role: 'user', content: item.message.prompt }
+            const assistant: Message = { id: item.message._id, role: 'assistant', content: item.response.text }
+            if (!assistant.content) {
+                return [user]
+            }
+            return [user, assistant]
+        })
+    }
+})
+
 export const body = internalQuery({
     args: { messageId: v.id('messages') },
     handler: async (ctx, args) => {
@@ -53,27 +74,6 @@ export const send = action({
 export const create = internalMutation({
     args: { threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { threadId, prompt }) => await ctx.db.insert('messages', { threadId, status: 'pending', model: 'openai/gpt-4.1-nano', prompt })
-})
-
-export const getHistory = internalQuery({
-    args: { threadId: v.id('threads') },
-    handler: async (ctx, { threadId }): Promise<Message[]> => {
-        const messages = await ctx.db
-            .query('messages')
-            .filter((q) => q.eq(q.field('threadId'), threadId))
-            .collect()
-        const joined = await Promise.all(
-            messages.map(async (message) => ({ message, response: await ctx.runQuery(internal.messages.body, { messageId: message._id }) }))
-        )
-        return joined.flatMap((item) => {
-            const user: Message = { id: item.message._id, role: 'user', content: item.message.prompt }
-            const assistant: Message = { id: item.message._id, role: 'assistant', content: item.response.text }
-            if (!assistant.content) {
-                return [user]
-            }
-            return [user, assistant]
-        })
-    }
 })
 
 export const removeAll = internalMutation({
