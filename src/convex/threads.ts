@@ -105,8 +105,8 @@ export const remove = mutation({
         if (!thread || thread.userId !== identity.subject) {
             return
         }
-        await ctx.scheduler.runAfter(0, internal.messages.removeAll, { threadId: id })
         await ctx.db.delete(id)
+        await ctx.scheduler.runAfter(0, internal.messages.removeAll, { threadId: id })
     }
 })
 

@@ -1,8 +1,11 @@
-import { Message } from 'ai'
+import { createOpenRouter } from '@openrouter/ai-sdk-provider'
+import { Message, smoothStream, streamText } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { action, internalMutation, internalQuery, query } from './_generated/server'
+import { action, internalAction, internalMutation, internalQuery, query } from './_generated/server'
+
+const openrouter = createOpenRouter()
 
 export const findAll = query({
     args: { threadId: v.id('threads') },
@@ -81,6 +84,37 @@ export const create = internalMutation({
     handler: async (ctx, { threadId, prompt }) => await ctx.db.insert('messages', { threadId, status: 'pending', model: 'openai/gpt-4.1-nano', prompt })
 })
 
+export const run = internalAction({
+    args: { messageId: v.id('messages') },
+    handler: async (ctx, { messageId }) => {
+        const message = await ctx.runQuery(internal.messages.findOne, { messageId })
+        if (!message) {
+            throw new Error('Message Not Found')
+        }
+        if (message.status !== 'pending') {
+            throw new Error('Stream Already Completed')
+        }
+        const { textStream } = streamText({
+            system: 'You are a helpful assistant. Respond to the user in Markdown format.',
+            model: openrouter.chat('openai/gpt-4.1-nano'),
+            messages: [{ role: 'user', content: message.prompt }],
+            experimental_transform: smoothStream({ chunking: 'line' })
+        })
+        let delta = ''
+        let count = 0
+        for await (const textPart of textStream) {
+            delta += textPart
+            count++
+            if (count === 2) {
+                await ctx.runMutation(internal.chunks.add, { messageId, text: delta, final: false })
+                delta = ''
+                count = 0
+            }
+        }
+        await ctx.runMutation(internal.chunks.add, { messageId, text: delta, final: true })
+    }
+})
+
 export const removeAll = internalMutation({
     args: { threadId: v.id('threads') },
     handler: async (ctx, { threadId }) => {
@@ -89,5 +123,6 @@ export const removeAll = internalMutation({
             .filter((q) => q.eq(q.field('threadId'), threadId))
             .collect()
         await Promise.all(messages.map((message) => ctx.db.delete(message._id)))
+        await Promise.all(messages.map((message) => ctx.runMutation(internal.chunks.removeAll, { messageId: message._id })))
     }
 })
