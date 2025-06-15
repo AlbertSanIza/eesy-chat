@@ -11,14 +11,12 @@ export default defineSchema({
     }).index('by_user', ['user']),
     messages: defineTable({
         threadId: v.id('threads'),
-        streamId: v.id('streams'),
+        status: v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error'), v.literal('timeout')),
+        model: v.string(),
         prompt: v.string()
-    }).index('by_stream', ['streamId']),
-    streams: defineTable({
-        status: v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error'), v.literal('timeout'))
-    }).index('byStatus', ['status']),
+    }).index('by_thread', ['threadId']),
     chunks: defineTable({
-        streamId: v.id('streams'),
+        messageId: v.id('messages'),
         text: v.string()
-    }).index('byStream', ['streamId'])
+    }).index('by_message', ['messageId'])
 })
