@@ -33,8 +33,6 @@ function RouteComponent() {
             <Messages data={thread.messages} />
         </div>
     ) : (
-        <div className="fixed inset-0 flex items-center justify-center">
-            <Loader2Icon className="h-6 w-6 animate-spin text-gray-500" />
-        </div>
+        <div className="fixed inset-0 flex items-center justify-center">Sorry, this thread is not shared or does not exist.</div>
     )
 }
