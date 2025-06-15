@@ -75,7 +75,23 @@ export function Input() {
                             autoFocus
                         />
                         <div className="flex items-center justify-between">
-                            <div>Model Selection Here!</div>
+                            <div className="grid grid-cols-1 text-sm">
+                                <select
+                                    className="col-start-1 row-start-1 h-9 cursor-pointer appearance-none rounded-md border bg-background pr-7 pl-2 shadow-xs outline-none hover:bg-accent hover:text-accent-foreground"
+                                    value={selectedModel}
+                                    onChange={(event) => setSelectedModel(event.target.value)}
+                                >
+                                    {models.map((model) => (
+                                        <option key={model.id} value={model.id}>
+                                            {model.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronDownIcon
+                                    aria-hidden="true"
+                                    className="pointer-events-none col-start-1 row-start-1 mr-2 self-center justify-self-end sm:size-4"
+                                />
+                            </div>
                             {status === 'ready' && (
                                 <Button size="icon" type="submit" className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary">
                                     <SendHorizontalIcon />
