@@ -9,20 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './../routes/__root'
+import { Route as SharedRouteRouteImport } from './../routes/shared/route'
 import { Route as appRouteRouteImport } from './../routes/(app)/route'
 import { Route as SharedIndexRouteImport } from './../routes/shared/index'
 import { Route as appIndexRouteImport } from './../routes/(app)/index'
 import { Route as SharedThreadIdRouteImport } from './../routes/shared/$threadId'
 import { Route as appThreadIdRouteImport } from './../routes/(app)/$threadId'
 
+const SharedRouteRoute = SharedRouteRouteImport.update({
+  id: '/shared',
+  path: '/shared',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const appRouteRoute = appRouteRouteImport.update({
   id: '/(app)',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SharedIndexRoute = SharedIndexRouteImport.update({
-  id: '/shared/',
-  path: '/shared/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => SharedRouteRoute,
 } as any)
 const appIndexRoute = appIndexRouteImport.update({
   id: '/',
@@ -30,9 +36,9 @@ const appIndexRoute = appIndexRouteImport.update({
   getParentRoute: () => appRouteRoute,
 } as any)
 const SharedThreadIdRoute = SharedThreadIdRouteImport.update({
-  id: '/shared/$threadId',
-  path: '/shared/$threadId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$threadId',
+  path: '/$threadId',
+  getParentRoute: () => SharedRouteRoute,
 } as any)
 const appThreadIdRoute = appThreadIdRouteImport.update({
   id: '/$threadId',
@@ -42,9 +48,10 @@ const appThreadIdRoute = appThreadIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof appIndexRoute
+  '/shared': typeof SharedRouteRouteWithChildren
   '/$threadId': typeof appThreadIdRoute
   '/shared/$threadId': typeof SharedThreadIdRoute
-  '/shared': typeof SharedIndexRoute
+  '/shared/': typeof SharedIndexRoute
 }
 export interface FileRoutesByTo {
   '/$threadId': typeof appThreadIdRoute
@@ -55,6 +62,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
+  '/shared': typeof SharedRouteRouteWithChildren
   '/(app)/$threadId': typeof appThreadIdRoute
   '/shared/$threadId': typeof SharedThreadIdRoute
   '/(app)/': typeof appIndexRoute
@@ -62,12 +70,13 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$threadId' | '/shared/$threadId' | '/shared'
+  fullPaths: '/' | '/shared' | '/$threadId' | '/shared/$threadId' | '/shared/'
   fileRoutesByTo: FileRoutesByTo
   to: '/$threadId' | '/shared/$threadId' | '/' | '/shared'
   id:
     | '__root__'
     | '/(app)'
+    | '/shared'
     | '/(app)/$threadId'
     | '/shared/$threadId'
     | '/(app)/'
@@ -76,12 +85,18 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   appRouteRoute: typeof appRouteRouteWithChildren
-  SharedThreadIdRoute: typeof SharedThreadIdRoute
-  SharedIndexRoute: typeof SharedIndexRoute
+  SharedRouteRoute: typeof SharedRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/shared': {
+      id: '/shared'
+      path: '/shared'
+      fullPath: '/shared'
+      preLoaderRoute: typeof SharedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(app)': {
       id: '/(app)'
       path: '/'
@@ -91,10 +106,10 @@ declare module '@tanstack/react-router' {
     }
     '/shared/': {
       id: '/shared/'
-      path: '/shared'
-      fullPath: '/shared'
+      path: '/'
+      fullPath: '/shared/'
       preLoaderRoute: typeof SharedIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof SharedRouteRoute
     }
     '/(app)/': {
       id: '/(app)/'
@@ -105,10 +120,10 @@ declare module '@tanstack/react-router' {
     }
     '/shared/$threadId': {
       id: '/shared/$threadId'
-      path: '/shared/$threadId'
+      path: '/$threadId'
       fullPath: '/shared/$threadId'
       preLoaderRoute: typeof SharedThreadIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof SharedRouteRoute
     }
     '/(app)/$threadId': {
       id: '/(app)/$threadId'
@@ -134,10 +149,23 @@ const appRouteRouteWithChildren = appRouteRoute._addFileChildren(
   appRouteRouteChildren,
 )
 
-const rootRouteChildren: RootRouteChildren = {
-  appRouteRoute: appRouteRouteWithChildren,
+interface SharedRouteRouteChildren {
+  SharedThreadIdRoute: typeof SharedThreadIdRoute
+  SharedIndexRoute: typeof SharedIndexRoute
+}
+
+const SharedRouteRouteChildren: SharedRouteRouteChildren = {
   SharedThreadIdRoute: SharedThreadIdRoute,
   SharedIndexRoute: SharedIndexRoute,
+}
+
+const SharedRouteRouteWithChildren = SharedRouteRoute._addFileChildren(
+  SharedRouteRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  appRouteRoute: appRouteRouteWithChildren,
+  SharedRouteRoute: SharedRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
