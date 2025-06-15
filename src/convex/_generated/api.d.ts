@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as http from "../http.js";
 import type * as messages from "../messages.js";
+import type * as shared from "../shared.js";
 import type * as stream from "../stream.js";
 import type * as streams from "../streams.js";
 import type * as threads from "../threads.js";
@@ -30,6 +31,7 @@ import type * as threads from "../threads.js";
 declare const fullApi: ApiFromModules<{
   http: typeof http;
   messages: typeof messages;
+  shared: typeof shared;
   stream: typeof stream;
   streams: typeof streams;
   threads: typeof threads;
