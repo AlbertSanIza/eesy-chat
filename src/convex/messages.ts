@@ -38,8 +38,11 @@ export const sendInternal = internalMutation({
 
 export const getHistory = internalQuery({
     args: { threadId: v.id('threads') },
-    handler: async (ctx) => {
-        const messages = await ctx.db.query('messages').collect()
+    handler: async (ctx, { threadId }) => {
+        const messages = await ctx.db
+            .query('messages')
+            .filter((q) => q.eq(q.field('threadId'), threadId))
+            .collect()
         const joined = await Promise.all(
             messages.map(async (message) => {
                 return {
