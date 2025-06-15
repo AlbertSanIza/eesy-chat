@@ -61,9 +61,7 @@ export const rename = action({
 
 export const renameInternal = internalMutation({
     args: { id: v.id('threads'), name: v.string() },
-    handler: async (ctx, { id, name }) => {
-        await ctx.db.patch(id, { name: name.trim() || 'Untitled Thread' })
-    }
+    handler: async (ctx, { id, name }) => await ctx.db.patch(id, { name: name.trim() || 'Untitled Thread' })
 })
 
 export const togglePin = mutation({
@@ -114,7 +112,5 @@ export const remove = mutation({
 
 export const updateTime = internalMutation({
     args: { threadId: v.id('threads') },
-    handler: async (ctx, { threadId }) => {
-        await ctx.db.patch(threadId, { updateTime: Date.now() })
-    }
+    handler: async (ctx, { threadId }) => await ctx.db.patch(threadId, { updateTime: Date.now() })
 })
