@@ -24,5 +24,5 @@ export default defineSchema({
         provider: v.string(),
         label: v.string(),
         enabled: v.boolean()
-    })
+    }).index('by_provider_and_label', ['provider', 'label'])
 })

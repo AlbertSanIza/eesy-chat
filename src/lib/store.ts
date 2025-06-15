@@ -7,11 +7,12 @@ import type { api } from '@/convex/_generated/api'
 export const useStore = create<{
     user: { fullName?: string; imageUrl?: string }
     threads: FunctionReturnType<typeof api.threads.findAll>
+    models: FunctionReturnType<typeof api.models.findAll>
     threadSearch: string
     selectedModel: string
-    models: { id: string; label: string }[]
     setUser: ({ fullName, imageUrl }: { fullName?: string; imageUrl?: string }) => void
     setThreads: (threads: FunctionReturnType<typeof api.threads.findAll>) => void
+    setModels: (models: FunctionReturnType<typeof api.models.findAll>) => void
     setThreadSearch: (search: string) => void
     setSelectedModel: (modelId: string) => void
 }>()(
@@ -19,18 +20,17 @@ export const useStore = create<{
         (set) => ({
             user: {},
             threads: [],
+            models: [],
             threadSearch: '',
             selectedModel: 'openai/gpt-4.1-nano',
-            models: [
-                { id: 'openai/gpt-4.1-nano', label: 'OpenAI: GPT-4.1' },
-                { id: 'anthropic/claude-3-haiku', label: 'Anthropic: Claude 3 Haiku' },
-                { id: 'google/gemini-2.5-flash-preview-05-2024', label: 'Google: Gemini 2.5 Flash' }
-            ],
             setUser: ({ fullName, imageUrl }) => {
                 set({ user: { fullName, imageUrl } })
             },
             setThreads: (threads: FunctionReturnType<typeof api.threads.findAll>) => {
                 set({ threads })
+            },
+            setModels: (models: FunctionReturnType<typeof api.models.findAll>) => {
+                set({ models })
             },
             setThreadSearch: (search: string) => {
                 set({ threadSearch: search })
