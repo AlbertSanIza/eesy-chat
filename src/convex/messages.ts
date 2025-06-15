@@ -18,6 +18,25 @@ export const findAll = query({
     }
 })
 
+export const body = internalQuery({
+    args: { messageId: v.id('messages') },
+    handler: async (ctx, args) => {
+        const message = await ctx.db.get(args.messageId)
+        if (!message) {
+            throw new Error('Message Not Found')
+        }
+        let text = ''
+        if (message.status !== 'pending') {
+            const chunks = await ctx.db
+                .query('chunks')
+                .withIndex('by_message', (q) => q.eq('messageId', args.messageId))
+                .collect()
+            text = chunks.map((chunk) => chunk.text).join('')
+        }
+        return { text, status: message.status }
+    }
+})
+
 export const history = internalQuery({
     args: { threadId: v.id('threads') },
     handler: async (ctx, { threadId }): Promise<Message[]> => {
@@ -36,25 +55,6 @@ export const history = internalQuery({
             }
             return [user, assistant]
         })
-    }
-})
-
-export const body = internalQuery({
-    args: { messageId: v.id('messages') },
-    handler: async (ctx, args) => {
-        const message = await ctx.db.get(args.messageId)
-        if (!message) {
-            throw new Error('Message Not Found')
-        }
-        let text = ''
-        if (message.status !== 'pending') {
-            const chunks = await ctx.db
-                .query('chunks')
-                .withIndex('by_message', (q) => q.eq('messageId', args.messageId))
-                .collect()
-            text = chunks.map((chunk) => chunk.text).join('')
-        }
-        return { text, status: message.status }
     }
 })
 
