@@ -49,7 +49,6 @@ export function AppSidebarContent() {
         if (!threads) {
             return {}
         }
-
         let filteredThreads = threads
         if (threadSearch && threadSearch.trim()) {
             const searchTerms = threadSearch.trim().toLowerCase().split(/\s+/)
@@ -58,7 +57,6 @@ export function AppSidebarContent() {
                 return searchTerms.every((term) => threadName.includes(term))
             })
         }
-
         const groups: GroupedThreads = {}
         const pinnedThreads = filteredThreads.filter((thread) => thread.pinned)
         const unpinnedThreads = filteredThreads.filter((thread) => !thread.pinned)
