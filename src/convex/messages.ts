@@ -18,6 +18,11 @@ export const findAll = query({
     }
 })
 
+export const findOne = internalQuery({
+    args: { messageId: v.id('messages') },
+    handler: async (ctx, { messageId }) => await ctx.db.get(messageId)
+})
+
 export const body = internalQuery({
     args: { messageId: v.id('messages') },
     handler: async (ctx, args) => {
