@@ -80,11 +80,17 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
             <ShadSidebarMenuItem>
                 <SidebarMenuButton
                     isActive={threadId === thread._id || isEditing}
-                    className={cn('group/sidebar-menu-button m-0 py-0 font-normal! transition-none', isEditing && 'm-0 p-0')}
+                    className={cn('group/sidebar-menu-button m-0 gap-1 py-0 font-normal! transition-none', isEditing && 'm-0 p-0')}
                     asChild
                 >
                     <Link to={`/$threadId`} params={{ threadId: thread._id }}>
-                        {!isEditing && thread.shared && <LinkIcon className="" />}
+                        {!isEditing && thread.shared && (
+                            <Button size="icon" variant="ghost" className="-ml-1 size-6 hover:bg-sidebar dark:hover:bg-sidebar">
+                                <a href={`/shared/${thread._id}`} target="_blank" rel="noopener noreferrer">
+                                    <LinkIcon />
+                                </a>
+                            </Button>
+                        )}
                         {isEditing && (
                             <input
                                 className="h-full w-full rounded px-2 pb-[1px] outline-none"
@@ -111,7 +117,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
                         {!isEditing && <div className="h-fit w-full truncate">{displayName}</div>}
                         {!isEditing && (
                             <div
-                                className="hidden group-hover/sidebar-menu-button:flex"
+                                className="-mr-1 hidden group-hover/sidebar-menu-button:flex"
                                 onClick={(event) => {
                                     event.preventDefault()
                                     event.stopPropagation()
