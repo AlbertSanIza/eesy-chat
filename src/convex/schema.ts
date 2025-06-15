@@ -4,11 +4,11 @@ import { v } from 'convex/values'
 export default defineSchema({
     threads: defineTable({
         name: v.string(),
-        user: v.string(),
+        userId: v.string(),
         pinned: v.boolean(),
         shared: v.boolean(),
         updateTime: v.number()
-    }).index('by_user', ['user']),
+    }).index('by_user_and_update_time', ['userId', 'updateTime']),
     messages: defineTable({
         threadId: v.id('threads'),
         status: v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error'), v.literal('timeout')),
