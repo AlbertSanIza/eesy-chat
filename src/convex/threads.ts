@@ -16,7 +16,7 @@ export const findAll = query({
         }
         return await ctx.db
             .query('threads')
-            .filter((q) => q.eq(q.field('user'), identity.subject))
+            .withIndex('by_user_and_update_time', (q) => q.eq('userId', identity.subject))
             .order('desc')
             .collect()
     }
@@ -29,7 +29,7 @@ export const create = mutation({
         if (identity === null) {
             return null
         }
-        const threadId = await ctx.db.insert('threads', { name: 'New Thread', user: identity.subject, pinned: false, shared: false, updateTime: Date.now() })
+        const threadId = await ctx.db.insert('threads', { name: 'New Thread', userId: identity.subject, pinned: false, shared: false, updateTime: Date.now() })
         await ctx.scheduler.runAfter(0, internal.threads.createInternal, { threadId, prompt })
         await ctx.scheduler.runAfter(0, internal.messages.create, { threadId, prompt })
         return threadId
@@ -72,7 +72,7 @@ export const togglePin = mutation({
             return
         }
         const thread = await ctx.db.get(id)
-        if (!thread || thread.user !== identity.subject) {
+        if (!thread || thread.userId !== identity.subject) {
             return
         }
         await ctx.db.patch(id, { pinned: !thread?.pinned })
@@ -87,7 +87,7 @@ export const toggleShared = mutation({
             return
         }
         const thread = await ctx.db.get(id)
-        if (!thread || thread.user !== identity.subject) {
+        if (!thread || thread.userId !== identity.subject) {
             return
         }
         await ctx.db.patch(id, { shared: !thread?.shared })
@@ -102,7 +102,7 @@ export const remove = mutation({
             return
         }
         const thread = await ctx.db.get(id)
-        if (!thread || thread.user !== identity.subject) {
+        if (!thread || thread.userId !== identity.subject) {
             return
         }
         await ctx.scheduler.runAfter(0, internal.messages.removeAll, { threadId: id })
