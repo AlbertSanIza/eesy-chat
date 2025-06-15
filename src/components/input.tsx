@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { useMutation } from 'convex/react'
+import { useAction, useMutation } from 'convex/react'
 import { LoaderCircleIcon, SendHorizontalIcon, SquareIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 
@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils'
 export function Input() {
     const { open } = useSidebar()
     const navigate = useNavigate()
-    const send = useMutation(api.messages.send)
+    const send = useAction(api.messages.send)
     const { threadId } = useParams({ strict: false })
     const createThread = useMutation(api.threads.create)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)

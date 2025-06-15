@@ -30,7 +30,7 @@ function RouteComponent() {
                         <div className="ml-auto w-fit rounded-lg border bg-sidebar px-4 py-3 text-right text-[#492C61] dark:bg-[#2C2632] dark:text-[#F2EBFA]">
                             {message.prompt}
                         </div>
-                        <div className="markdown">{message.streamId}</div>
+                        <div className="markdown">{message._id}</div>
                     </Fragment>
                 ))}
             </div>

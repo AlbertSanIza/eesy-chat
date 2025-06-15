@@ -17,7 +17,6 @@ import type * as http from "../http.js";
 import type * as messages from "../messages.js";
 import type * as shared from "../shared.js";
 import type * as stream from "../stream.js";
-import type * as streams from "../streams.js";
 import type * as threads from "../threads.js";
 
 /**
@@ -33,7 +32,6 @@ declare const fullApi: ApiFromModules<{
   messages: typeof messages;
   shared: typeof shared;
   stream: typeof stream;
-  streams: typeof streams;
   threads: typeof threads;
 }>;
 export declare const api: FilterApi<
