@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { useAiChat } from '@/hooks/use-ai-chat'
 import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/(app)/')({
     component: RouteComponent
 })
 

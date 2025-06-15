@@ -8,13 +8,13 @@ import type { Id } from '@/convex/_generated/dataModel'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute('/$threadId')({
+export const Route = createFileRoute('/(app)/$threadId')({
     component: RouteComponent
 })
 
 function RouteComponent() {
     const { open, isMobile } = useSidebar()
-    const { threadId } = useParams({ from: Route.fullPath })
+    const { threadId } = useParams({ from: '/(app)/$threadId' })
     const thread = useStore(({ threads }) => threads.find((thread) => thread._id === threadId))
     const messages = useQuery(api.messages.findAll, { threadId: threadId as Id<'threads'> })
 
