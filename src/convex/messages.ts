@@ -73,15 +73,15 @@ export const send = action({
         if (identity === null) {
             return null
         }
-        const message = ctx.runMutation(internal.messages.create, { threadId, prompt })
+        const message = ctx.runMutation(internal.messages.create, { threadId, model: 'openai/gpt-4.1-nano', prompt })
         await ctx.scheduler.runAfter(0, internal.threads.updateTime, { threadId })
         console.log('message', message)
     }
 })
 
 export const create = internalMutation({
-    args: { threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { threadId, prompt }) => await ctx.db.insert('messages', { threadId, status: 'pending', model: 'openai/gpt-4.1-nano', prompt })
+    args: { threadId: v.id('threads'), model: v.string(), prompt: v.string() },
+    handler: async (ctx, { threadId, model, prompt }) => await ctx.db.insert('messages', { threadId, status: 'pending', model, prompt })
 })
 
 export const run = internalAction({
