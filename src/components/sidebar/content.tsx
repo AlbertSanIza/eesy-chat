@@ -31,13 +31,13 @@ function getTimeGroup(timestamp: number): string {
             return `${days} Days ago`
         } else if (diff < monthInMs) {
             const weeks = Math.floor(diff / weekInMs)
-            return weeks === 1 ? '1 Week Ago' : `${weeks} Weeks Ago`
+            return `${weeks} Week${weeks === 1 ? '' : 's'} Ago`
         } else if (diff < yearInMs) {
             const months = Math.floor(diff / monthInMs)
-            return months === 1 ? '1 Month Ago' : `${months} Months Ago`
+            return `${months} Month${months === 1 ? '' : 's'} Ago`
         } else {
             const years = Math.floor(diff / yearInMs)
-            return years === 1 ? '1 Year Ago' : `${years} Years Ago`
+            return `${years} Year${years === 1 ? '' : 's'} Ago`
         }
     }
 }
