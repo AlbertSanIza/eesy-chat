@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { api } from '@/convex/_generated/api'
 import { useStore } from '@/lib/store'
 
-export function useCachedThreads() {
+export function useThreadsCache() {
     const threads = useQuery(api.threads.findAll)
     const { setThreads } = useStore()
 

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 const CACHE_DURATION = 5 * 60 * 1000
 
-export function useCachedQuery<Query extends FunctionReference<'query'>>(
+export function useQueryCache<Query extends FunctionReference<'query'>>(
     query: Query,
     ...args: OptionalRestArgsOrSkip<Query>
 ): Query['_returnType'] | undefined {

@@ -1,12 +1,12 @@
 import { MessagesCache } from '@/components/cache/messages'
-import { useCacheModels } from '@/hooks/use-cache-models'
-import { useCachedThreads } from '@/hooks/use-cached-threads'
-import { useCachedUser } from '@/hooks/use-cached-user'
+import { useModelsCache } from '@/hooks/use-models-cache'
+import { useThreadsCache } from '@/hooks/use-threads-cache'
+import { useUserCache } from '@/hooks/use-user-cache'
 
 export function Cache() {
-    useCachedUser()
-    useCachedThreads()
-    useCacheModels()
+    useUserCache()
+    useThreadsCache()
+    useModelsCache()
 
     return <MessagesCache />
 }

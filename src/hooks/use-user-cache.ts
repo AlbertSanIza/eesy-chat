@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 
 import { useStore } from '@/lib/store'
 
-export function useCachedUser() {
+export function useUserCache() {
     const { user, isLoaded } = useUser()
     const { setUser } = useStore()
 
