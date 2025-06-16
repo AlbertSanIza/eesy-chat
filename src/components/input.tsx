@@ -1,9 +1,11 @@
+import { SignInButton, useUser } from '@clerk/clerk-react'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useAction, useMutation } from 'convex/react'
 import { ChevronDownIcon, LoaderCircleIcon, SendHorizontalIcon, SquareIcon } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useSidebar } from '@/components/ui/sidebar'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
@@ -12,6 +14,7 @@ import { cn } from '@/lib/utils'
 import { useStore } from '@/lib/zustand/store'
 
 export function Input() {
+    const { isSignedIn } = useUser()
     const { open } = useSidebar()
     const navigate = useNavigate()
     const send = useAction(api.messages.send)
@@ -19,6 +22,7 @@ export function Input() {
     const createThread = useMutation(api.threads.create)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const { models, selectedModel, setSelectedModel } = useStore()
+    const [showSignInDialog, setShowSignInDialog] = useState(false)
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
 
     useEffect(() => {
@@ -40,6 +44,8 @@ export function Input() {
             // handleSubmit({ id: newThreadId.toString(), override: newInput })
             await navigate({ to: `/${newThreadId}` })
             handleInputChange({ id: 'home', value: '' })
+        } else if (!isSignedIn) {
+            setShowSignInDialog(true)
         }
     }
 
@@ -111,6 +117,22 @@ export function Input() {
                     </div>
                 </form>
             </div>
+            <Dialog open={showSignInDialog} onOpenChange={setShowSignInDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Sign in to Continue</DialogTitle>
+                        <DialogDescription>You need to sign in to start a conversation. Please sign in to continue.</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowSignInDialog(false)}>
+                            Cancel
+                        </Button>
+                        <SignInButton>
+                            <Button>Sign In</Button>
+                        </SignInButton>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
