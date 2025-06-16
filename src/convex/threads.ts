@@ -23,15 +23,15 @@ export const findAll = query({
 })
 
 export const create = mutation({
-    args: { modelId: v.id('models'), prompt: v.string() },
-    handler: async (ctx, { modelId, prompt }) => {
+    args: { openRouterId: v.id('models'), prompt: v.string() },
+    handler: async (ctx, { openRouterId, prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
         }
         const threadId = await ctx.db.insert('threads', { name: 'New Thread', userId: identity.subject, pinned: false, shared: false, updateTime: Date.now() })
         await ctx.scheduler.runAfter(0, internal.threads.createInternal, { threadId, prompt })
-        await ctx.scheduler.runAfter(0, internal.messages.create, { threadId, modelId, prompt })
+        await ctx.scheduler.runAfter(0, internal.messages.create, { threadId, openRouterId, prompt })
         // const messageId = await ctx.runMutation(internal.messages.create, { threadId, model, prompt })
         // await ctx.scheduler.runAfter(0, internal.messages.run, { messageId })
         return threadId
