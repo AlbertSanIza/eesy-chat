@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useAction, useMutation } from 'convex/react'
-import { LinkIcon, Loader2Icon, PinIcon, PinOffIcon, TextCursorIcon, Trash2Icon, UnlinkIcon, XIcon } from 'lucide-react'
+import { GitForkIcon, LinkIcon, Loader2Icon, PinIcon, PinOffIcon, TextCursorIcon, Trash2Icon, UnlinkIcon, XIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import {
@@ -98,6 +98,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
                                 <LinkIcon className="size-4" />
                             </Button>
                         )}
+                        {!isEditing && thread.branched && <GitForkIcon className="size-4 opacity-60" />}
                         {isEditing && (
                             <input
                                 className="h-full w-full rounded px-2 pb-[1px] outline-none"
