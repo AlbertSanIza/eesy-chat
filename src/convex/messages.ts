@@ -30,10 +30,10 @@ export const findOne = internalQuery({
 
 export const body = query({
     args: { messageId: v.id('messages') },
-    handler: async (ctx, { messageId }) => {
+    handler: async (ctx, { messageId }): Promise<Message | null> => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
-            return ''
+            return null
         }
         return await getMessageBody(ctx, messageId)
     }
@@ -49,7 +49,7 @@ export const history = internalQuery({
         const joined = await Promise.all(messages.map(async (message) => ({ message, response: await getMessageBody(ctx, message._id) })))
         return joined.flatMap((item) => {
             const user: Message = { id: item.message._id, role: 'user', content: item.message.prompt }
-            const assistant: Message = { id: item.message._id, role: 'assistant', content: item.response }
+            const assistant: Message = item.response
             if (!assistant.content) {
                 return [user]
             }
@@ -122,10 +122,25 @@ export const removeAll = internalMutation({
     }
 })
 
-export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>) {
+export const shared = query({
+    args: { threadId: v.id('threads') },
+    handler: async (ctx, { threadId }): Promise<{ name: string | null; messages: Message[] }> => {
+        const thread = await ctx.db.get(threadId)
+        if (!thread || !thread.shared) {
+            return { name: null, messages: [] }
+        }
+        return { name: thread.name, messages: await ctx.runQuery(internal.messages.history, { threadId }) }
+    }
+})
+
+export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): Promise<Message> {
     const chunks = await ctx.db
         .query('chunks')
         .withIndex('by_message', (q) => q.eq('messageId', messageId))
         .collect()
-    return chunks.map((chunk) => chunk.text).join('')
+    return {
+        id: messageId,
+        role: 'assistant',
+        content: chunks.map((chunk) => chunk.text).join('')
+    }
 }

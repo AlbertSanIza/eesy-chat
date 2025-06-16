@@ -1,7 +1,9 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
+import { Loader2Icon } from 'lucide-react'
 import { Fragment } from 'react'
 
+import { AssistantMessage } from '@/components/messages/assistant'
 import { useSidebar } from '@/components/ui/sidebar'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
@@ -32,10 +34,21 @@ function RouteComponent() {
                         <div className="ml-auto w-fit rounded-lg border bg-sidebar px-4 py-3 text-right text-[#492C61] dark:bg-[#2C2632] dark:text-[#F2EBFA]">
                             {message.prompt}
                         </div>
-                        <div className="markdown">{message._id}</div>
+                        {message.status !== 'pending' && <ServerMessage messageId={message._id} />}
+                        {(message.status === 'pending' || message.status === 'streaming') && <Loader2Icon className="size-4 animate-spin" />}
                     </Fragment>
                 ))}
             </div>
         </div>
     )
+}
+
+function ServerMessage({ messageId }: { messageId: Id<'messages'> }) {
+    const message = useQuery(api.messages.body, { messageId })
+
+    if (!message) {
+        return null
+    }
+
+    return <AssistantMessage message={message} />
 }

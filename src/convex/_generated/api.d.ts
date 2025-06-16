@@ -17,7 +17,6 @@ import type * as chunks from "../chunks.js";
 import type * as http from "../http.js";
 import type * as messages from "../messages.js";
 import type * as models from "../models.js";
-import type * as shared from "../shared.js";
 import type * as stream from "../stream.js";
 import type * as threads from "../threads.js";
 
@@ -34,7 +33,6 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   messages: typeof messages;
   models: typeof models;
-  shared: typeof shared;
   stream: typeof stream;
   threads: typeof threads;
 }>;
