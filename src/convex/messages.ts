@@ -126,7 +126,7 @@ export const removeAll = internalMutation({
             .filter((q) => q.eq(q.field('threadId'), threadId))
             .collect()
         await Promise.all(messages.map((message) => ctx.db.delete(message._id)))
-        await Promise.all(messages.map((message) => ctx.runMutation(internal.chunks.removeAll, { messageId: message._id })))
+        await Promise.all(messages.map((message) => ctx.runMutation(internal.chunks.removeByMessageId, { messageId: message._id })))
     }
 })
 
