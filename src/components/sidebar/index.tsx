@@ -54,7 +54,7 @@ export function AppSidebar() {
                     ) : (
                         <>
                             <Skeleton className="size-7 min-w-7 rounded-full" />
-                            <Skeleton className="h-5 w-2/3 rounded-full" />
+                            <Skeleton className="h-5 w-20 rounded-full" />
                         </>
                     )}
                 </div>
