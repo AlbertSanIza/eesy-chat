@@ -44,10 +44,15 @@ function RouteComponent() {
                             {message.status !== 'pending' && <ServerMessage messageId={message._id} />}
                             {(message.status === 'pending' || message.status === 'streaming') && <Loader2Icon className="size-4 animate-spin" />}
                             {message.status === 'done' && (
-                                <div className="pointer-events-none flex items-center gap-2 opacity-0 transition-opacity group-hover/assistant-message:pointer-events-auto group-hover/assistant-message:opacity-100">
+                                <div className="flex items-center gap-2 opacity-0 transition-opacity group-hover/assistant-message:opacity-100">
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Button size="icon" variant="default" className="size-7" onClick={() => handleBranchOff(thread._id, message._id)}>
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]"
+                                                onClick={() => handleBranchOff(thread._id, message._id)}
+                                            >
                                                 <GitForkIcon />
                                             </Button>
                                         </TooltipTrigger>
