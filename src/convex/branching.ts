@@ -44,7 +44,8 @@ export const copyMessagesInternal = internalMutation({
             const newMessageId = await ctx.db.insert('messages', {
                 threadId: newThreadId,
                 status: message.status,
-                openRouterId: message.openRouterId,
+                service: message.service,
+                model: message.model,
                 provider: message.provider,
                 label: message.label,
                 prompt: message.prompt
