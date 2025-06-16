@@ -21,7 +21,7 @@ export function UserMessage({ message, showExtras }: { message: Message; showExt
                             <Button
                                 size="icon"
                                 variant="ghost"
-                                className="size-7 hover:bg-sidebar dark:hover:bg-[#2C2632]"
+                                className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]"
                                 onClick={() => {
                                     navigator.clipboard.writeText(message.content)
                                     setCopied(true)
