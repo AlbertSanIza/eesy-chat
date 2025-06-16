@@ -45,21 +45,15 @@ app.post('/', async (c) => {
                     count++
                 }
                 if (count === 7) {
-                    // await httpClient.mutate(api.streaming.addChunk, {
-                    //     messageId,
-                    //     text: delta,
-                    //     final: false
-                    // })
-                    console.log('🚀:', delta)
+                    httpClient.mutation(api.streaming.addChunk, { messageId, text: delta, final: false })
                     delta = ''
                     count = 0
                 }
             },
             onFinish: async () => {
-                console.log('🚀🚀🚀🚀:', delta)
+                httpClient.mutation(api.streaming.addChunk, { messageId, text: delta, final: true })
             },
             messages: [...history, { role: 'user', content: message.prompt }]
-            // experimental_transform: smoothStream({ chunking: 'word' })
         })
         response.consumeStream()
         c.header('Content-Type', 'text/plain; charset=utf-8')
