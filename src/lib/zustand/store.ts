@@ -3,20 +3,21 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 import type { api } from '@/convex/_generated/api'
+import type { Doc } from '@/convex/_generated/dataModel'
 
 export const useStore = create<{
     user: { fullName?: string; imageUrl?: string }
     threads: FunctionReturnType<typeof api.threads.list>
     models: FunctionReturnType<typeof api.models.list>
     threadSearch: string
-    selectedModel: string
+    selectedModel?: Doc<'models'>
     openRouterApiKey: string | null
     openAiApiKey: string | null
     setUser: ({ fullName, imageUrl }: { fullName?: string; imageUrl?: string }) => void
     setThreads: (threads: FunctionReturnType<typeof api.threads.list>) => void
     setModels: (models: FunctionReturnType<typeof api.models.list>) => void
     setThreadSearch: (search: string) => void
-    setSelectedModel: (modelId: string) => void
+    setSelectedModel: (modelId: Doc<'models'>) => void
     setOpenRouterApiKey: (apiKey: string) => void
     setOpenAiApiKey: (apiKey: string) => void
 }>()(
@@ -26,7 +27,7 @@ export const useStore = create<{
             threads: [],
             models: [],
             threadSearch: '',
-            selectedModel: 'openai/gpt-4.1-nano',
+            selectedModel: undefined,
             openRouterApiKey: null,
             openAiApiKey: null,
             setUser: ({ fullName, imageUrl }) => {
@@ -41,7 +42,7 @@ export const useStore = create<{
             setThreadSearch: (search: string) => {
                 set({ threadSearch: search })
             },
-            setSelectedModel: (model: string) => {
+            setSelectedModel: (model: Doc<'models'>) => {
                 set({ selectedModel: model })
             },
             setOpenRouterApiKey: (apiKey: string) => {
