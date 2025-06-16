@@ -5,6 +5,7 @@ import { Fragment } from 'react'
 import { useSidebar } from '@/components/ui/sidebar'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
 
@@ -17,6 +18,7 @@ function RouteComponent() {
     const { threadId } = useParams({ from: '/(app)/$threadId' })
     const thread = useStore(({ threads }) => threads.find((thread) => thread._id === threadId))
     const messages = useQuery(api.messages.findAll, { threadId: threadId as Id<'threads'> })
+    useDocumentTitle(thread?.name)
 
     if (!thread) {
         return 'Loading...'

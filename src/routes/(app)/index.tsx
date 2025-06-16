@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useAiChat } from '@/hooks/use-ai-chat'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/(app)/')({
@@ -37,6 +38,7 @@ const suggestions = {
 function RouteComponent() {
     const { input, handleInputChange } = useAiChat({ id: 'home' })
     const [category, setCategory] = useState<'create' | 'explore' | 'code' | 'learn' | 'default'>('default')
+    useDocumentTitle('eesy.chat')
 
     const handleCategorySelect = (option: 'create' | 'explore' | 'code' | 'learn') => {
         setCategory(category === option ? 'default' : option)

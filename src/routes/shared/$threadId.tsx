@@ -1,10 +1,11 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
+import { Loader2Icon } from 'lucide-react'
 
 import { Messages } from '@/components/messages'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
-import { Loader2Icon } from 'lucide-react'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 
 export const Route = createFileRoute('/shared/$threadId')({
     component: RouteComponent
@@ -14,6 +15,7 @@ function RouteComponent() {
     const { threadId } = useParams({ from: Route.fullPath })
 
     const thread = useQuery(api.shared.thread, { threadId: threadId as Id<'threads'> })
+    useDocumentTitle(thread?.name ? `Shared: ${thread.name}` : null)
 
     if (!thread) {
         return (
