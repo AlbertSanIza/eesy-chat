@@ -171,7 +171,6 @@
 .markdown table {
     @apply w-full table-auto border-collapse;
 }
-
 .markdown th,
 .markdown td {
     @apply p-2 text-left text-sm;
