@@ -15,10 +15,8 @@ import type {
 } from "convex/server";
 import type * as branching from "../branching.js";
 import type * as chunks from "../chunks.js";
-import type * as http from "../http.js";
 import type * as messages from "../messages.js";
 import type * as models from "../models.js";
-import type * as stream from "../stream.js";
 import type * as threads from "../threads.js";
 
 /**
@@ -32,10 +30,8 @@ import type * as threads from "../threads.js";
 declare const fullApi: ApiFromModules<{
   branching: typeof branching;
   chunks: typeof chunks;
-  http: typeof http;
   messages: typeof messages;
   models: typeof models;
-  stream: typeof stream;
   threads: typeof threads;
 }>;
 export declare const api: FilterApi<
