@@ -75,8 +75,8 @@ export const send = action({
 export const create = internalMutation({
     args: { threadId: v.id('threads'), openRouterId: v.string(), prompt: v.string() },
     handler: async (ctx, { threadId, openRouterId, prompt }) => {
-        const model: string = await ctx.runQuery(internal.models.openRouterId, { openRouterId })
-        return await ctx.db.insert('messages', { threadId, status: 'pending', model, prompt })
+        const model: { openRouterId: string; label: string } = await ctx.runQuery(internal.models.data, { openRouterId })
+        return await ctx.db.insert('messages', { threadId, status: 'pending', model: model.openRouterId, prompt })
     }
 })
 
