@@ -6,7 +6,7 @@ import { KeyIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Label } from './ui/label'
 
-export function ApiKeyDialog() {
+export function ApiKeysDialog() {
     const { openRouterApiKey, openAiApiKey, setOpenRouterApiKey, setOpenAiApiKey } = useStore()
     const [tempOpenRouterApiKey, setTempOpenRouterApiKey] = useState(openRouterApiKey || '')
     const [tempOpenAiApiKey, setTempOpenAiApiKey] = useState(openAiApiKey || '')

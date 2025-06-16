@@ -4,7 +4,7 @@ import { useAction, useMutation } from 'convex/react'
 import { ChevronDownIcon, LoaderCircleIcon, SendHorizontalIcon, SquareIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
-import { ApiKeyDialog } from '@/components/api-key-dialog'
+import { ApiKeysDialog } from '@/components/api-key-dialog'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useSidebar } from '@/components/ui/sidebar'
@@ -22,8 +22,8 @@ export function Input() {
     const { threadId } = useParams({ strict: false })
     const createThread = useMutation(api.threads.create)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
-    const { openRouterApiKey, models, selectedModel, setSelectedModel } = useStore()
     const [showSignInDialog, setShowSignInDialog] = useState(false)
+    const { openRouterApiKey, models, selectedModel, setSelectedModel } = useStore()
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
 
     useEffect(() => {
@@ -104,7 +104,7 @@ export function Input() {
                                         className="pointer-events-none col-start-1 row-start-1 mr-2 self-center justify-self-end sm:size-4"
                                     />
                                 </div>
-                                <ApiKeyDialog />
+                                <ApiKeysDialog />
                             </div>
                             {status === 'ready' && (
                                 <Button size="icon" type="submit" className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary">
