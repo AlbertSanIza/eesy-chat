@@ -99,7 +99,7 @@ export const run = internalAction({
         const openrouter = createOpenRouter({ apiKey: apiKey || process.env.OPENROUTER_API_KEY })
         const { textStream } = streamText({
             system: 'You are a helpful assistant. Respond to the user in Markdown format.',
-            model: openrouter.chat(message.openRouterId),
+            model: openrouter.chat(message.model),
             messages: [...history, { role: 'user', content: message.prompt }],
             experimental_transform: smoothStream({ chunking: 'line' })
         })
