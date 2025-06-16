@@ -180,21 +180,18 @@
     @apply rounded bg-accent px-1 font-mono text-sm;
 }
 
-/* Firefox */
+/* Scrollbar */
 * {
     scrollbar-width: thin;
     scrollbar-color: var(--color-scrollbar) transparent;
 }
-/* Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
     width: 15px;
 }
-
 *::-webkit-scrollbar-track {
     background: var(--color-scrollbar);
     border-radius: 5px;
 }
-
 *::-webkit-scrollbar-thumb {
     background-color: transparent;
     border-radius: 14px;
