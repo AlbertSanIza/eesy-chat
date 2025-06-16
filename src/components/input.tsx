@@ -34,15 +34,21 @@ export function Input() {
 
     const handleOnSubmit = async (newInput: string) => {
         textAreaRef.current?.style.setProperty('height', 'auto')
+        if (!selectedModel) {
+            return
+        }
         if (threadId) {
-            // handleSubmit({ id: threadId, override: newInput })
-            send({ apiKey: openRouterApiKey || undefined, threadId: threadId as Id<'threads'>, openRouterId: selectedModel, prompt: newInput.trim() })
+            send({
+                apiKey: openRouterApiKey || undefined,
+                threadId: threadId as Id<'threads'>,
+                prompt: newInput.trim(),
+                modelId: selectedModel._id
+            })
             handleInputChange({ id: threadId, value: '' })
             return
         }
-        const newThreadId = await createThread({ apiKey: openRouterApiKey || undefined, openRouterId: selectedModel, prompt: input.trim() })
+        const newThreadId = await createThread({ apiKey: openRouterApiKey || undefined, prompt: input.trim(), modelId: selectedModel._id })
         if (newThreadId) {
-            // handleSubmit({ id: newThreadId.toString(), override: newInput })
             await navigate({ to: `/${newThreadId}` })
             handleInputChange({ id: 'home', value: '' })
         } else if (!isSignedIn) {
@@ -88,13 +94,19 @@ export function Input() {
                                 <div className="grid grid-cols-1 text-sm">
                                     <select
                                         className="col-start-1 row-start-1 h-9 cursor-pointer appearance-none rounded-md border bg-background pr-7 pl-2 shadow-xs outline-none hover:bg-accent hover:text-accent-foreground"
-                                        value={selectedModel}
-                                        onChange={(event) => setSelectedModel(event.target.value)}
+                                        value={selectedModel?._id}
+                                        onChange={(event) => {
+                                            const modelId = event.target.value
+                                            const model = models.find((m) => m._id === modelId)
+                                            if (model) {
+                                                setSelectedModel(model)
+                                            }
+                                        }}
                                     >
                                         {models
                                             .filter((model) => openRouterApiKey || !model.withKey)
                                             .map((model) => (
-                                                <option key={model._id} value={model.openRouterId}>
+                                                <option key={model._id} value={model._id}>
                                                     {model.label}
                                                 </option>
                                             ))}
