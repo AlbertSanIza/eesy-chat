@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { Label } from './ui/label'
 
 export function ApiKeyDialog() {
-    const { openRouterApiKey, setOpenRouterApiKey } = useStore()
+    const { openRouterApiKey, setOpenRouterApiKey, setSelectedModel } = useStore()
     const [tempApiKey, setTempApiKey] = useState(openRouterApiKey || '')
     const [isOpen, setIsOpen] = useState(false)
 
@@ -18,6 +18,7 @@ export function ApiKeyDialog() {
 
     const handleClear = () => {
         setOpenRouterApiKey('')
+        setSelectedModel('openai/gpt-4.1-nano')
         setTempApiKey('')
         setIsOpen(false)
     }
