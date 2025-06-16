@@ -182,7 +182,7 @@
     @apply border-b last:border-b-0 hover:bg-[#F2CEE2] dark:hover:bg-[#322C36];
 }
 .markdown code:not(pre code) {
-    @apply rounded bg-accent px-1 font-mono text-sm;
+    @apply rounded bg-sidebar px-1 font-mono text-xs dark:bg-pink-400/50;
 }
 
 /* Scrollbar */
