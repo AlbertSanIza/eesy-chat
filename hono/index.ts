@@ -1,5 +1,5 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-import { smoothStream, streamText } from 'ai'
+import { streamText } from 'ai'
 import { ConvexHttpClient } from 'convex/browser'
 import { config } from 'dotenv'
 import { Hono } from 'hono'
@@ -34,11 +34,32 @@ app.post('/', async (c) => {
         }
         const history = await httpClient.query(api.streaming.getHistory, { threadId: message.threadId })
         const openrouter = createOpenRouter({ apiKey: apiKey || process.env.OPENROUTER_API_KEY })
+        let delta = ''
+        let count = 0
         const response = streamText({
             system: 'You are a helpful assistant. Respond to the user in Markdown format.',
             model: openrouter.chat(message.model),
-            messages: [...history, { role: 'user', content: message.prompt }],
-            experimental_transform: smoothStream({ chunking: 'line' })
+            onChunk: async (result) => {
+                if (result.chunk.type === 'text-delta') {
+                    delta += result.chunk.textDelta
+                    count++
+                }
+                if (count === 7) {
+                    // await httpClient.mutate(api.streaming.addChunk, {
+                    //     messageId,
+                    //     text: delta,
+                    //     final: false
+                    // })
+                    console.log('🚀:', delta)
+                    delta = ''
+                    count = 0
+                }
+            },
+            onFinish: async () => {
+                console.log('🚀🚀🚀🚀:', delta)
+            },
+            messages: [...history, { role: 'user', content: message.prompt }]
+            // experimental_transform: smoothStream({ chunking: 'word' })
         })
         response.consumeStream()
         c.header('Content-Type', 'text/plain; charset=utf-8')
