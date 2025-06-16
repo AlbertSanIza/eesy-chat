@@ -2,7 +2,7 @@ import { v } from 'convex/values'
 
 import { internalQuery, query } from './_generated/server'
 
-export const findAll = query({
+export const list = query({
     args: {},
     handler: async (ctx) => {
         return await ctx.db

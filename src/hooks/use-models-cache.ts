@@ -5,7 +5,7 @@ import { api } from '@/convex/_generated/api'
 import { useStore } from '@/lib/zustand/store'
 
 export function useModelsCache() {
-    const models = useQuery(api.models.findAll)
+    const models = useQuery(api.models.list)
     const { setModels } = useStore()
 
     useEffect(() => {
