@@ -36,7 +36,7 @@ function RouteComponent() {
     }
 
     return (
-        <div className={cn('w-full pt-14 pb-33 sm:pt-8', open && !isMobile && 'max-w-[calc(100vw-var(--sidebar-width))]')}>
+        <div className={cn('w-full pt-14 pb-36 sm:pt-8', open && !isMobile && 'max-w-[calc(100vw-var(--sidebar-width))]')}>
             <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 sm:px-14">
                 {messages?.map((message) => (
                     <Fragment key={message._id}>
@@ -47,9 +47,9 @@ function RouteComponent() {
                             {message.status !== 'pending' && <ServerMessage messageId={message._id} />}
                             {(message.status === 'pending' || message.status === 'streaming') && <Loader2Icon className="size-4 animate-spin" />}
                             {message.status === 'done' && (
-                                <div className="pointer-events-none -mt-3 flex items-center gap-2 opacity-0 transition-opacity group-hover/assistant-message:pointer-events-auto group-hover/assistant-message:opacity-100">
+                                <div className="pointer-events-none flex items-center gap-2 opacity-0 transition-opacity group-hover/assistant-message:pointer-events-auto group-hover/assistant-message:opacity-100">
                                     <Tooltip>
-                                        <TooltipTrigger>
+                                        <TooltipTrigger asChild>
                                             <Button size="icon" variant="default" className="size-7" onClick={() => handleBranchOff(thread._id, message._id)}>
                                                 <GitForkIcon />
                                             </Button>
