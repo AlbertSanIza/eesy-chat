@@ -7,7 +7,7 @@ import { useStore } from '@/lib/store'
 export function MessagesCache() {
     const { threads } = useStore()
 
-    return threads.slice(0, 10).map((thread) => <MessageCache key={thread._id} id={thread._id} />)
+    return threads.slice(0, 20).map((thread) => <MessageCache key={thread._id} id={thread._id} />)
 }
 
 function MessageCache({ id }: { id: Id<'threads'> }) {
