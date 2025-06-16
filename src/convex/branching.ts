@@ -3,14 +3,14 @@ import { v } from 'convex/values'
 import { internalMutation, mutation } from './_generated/server'
 
 export const copy = mutation({
-    args: { threadId: v.id('threads') },
+    args: { threadId: v.id('threads'), messageId: v.id('messages') },
     handler: async (ctx, { threadId }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return []
         }
         const thread = await ctx.db.get(threadId)
-        if (!thread || thread.userId !== identity.subject) {
+        if (!thread || (!thread.shared && thread.userId !== identity.subject)) {
             return null
         }
         const newThreadId = await ctx.db.insert('threads', {
