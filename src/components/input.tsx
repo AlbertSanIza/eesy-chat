@@ -91,11 +91,13 @@ export function Input() {
                                         value={selectedModel}
                                         onChange={(event) => setSelectedModel(event.target.value)}
                                     >
-                                        {models.map((model) => (
-                                            <option key={model._id} value={model.openRouterId}>
-                                                {model.label}
-                                            </option>
-                                        ))}
+                                        {models
+                                            .filter((model) => openRouterApiKey || !model.withKey)
+                                            .map((model) => (
+                                                <option key={model._id} value={model.openRouterId}>
+                                                    {model.label}
+                                                </option>
+                                            ))}
                                     </select>
                                     <ChevronDownIcon
                                         aria-hidden="true"
