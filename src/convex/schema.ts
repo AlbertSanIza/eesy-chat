@@ -24,7 +24,8 @@ export default defineSchema({
         text: v.string()
     }).index('by_message', ['messageId']),
     models: defineTable({
-        openRouterId: v.string(),
+        service: v.union(v.literal('openRouter'), v.literal('openAi')),
+        model: v.string(),
         provider: v.string(),
         label: v.string(),
         enabled: v.boolean(),
