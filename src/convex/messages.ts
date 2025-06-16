@@ -101,7 +101,7 @@ export const run = internalAction({
         for await (const textPart of textStream) {
             delta += textPart
             count++
-            if (count === 2) {
+            if (count === 1) {
                 await ctx.runMutation(internal.chunks.add, { messageId, text: delta, final: false })
                 delta = ''
                 count = 0
