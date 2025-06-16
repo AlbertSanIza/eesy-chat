@@ -35,12 +35,10 @@ export const useStore = create<{
             setThreadSearch: (search: string) => {
                 set({ threadSearch: search })
             },
-            setSelectedModel: (modelId: string) => {
-                set({ selectedModel: modelId })
+            setSelectedModel: (openRouterId: string) => {
+                set({ selectedModel: openRouterId })
             }
         }),
-        {
-            name: 'eesy-chat-store'
-        }
+        { name: 'eesy-chat-store' }
     )
 )
