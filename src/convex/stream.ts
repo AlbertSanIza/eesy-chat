@@ -1,15 +1,24 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { type Message, smoothStream, streamText } from 'ai'
 
+import { internal } from './_generated/api'
+import { Id } from './_generated/dataModel'
 import { httpAction } from './_generated/server'
 
 const openrouter = createOpenRouter()
 
-export const stream = httpAction(async (_, request) => {
-    const { messages }: { messages: Message[] } = await request.json()
+export const stream = httpAction(async (ctx, request) => {
+    const { modelId, messages }: { modelId: Id<'models'>; messages: Message[] } = await request.json()
+    const model = await ctx.runQuery(internal.models.findOne, { modelId })
+    let operRouterId = ''
+    if (model?.openRouterId) {
+        operRouterId = model.openRouterId
+    } else {
+        operRouterId = 'openai/gpt-4.1-nano'
+    }
     const result = streamText({
         system: 'You are a helpful assistant. Respond to the user in Markdown format.',
-        model: openrouter.chat('openai/gpt-4.1-nano'),
+        model: openrouter.chat(operRouterId),
         messages,
         // onChunk: (chunk) => {},
         experimental_transform: smoothStream({ chunking: 'word' })
