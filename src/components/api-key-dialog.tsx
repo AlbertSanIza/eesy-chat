@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { useStore } from '@/lib/zustand/store'
 import { KeyIcon, Trash2Icon } from 'lucide-react'
 import { useState } from 'react'
+import { Label } from './ui/label'
 
 export function ApiKeyDialog() {
     const { openRouterApiKey, setOpenRouterApiKey } = useStore()
@@ -56,17 +57,15 @@ export function ApiKeyDialog() {
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <label htmlFor="api-key" className="text-sm font-medium">
-                            API Key
-                        </label>
+                        <Label htmlFor="api-key">API Key</Label>
                         <Input
                             id="api-key"
                             type="password"
+                            autoComplete="off"
+                            className="col-span-3"
                             placeholder="sk-or-v1-..."
                             value={tempApiKey}
-                            onChange={(e) => setTempApiKey(e.target.value)}
-                            className="col-span-3"
-                            autoComplete="off"
+                            onChange={(event) => setTempApiKey(event.target.value)}
                         />
                         {tempApiKey && !hasValidKey && <p className="text-sm text-destructive">API key should start with "sk-or-v1-"</p>}
                     </div>
