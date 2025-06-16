@@ -20,8 +20,8 @@ export function UserMessage({ message, showExtras }: { message: Message; showExt
                         <TooltipTrigger asChild>
                             <Button
                                 size="icon"
-                                variant="default"
-                                className="size-7"
+                                variant="ghost"
+                                className="size-7 hover:bg-sidebar dark:hover:bg-[#2C2632]"
                                 onClick={() => {
                                     navigator.clipboard.writeText(message.content)
                                     setCopied(true)
