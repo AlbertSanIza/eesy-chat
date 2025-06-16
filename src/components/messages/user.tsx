@@ -10,7 +10,7 @@ export function UserMessage({ message, showExtras }: { message: Message; showExt
     const [copied, setCopied] = useState(false)
 
     return (
-        <div className="group/user-message flex flex-col items-end gap-1">
+        <div className="group/user-message flex flex-col items-end gap-1.5">
             <div className="ml-auto w-fit rounded-lg border bg-sidebar px-4 py-3 text-right text-[#492C61] dark:bg-[#2C2632] dark:text-[#F2EBFA]">
                 <MemoizedMarkdown id={message.id} content={message.content} />
             </div>
