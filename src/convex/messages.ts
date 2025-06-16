@@ -102,7 +102,7 @@ export const create = internalMutation({
             label: model.label,
             prompt
         })
-        await ctx.runMutation(internal.chunks.add, { messageId, text: prompt, final: true })
+        // await ctx.runMutation(internal.chunks.add, { messageId, text: prompt, final: true })
         return messageId
     }
 })
