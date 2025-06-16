@@ -10,7 +10,7 @@ import { action, internalAction, internalMutation, internalQuery, query } from '
 
 const openrouter = createOpenRouter()
 
-export const findAll = query({
+export const list = query({
     args: { threadId: v.id('threads') },
     handler: async (ctx, { threadId }) => {
         const identity = await ctx.auth.getUserIdentity()

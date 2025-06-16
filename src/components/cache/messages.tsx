@@ -16,7 +16,7 @@ export function MessagesCache() {
 }
 
 function UserMessageCache({ id }: { id: Id<'threads'> }) {
-    const messages = useQuery(api.messages.findAll, { threadId: id })
+    const messages = useQuery(api.messages.list, { threadId: id })
 
     return messages?.map((message) => (
         <Fragment key={message._id}>
