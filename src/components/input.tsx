@@ -15,14 +15,14 @@ import { cn } from '@/lib/utils'
 import { useStore } from '@/lib/zustand/store'
 
 export function Input() {
-    const { isSignedIn } = useUser()
     const { open } = useSidebar()
     const navigate = useNavigate()
+    const { isSignedIn } = useUser()
     const send = useAction(api.messages.send)
     const { threadId } = useParams({ strict: false })
     const createThread = useMutation(api.threads.create)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
-    const { models, selectedModel, setSelectedModel } = useStore()
+    const { openRouterApiKey, models, selectedModel, setSelectedModel } = useStore()
     const [showSignInDialog, setShowSignInDialog] = useState(false)
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
 
@@ -36,11 +36,11 @@ export function Input() {
         textAreaRef.current?.style.setProperty('height', 'auto')
         if (threadId) {
             // handleSubmit({ id: threadId, override: newInput })
-            send({ threadId: threadId as Id<'threads'>, openRouterId: selectedModel, prompt: newInput.trim() })
+            send({ apiKey: openRouterApiKey || undefined, threadId: threadId as Id<'threads'>, openRouterId: selectedModel, prompt: newInput.trim() })
             handleInputChange({ id: threadId, value: '' })
             return
         }
-        const newThreadId = await createThread({ openRouterId: selectedModel, prompt: input.trim() })
+        const newThreadId = await createThread({ apiKey: openRouterApiKey || undefined, openRouterId: selectedModel, prompt: input.trim() })
         if (newThreadId) {
             // handleSubmit({ id: newThreadId.toString(), override: newInput })
             await navigate({ to: `/${newThreadId}` })
