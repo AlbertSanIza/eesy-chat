@@ -4,7 +4,7 @@ import { useAction, useMutation } from 'convex/react'
 import { ChevronDownIcon, LoaderCircleIcon, SendHorizontalIcon, SquareIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
-import { ApiKeysDialog } from '@/components/api-key-dialog'
+import { ApiKeysDialog } from '@/components/api-keys-dialog'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useSidebar } from '@/components/ui/sidebar'
