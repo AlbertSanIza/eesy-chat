@@ -13,7 +13,8 @@ export default defineSchema({
     messages: defineTable({
         threadId: v.id('threads'),
         status: v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error')),
-        openRouterId: v.string(),
+        service: v.union(v.literal('openRouter'), v.literal('openAi')),
+        model: v.string(),
         provider: v.string(),
         label: v.string(),
         prompt: v.string()
