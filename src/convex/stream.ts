@@ -9,16 +9,10 @@ const openrouter = createOpenRouter()
 
 export const stream = httpAction(async (ctx, request) => {
     const { modelId, messages }: { modelId: Id<'models'>; messages: Message[] } = await request.json()
-    const model = await ctx.runQuery(internal.models.findOne, { modelId })
-    let operRouterId = ''
-    if (model?.openRouterId) {
-        operRouterId = model.openRouterId
-    } else {
-        operRouterId = 'openai/gpt-4.1-nano'
-    }
+    const openRouterId = await ctx.runQuery(internal.models.openRouterId, { modelId })
     const result = streamText({
         system: 'You are a helpful assistant. Respond to the user in Markdown format.',
-        model: openrouter.chat(operRouterId),
+        model: openrouter.chat(openRouterId),
         messages,
         // onChunk: (chunk) => {},
         experimental_transform: smoothStream({ chunking: 'word' })
