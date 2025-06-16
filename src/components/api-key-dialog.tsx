@@ -42,9 +42,9 @@ export function ApiKeyDialog() {
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="icon" className="relative">
                     <KeyIcon />
-                    {openRouterApiKey && <div className="ml-auto flex h-2 w-2 rounded-full bg-green-500" />}
+                    {openRouterApiKey && <div className="absolute right-1.5 bottom-1.5 size-2 rounded-full bg-green-500" />}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
