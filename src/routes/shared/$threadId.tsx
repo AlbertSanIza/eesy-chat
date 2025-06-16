@@ -1,8 +1,9 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
+import { createFileRoute, Link, useParams } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
 import { Loader2Icon } from 'lucide-react'
 
 import { Messages } from '@/components/messages'
+import { Button } from '@/components/ui/button'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
 import { useDocumentTitle } from '@/hooks/use-document-title'
@@ -33,6 +34,11 @@ function RouteComponent() {
             <Messages data={thread.messages} />
         </div>
     ) : (
-        <div className="fixed inset-0 flex items-center justify-center">Sorry, this thread is not shared or does not exist.</div>
+        <div className="fixed inset-0 flex flex-col items-center justify-center gap-4">
+            <p className="text-xl">Sorry, this thread is not shared or does not exist.</p>
+            <Button variant="default" asChild>
+                <Link to="/">Lets Chat!</Link>
+            </Button>
+        </div>
     )
 }
