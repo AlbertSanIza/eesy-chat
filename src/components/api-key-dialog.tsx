@@ -2,30 +2,15 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useStore } from '@/lib/zustand/store'
-import { KeyIcon } from 'lucide-react'
+import { KeyIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Label } from './ui/label'
 
 export function ApiKeyDialog() {
-    const { openRouterApiKey, openAiApiKey, setOpenRouterApiKey, setOpenAiApiKey, setSelectedModel } = useStore()
+    const { openRouterApiKey, openAiApiKey, setOpenRouterApiKey, setOpenAiApiKey } = useStore()
     const [tempOpenRouterApiKey, setTempOpenRouterApiKey] = useState(openRouterApiKey || '')
     const [tempOpenAiApiKey, setTempOpenAiApiKey] = useState(openAiApiKey || '')
     const [isOpen, setIsOpen] = useState(false)
-
-    const handleCancel = () => {
-        setTempOpenRouterApiKey('')
-        setTempOpenAiApiKey('')
-        setIsOpen(false)
-    }
-
-    const handleClear = () => {
-        setSelectedModel('openai/gpt-4.1-nano')
-        setOpenRouterApiKey('')
-        setOpenAiApiKey('')
-        setTempOpenRouterApiKey('')
-        setTempOpenAiApiKey('')
-        setIsOpen(false)
-    }
 
     const handleSave = () => {
         setIsOpen(false)
@@ -41,17 +26,12 @@ export function ApiKeyDialog() {
         setIsOpen(open)
     }
 
-    const isValidOpenRouterApiKey = (key: string) => {
-        return key.trim().length > 0 && key.startsWith('sk-or-v1-')
-    }
-
-    const isValidOpenAiApiKey = (key: string) => {
-        return key.trim().length > 0 && key.startsWith('sk-')
-    }
+    const isValidOpenRouterApiKey = (key: string) => key.trim().length === 0 || key.startsWith('sk-or-v1-')
+    const isValidOpenAiApiKey = (key: string) => key.trim().length === 0 || key.startsWith('sk-')
 
     const hasValidOpenRouterKey = isValidOpenRouterApiKey(tempOpenRouterApiKey)
     const hasValidOpenAiKey = isValidOpenAiApiKey(tempOpenAiApiKey)
-    const hasAnyValidKey = hasValidOpenRouterKey || hasValidOpenAiKey
+    const allKeysValid = hasValidOpenRouterKey && hasValidOpenAiKey
     const hasAnyStoredKey = openRouterApiKey || openAiApiKey
 
     return (
@@ -70,44 +50,53 @@ export function ApiKeyDialog() {
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
                         <Label htmlFor="openrouter-api-key">OpenRouter API Key</Label>
-                        <Input
-                            type="password"
-                            autoComplete="off"
-                            className="col-span-3"
-                            id="openrouter-api-key"
-                            placeholder="sk-or-v1-..."
-                            value={tempOpenRouterApiKey}
-                            onChange={(event) => setTempOpenRouterApiKey(event.target.value)}
-                        />
+                        <div className="flex gap-2">
+                            <Input
+                                type="password"
+                                autoComplete="off"
+                                className="flex-1"
+                                id="openrouter-api-key"
+                                placeholder="sk-or-v1-..."
+                                value={tempOpenRouterApiKey}
+                                onChange={(event) => setTempOpenRouterApiKey(event.target.value)}
+                            />
+                            {tempOpenRouterApiKey && (
+                                <Button variant="destructive" size="icon" onClick={() => setTempOpenRouterApiKey('')} type="button">
+                                    <XIcon className="size-4" />
+                                </Button>
+                            )}
+                        </div>
                         {tempOpenRouterApiKey && !hasValidOpenRouterKey && (
                             <p className="text-xs text-destructive">OpenRouter API key should start with "sk-or-v1-"</p>
                         )}
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="openai-api-key">OpenAI API Key</Label>
-                        <Input
-                            type="password"
-                            autoComplete="off"
-                            id="openai-api-key"
-                            placeholder="sk-..."
-                            className="col-span-3"
-                            value={tempOpenAiApiKey}
-                            onChange={(event) => setTempOpenAiApiKey(event.target.value)}
-                        />
+                        <Label htmlFor="openai-api-key">OpenAI API Key (Image Gen)</Label>
+                        <div className="flex gap-2">
+                            <Input
+                                type="password"
+                                autoComplete="off"
+                                className="flex-1"
+                                id="openai-api-key"
+                                placeholder="sk-..."
+                                value={tempOpenAiApiKey}
+                                onChange={(event) => setTempOpenAiApiKey(event.target.value)}
+                            />
+                            {tempOpenAiApiKey && (
+                                <Button variant="destructive" size="icon" onClick={() => setTempOpenAiApiKey('')} type="button">
+                                    <XIcon className="size-4" />
+                                </Button>
+                            )}
+                        </div>
                         {tempOpenAiApiKey && !hasValidOpenAiKey && <p className="text-xs text-destructive">OpenAI API key should start with "sk-"</p>}
                     </div>
                 </div>
                 <DialogFooter className="gap-3">
-                    <Button variant="outline" onClick={handleCancel}>
+                    <Button variant="outline" onClick={() => setIsOpen(false)}>
                         Cancel
                     </Button>
-                    {hasAnyStoredKey && isOpen && (
-                        <Button variant="destructive" onClick={handleClear}>
-                            Delete All
-                        </Button>
-                    )}
-                    <Button className="bg-sidebar text-sidebar-foreground dark:bg-pink-800" onClick={handleSave} disabled={!hasAnyValidKey}>
-                        Save API Keys
+                    <Button className="bg-sidebar text-sidebar-foreground dark:bg-pink-800" onClick={handleSave} disabled={!allKeysValid}>
+                        Save
                     </Button>
                 </DialogFooter>
             </DialogContent>
