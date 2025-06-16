@@ -28,7 +28,7 @@ function RouteComponent() {
 
     return thread.name ? (
         <div className="mx-auto flex max-w-4xl flex-col gap-6 p-6">
-            <div className="sticky top-6 w-fit rounded-lg border bg-sidebar/50 px-4 py-3 text-2xl font-semibold tracking-tight backdrop-blur-sm">
+            <div className="sticky top-6 z-50 w-fit rounded-lg border bg-sidebar/50 px-4 py-3 text-2xl font-semibold tracking-tight backdrop-blur-sm">
                 {thread.name}
             </div>
             <Messages data={thread.messages} />
