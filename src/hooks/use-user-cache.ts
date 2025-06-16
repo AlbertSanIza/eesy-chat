@@ -1,7 +1,7 @@
 import { useUser } from '@clerk/clerk-react'
 import { useEffect } from 'react'
 
-import { useStore } from '@/lib/store'
+import { useStore } from '@/lib/zustand/store'
 
 export function useUserCache() {
     const { user, isLoaded } = useUser()

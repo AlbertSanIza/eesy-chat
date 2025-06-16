@@ -10,8 +10,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
 import { useDocumentTitle } from '@/hooks/use-document-title'
-import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
+import { useStore } from '@/lib/zustand/store'
 
 export const Route = createFileRoute('/(app)/$threadId')({
     component: RouteComponent

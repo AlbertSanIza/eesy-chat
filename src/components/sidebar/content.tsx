@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { AppSidebarMenuItem } from '@/components/sidebar/menu-item'
 import { SidebarContent as ShadSidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu } from '@/components/ui/sidebar'
 import type { Doc } from '@/convex/_generated/dataModel'
-import { useStore } from '@/lib/store'
+import { useStore } from '@/lib/zustand/store'
 
 interface GroupedThreads {
     [key: string]: Doc<'threads'>[]

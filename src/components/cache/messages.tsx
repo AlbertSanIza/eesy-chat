@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
-import { useStore } from '@/lib/store'
+import { useStore } from '@/lib/zustand/store'
 
 export function MessagesCache() {
     const { threads } = useStore()

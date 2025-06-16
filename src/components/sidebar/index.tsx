@@ -7,8 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
+import { useStore } from '@/lib/zustand/store'
 import { SearchIcon } from 'lucide-react'
 
 export function AppSidebar() {

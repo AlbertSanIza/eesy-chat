@@ -8,8 +8,8 @@ import { useSidebar } from '@/components/ui/sidebar'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
 import { useAiChat } from '@/hooks/use-ai-chat'
-import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
+import { useStore } from '@/lib/zustand/store'
 
 export function Input() {
     const { open } = useSidebar()
