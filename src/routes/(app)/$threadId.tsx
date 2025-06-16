@@ -22,8 +22,8 @@ function RouteComponent() {
     const { open, isMobile } = useSidebar()
     const branchOff = useMutation(api.branching.copy)
     const { threadId } = useParams({ from: '/(app)/$threadId' })
-    const thread = useStore(({ threads }) => threads.find((thread) => thread._id === threadId))
     const messages = useQuery(api.messages.findAll, { threadId: threadId as Id<'threads'> })
+    const thread = useStore(({ threads }) => threads.find((thread) => thread._id === threadId))
     useDocumentTitle(thread?.name)
 
     const handleBranchOff = async (currentThreadId: Id<'threads'>, messageId: Id<'messages'>) => {
