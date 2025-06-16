@@ -6,12 +6,12 @@ import type { api } from '@/convex/_generated/api'
 
 export const useStore = create<{
     user: { fullName?: string; imageUrl?: string }
-    threads: FunctionReturnType<typeof api.threads.findAll>
+    threads: FunctionReturnType<typeof api.threads.list>
     models: FunctionReturnType<typeof api.models.findAll>
     threadSearch: string
     selectedModel: string
     setUser: ({ fullName, imageUrl }: { fullName?: string; imageUrl?: string }) => void
-    setThreads: (threads: FunctionReturnType<typeof api.threads.findAll>) => void
+    setThreads: (threads: FunctionReturnType<typeof api.threads.list>) => void
     setModels: (models: FunctionReturnType<typeof api.models.findAll>) => void
     setThreadSearch: (search: string) => void
     setSelectedModel: (modelId: string) => void
@@ -26,7 +26,7 @@ export const useStore = create<{
             setUser: ({ fullName, imageUrl }) => {
                 set({ user: { fullName, imageUrl } })
             },
-            setThreads: (threads: FunctionReturnType<typeof api.threads.findAll>) => {
+            setThreads: (threads: FunctionReturnType<typeof api.threads.list>) => {
                 set({ threads })
             },
             setModels: (models: FunctionReturnType<typeof api.models.findAll>) => {

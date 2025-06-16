@@ -7,7 +7,7 @@ import { action, internalAction, internalMutation, mutation, query } from './_ge
 
 const openrouter = createOpenRouter()
 
-export const findAll = query({
+export const list = query({
     args: {},
     handler: async (ctx) => {
         const identity = await ctx.auth.getUserIdentity()

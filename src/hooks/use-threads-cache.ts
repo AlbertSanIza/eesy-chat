@@ -5,7 +5,7 @@ import { api } from '@/convex/_generated/api'
 import { useStore } from '@/lib/zustand/store'
 
 export function useThreadsCache() {
-    const threads = useQuery(api.threads.findAll)
+    const threads = useQuery(api.threads.list)
     const { setThreads } = useStore()
 
     useEffect(() => {
