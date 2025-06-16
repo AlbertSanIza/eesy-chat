@@ -2,17 +2,16 @@ import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { type Message, smoothStream, streamText } from 'ai'
 
 import { internal } from './_generated/api'
-import { Id } from './_generated/dataModel'
 import { httpAction } from './_generated/server'
 
 const openrouter = createOpenRouter()
 
 export const stream = httpAction(async (ctx, request) => {
-    const { modelId, messages }: { modelId: Id<'models'>; messages: Message[] } = await request.json()
-    const openRouterId = await ctx.runQuery(internal.models.openRouterId, { modelId })
+    const { openRouterId, messages }: { openRouterId: string; messages: Message[] } = await request.json()
+    const validatedOpenRouterId = await ctx.runQuery(internal.models.openRouterId, { openRouterId })
     const result = streamText({
         system: 'You are a helpful assistant. Respond to the user in Markdown format.',
-        model: openrouter.chat(openRouterId),
+        model: openrouter.chat(validatedOpenRouterId),
         messages,
         // onChunk: (chunk) => {},
         experimental_transform: smoothStream({ chunking: 'word' })
