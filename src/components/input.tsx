@@ -4,6 +4,7 @@ import { useAction, useMutation } from 'convex/react'
 import { ChevronDownIcon, LoaderCircleIcon, SendHorizontalIcon, SquareIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
+import { ApiKeyDialog } from '@/components/api-key-dialog'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useSidebar } from '@/components/ui/sidebar'
@@ -83,22 +84,25 @@ export function Input() {
                             autoFocus
                         />
                         <div className="flex items-center justify-between">
-                            <div className="grid grid-cols-1 text-sm">
-                                <select
-                                    className="col-start-1 row-start-1 h-9 cursor-pointer appearance-none rounded-md border bg-background pr-7 pl-2 shadow-xs outline-none hover:bg-accent hover:text-accent-foreground"
-                                    value={selectedModel}
-                                    onChange={(event) => setSelectedModel(event.target.value)}
-                                >
-                                    {models.map((model) => (
-                                        <option key={model._id} value={model.openRouterId}>
-                                            {model.label}
-                                        </option>
-                                    ))}
-                                </select>
-                                <ChevronDownIcon
-                                    aria-hidden="true"
-                                    className="pointer-events-none col-start-1 row-start-1 mr-2 self-center justify-self-end sm:size-4"
-                                />
+                            <div className="flex items-center gap-1">
+                                <div className="grid grid-cols-1 text-sm">
+                                    <select
+                                        className="col-start-1 row-start-1 h-9 cursor-pointer appearance-none rounded-md border bg-background pr-7 pl-2 shadow-xs outline-none hover:bg-accent hover:text-accent-foreground"
+                                        value={selectedModel}
+                                        onChange={(event) => setSelectedModel(event.target.value)}
+                                    >
+                                        {models.map((model) => (
+                                            <option key={model._id} value={model.openRouterId}>
+                                                {model.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <ChevronDownIcon
+                                        aria-hidden="true"
+                                        className="pointer-events-none col-start-1 row-start-1 mr-2 self-center justify-self-end sm:size-4"
+                                    />
+                                </div>
+                                <ApiKeyDialog />
                             </div>
                             {status === 'ready' && (
                                 <Button size="icon" type="submit" className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary">
