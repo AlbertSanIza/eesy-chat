@@ -20,7 +20,7 @@ export const findOne = internalQuery({
         const model = await ctx.db.get(modelId)
         if (!model) {
             return {
-                _id: 'jd7z8x9y2a1b3c4d5e6f7g8h',
+                _id: 'kh7cy4mfjaqrdvz6byjf4fhy897hw5mj',
                 openRouterId: 'openai/gpt-4.1-nano',
                 provider: 'OpenAI',
                 label: 'GPT-4.1 Nano',

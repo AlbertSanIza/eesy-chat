@@ -57,31 +57,53 @@ export const history = internalQuery({
     }
 })
 
+export const shared = query({
+    args: { threadId: v.id('threads') },
+    handler: async (ctx, { threadId }): Promise<{ name: string | null; messages: Message[] }> => {
+        const thread = await ctx.db.get(threadId)
+        if (!thread || !thread.shared) {
+            return { name: null, messages: [] }
+        }
+        return { name: thread.name, messages: await ctx.runQuery(internal.messages.history, { threadId }) }
+    }
+})
+
 export const send = action({
-    args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), openRouterId: v.string(), prompt: v.string() },
-    handler: async (ctx, { apiKey, threadId, openRouterId, prompt }) => {
+    args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), modelId: v.id('models'), prompt: v.string() },
+    handler: async (ctx, { apiKey, threadId, modelId, prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
         }
-        const messageId = await ctx.runMutation(internal.messages.create, { threadId, openRouterId, prompt })
+        const messageId = await ctx.runMutation(internal.messages.create, { modelId, threadId, prompt })
         await ctx.scheduler.runAfter(0, internal.threads.updateTime, { threadId })
         await ctx.scheduler.runAfter(0, internal.messages.run, { apiKey, messageId })
     }
 })
 
 export const create = internalMutation({
-    args: { threadId: v.id('threads'), openRouterId: v.string(), prompt: v.string() },
-    handler: async (ctx, { threadId, openRouterId, prompt }) => {
-        const model: { openRouterId: string; provider: string; label: string } = await ctx.runQuery(internal.models.data, { openRouterId })
-        return await ctx.db.insert('messages', {
+    args: { modelId: v.id('models'), threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { modelId, threadId, prompt }) => {
+        const model = (await ctx.runQuery(internal.models.findOne, { modelId })) as {
+            service: 'openRouter' | 'openAi'
+            model: string
+            provider: string
+            label: string
+        }
+        if (!model) {
+            throw new Error('Model Not Found')
+        }
+        const messageId = await ctx.db.insert('messages', {
             threadId,
             status: 'pending',
-            openRouterId: model.openRouterId,
+            service: model.service,
+            model: model.model,
             provider: model.provider,
             label: model.label,
             prompt
         })
+        await ctx.runMutation(internal.chunks.add, { messageId, text: prompt, final: true })
+        return messageId
     }
 })
 
@@ -127,17 +149,6 @@ export const removeAll = internalMutation({
             .collect()
         await Promise.all(messages.map((message) => ctx.db.delete(message._id)))
         await Promise.all(messages.map((message) => ctx.runMutation(internal.chunks.removeByMessageId, { messageId: message._id })))
-    }
-})
-
-export const shared = query({
-    args: { threadId: v.id('threads') },
-    handler: async (ctx, { threadId }): Promise<{ name: string | null; messages: Message[] }> => {
-        const thread = await ctx.db.get(threadId)
-        if (!thread || !thread.shared) {
-            return { name: null, messages: [] }
-        }
-        return { name: thread.name, messages: await ctx.runQuery(internal.messages.history, { threadId }) }
     }
 })
 
