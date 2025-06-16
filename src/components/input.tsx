@@ -12,13 +12,13 @@ import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
 
 export function Input() {
-    const { models, selectedModel, setSelectedModel } = useStore()
     const { open } = useSidebar()
     const navigate = useNavigate()
     const send = useAction(api.messages.send)
     const { threadId } = useParams({ strict: false })
     const createThread = useMutation(api.threads.create)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
+    const { models, selectedModel, setSelectedModel } = useStore()
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
 
     useEffect(() => {
@@ -31,11 +31,11 @@ export function Input() {
         textAreaRef.current?.style.setProperty('height', 'auto')
         if (threadId) {
             // handleSubmit({ id: threadId, override: newInput })
-            send({ threadId: threadId as Id<'threads'>, prompt: newInput.trim() })
+            send({ threadId: threadId as Id<'threads'>, openRouterId: selectedModel, prompt: newInput.trim() })
             handleInputChange({ id: threadId, value: '' })
             return
         }
-        const newThreadId = await createThread({ prompt: input.trim() })
+        const newThreadId = await createThread({ openRouterId: selectedModel, prompt: input.trim() })
         if (newThreadId) {
             // handleSubmit({ id: newThreadId.toString(), override: newInput })
             await navigate({ to: `/${newThreadId}` })
@@ -84,7 +84,7 @@ export function Input() {
                                     onChange={(event) => setSelectedModel(event.target.value)}
                                 >
                                     {models.map((model) => (
-                                        <option key={model._id} value={model._id}>
+                                        <option key={model._id} value={model.openRouterId}>
                                             {model.label}
                                         </option>
                                     ))}
