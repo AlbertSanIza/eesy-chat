@@ -32,6 +32,8 @@ export const create = mutation({
         const threadId = await ctx.db.insert('threads', { name: 'New Thread', userId: identity.subject, pinned: false, shared: false, updateTime: Date.now() })
         await ctx.scheduler.runAfter(0, internal.threads.createInternal, { threadId, prompt })
         await ctx.scheduler.runAfter(0, internal.messages.create, { threadId, model, prompt })
+        // const messageId = await ctx.runMutation(internal.messages.create, { threadId, model, prompt })
+        // await ctx.scheduler.runAfter(0, internal.messages.run, { messageId })
         return threadId
     }
 })
