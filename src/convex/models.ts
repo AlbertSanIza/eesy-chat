@@ -15,15 +15,15 @@ export const list = query({
 })
 
 export const data = internalQuery({
-    args: { openRouterId: v.string() },
-    handler: async (ctx, { openRouterId }) => {
+    args: { apiKey: v.optional(v.string()), openRouterId: v.string() },
+    handler: async (ctx, { apiKey, openRouterId }) => {
         const model = await ctx.db
             .query('models')
             .withIndex('by_openRouterId', (q) => q.eq('openRouterId', openRouterId))
             .first()
-        if (model) {
-            return { openRouterId: model.openRouterId, provider: model.provider, label: model.label }
+        if (!model || !model.enabled || (!apiKey && model.withKey === true)) {
+            return { openRouterId: 'openai/gpt-4.1-nano', provider: 'OpenAI', label: 'GPT-4.1 Nano' }
         }
-        return { openRouterId: 'openai/gpt-4.1-nano', provider: 'OpenAI', label: 'GPT-4.1 Nano' }
+        return { openRouterId: model.openRouterId, provider: model.provider, label: model.label }
     }
 })
