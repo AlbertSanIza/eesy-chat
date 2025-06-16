@@ -48,7 +48,7 @@ export const CodeHighlight = ({ className, children, node, ...props }: CodeHighl
                 className="overflow-auto rounded-none border-t bg-[#F5ECF9] p-2 text-sm dark:bg-[#1B161F]"
                 {...props}
             >
-                {String(children)}
+                {String(children).trim()}
             </ShikiHighlighter>
         </div>
     ) : (
