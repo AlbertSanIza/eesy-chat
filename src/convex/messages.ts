@@ -89,10 +89,11 @@ export const run = internalAction({
         if (message.status !== 'pending') {
             throw new Error('Stream Already Completed')
         }
+        const history = await ctx.runQuery(internal.messages.history, { threadId: message.threadId })
         const { textStream } = streamText({
             system: 'You are a helpful assistant. Respond to the user in Markdown format.',
             model: openrouter.chat(message.model),
-            messages: [{ role: 'user', content: message.prompt }],
+            messages: [...history, { role: 'user', content: message.prompt }],
             experimental_transform: smoothStream({ chunking: 'line' })
         })
         let delta = ''
