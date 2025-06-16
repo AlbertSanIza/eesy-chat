@@ -2,7 +2,7 @@ import { Message } from 'ai'
 import { v } from 'convex/values'
 
 import { Id } from './_generated/dataModel'
-import { query, QueryCtx } from './_generated/server'
+import { mutation, query, QueryCtx } from './_generated/server'
 
 export const getMessage = query({
     args: { messageId: v.id('messages') },
@@ -28,14 +28,20 @@ export const getHistory = query({
     }
 })
 
+export const addChunk = mutation({
+    args: { messageId: v.id('messages'), text: v.string(), final: v.boolean() },
+    handler: async (ctx, { messageId, text, final }) => {
+        ctx.db.insert('chunks', { messageId, text })
+        if (final) {
+            ctx.db.patch(messageId, { status: 'done' })
+        }
+    }
+})
+
 export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): Promise<Message> {
     const chunks = await ctx.db
         .query('chunks')
         .withIndex('by_message', (q) => q.eq('messageId', messageId))
         .collect()
-    return {
-        id: messageId,
-        role: 'assistant',
-        content: chunks.map((chunk) => chunk.text).join('')
-    }
+    return { id: messageId, role: 'assistant', content: chunks.map((chunk) => chunk.text).join('') }
 }
