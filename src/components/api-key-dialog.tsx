@@ -52,7 +52,8 @@ export function ApiKeyDialog() {
                 <DialogHeader>
                     <DialogTitle>OpenRouter API Key</DialogTitle>
                     <DialogDescription>
-                        Enter your OpenRouter API key to use AI models. Your key is stored locally and never sent to our servers.
+                        Enter your OpenRouter API key to unlock more AI models. Your key is only stored locally and never in our servers but it will be used to
+                        authenticate requests to the OpenRouter API on every request.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
