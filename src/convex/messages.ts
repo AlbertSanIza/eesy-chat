@@ -67,21 +67,24 @@ export const history = internalQuery({
 })
 
 export const send = action({
-    args: { threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { threadId, prompt }) => {
+    args: { threadId: v.id('threads'), openRouterId: v.string(), prompt: v.string() },
+    handler: async (ctx, { threadId, openRouterId, prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
         }
-        const message = ctx.runMutation(internal.messages.create, { threadId, model: 'openai/gpt-4.1-nano', prompt })
+        const messageId = await ctx.runMutation(internal.messages.create, { threadId, openRouterId, prompt })
         await ctx.scheduler.runAfter(0, internal.threads.updateTime, { threadId })
-        console.log('message', message)
+        await ctx.scheduler.runAfter(0, internal.messages.run, { messageId })
     }
 })
 
 export const create = internalMutation({
-    args: { threadId: v.id('threads'), model: v.string(), prompt: v.string() },
-    handler: async (ctx, { threadId, model, prompt }) => await ctx.db.insert('messages', { threadId, status: 'pending', model, prompt })
+    args: { threadId: v.id('threads'), openRouterId: v.string(), prompt: v.string() },
+    handler: async (ctx, { threadId, openRouterId, prompt }) => {
+        const model: string = await ctx.runQuery(internal.models.openRouterId, { openRouterId })
+        return await ctx.db.insert('messages', { threadId, status: 'pending', model, prompt })
+    }
 })
 
 export const run = internalAction({
