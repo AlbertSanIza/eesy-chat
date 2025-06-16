@@ -15,10 +15,13 @@ export const findAll = query({
 })
 
 export const openRouterId = internalQuery({
-    args: { modelId: v.id('models') },
-    handler: async (ctx, { modelId }) => {
-        const model = await ctx.db.get(modelId)
-        if (model?.openRouterId) {
+    args: { openRouterId: v.string() },
+    handler: async (ctx, { openRouterId }) => {
+        const model = await ctx.db
+            .query('models')
+            .withIndex('by_openRouterId', (q) => q.eq('openRouterId', openRouterId))
+            .first()
+        if (model) {
             return model.openRouterId
         }
         return 'openai/gpt-4.1-nano'
