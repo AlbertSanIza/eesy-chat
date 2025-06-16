@@ -1,4 +1,4 @@
-import { Message } from 'ai'
+import type { Message } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'

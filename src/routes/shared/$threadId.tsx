@@ -15,7 +15,7 @@ function RouteComponent() {
     const { threadId } = useParams({ from: Route.fullPath })
 
     const thread = useQuery(api.shared.thread, { threadId: threadId as Id<'threads'> })
-    useDocumentTitle(thread?.name ? `Shared: ${thread.name}` : null)
+    useDocumentTitle(thread?.name ? `Shared: ${thread.name}` : undefined)
 
     if (!thread) {
         return (

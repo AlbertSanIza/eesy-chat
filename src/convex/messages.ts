@@ -1,5 +1,6 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-import { Message, smoothStream, streamText } from 'ai'
+import type { Message } from 'ai'
+import { smoothStream, streamText } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
