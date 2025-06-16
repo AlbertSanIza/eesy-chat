@@ -96,7 +96,7 @@ export const run = internalAction({
         }
         const { textStream } = streamText({
             system: 'You are a helpful assistant. Respond to the user in Markdown format.',
-            model: openrouter.chat('openai/gpt-4.1-nano'),
+            model: openrouter.chat(message.model),
             messages: [{ role: 'user', content: message.prompt }],
             experimental_transform: smoothStream({ chunking: 'line' })
         })
