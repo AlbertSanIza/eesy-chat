@@ -8,8 +8,6 @@ import type { Id } from './_generated/dataModel'
 import type { QueryCtx } from './_generated/server'
 import { action, internalAction, internalMutation, internalQuery, query } from './_generated/server'
 
-const openrouter = createOpenRouter()
-
 export const list = query({
     args: { threadId: v.id('threads') },
     handler: async (ctx, { threadId }) => {
@@ -60,15 +58,15 @@ export const history = internalQuery({
 })
 
 export const send = action({
-    args: { threadId: v.id('threads'), openRouterId: v.string(), prompt: v.string() },
-    handler: async (ctx, { threadId, openRouterId, prompt }) => {
+    args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), openRouterId: v.string(), prompt: v.string() },
+    handler: async (ctx, { apiKey, threadId, openRouterId, prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
         }
         const messageId = await ctx.runMutation(internal.messages.create, { threadId, openRouterId, prompt })
         await ctx.scheduler.runAfter(0, internal.threads.updateTime, { threadId })
-        await ctx.scheduler.runAfter(0, internal.messages.run, { messageId })
+        await ctx.scheduler.runAfter(0, internal.messages.run, { apiKey, messageId })
     }
 })
 
@@ -88,8 +86,8 @@ export const create = internalMutation({
 })
 
 export const run = internalAction({
-    args: { messageId: v.id('messages') },
-    handler: async (ctx, { messageId }) => {
+    args: { apiKey: v.optional(v.string()), messageId: v.id('messages') },
+    handler: async (ctx, { apiKey, messageId }) => {
         const message = await ctx.runQuery(internal.messages.findOne, { messageId })
         if (!message) {
             throw new Error('Message Not Found')
@@ -98,6 +96,7 @@ export const run = internalAction({
             throw new Error('Stream Already Completed')
         }
         const history = await ctx.runQuery(internal.messages.history, { threadId: message.threadId })
+        const openrouter = createOpenRouter({ apiKey: apiKey || process.env.OPENROUTER_API_KEY })
         const { textStream } = streamText({
             system: 'You are a helpful assistant. Respond to the user in Markdown format.',
             model: openrouter.chat(message.openRouterId),

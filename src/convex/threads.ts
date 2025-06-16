@@ -5,8 +5,6 @@ import { v } from 'convex/values'
 import { internal } from './_generated/api'
 import { action, internalAction, internalMutation, mutation, query } from './_generated/server'
 
-const openrouter = createOpenRouter()
-
 export const list = query({
     args: {},
     handler: async (ctx) => {
@@ -23,8 +21,8 @@ export const list = query({
 })
 
 export const create = mutation({
-    args: { openRouterId: v.string(), prompt: v.string() },
-    handler: async (ctx, { openRouterId, prompt }) => {
+    args: { apiKey: v.optional(v.string()), openRouterId: v.string(), prompt: v.string() },
+    handler: async (ctx, { apiKey, openRouterId, prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
@@ -37,16 +35,17 @@ export const create = mutation({
             branched: false,
             updateTime: Date.now()
         })
-        await ctx.scheduler.runAfter(0, internal.threads.createInternal, { threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.threads.createInternal, { apiKey, threadId, prompt })
         const messageId = await ctx.runMutation(internal.messages.create, { threadId, openRouterId, prompt })
-        await ctx.scheduler.runAfter(0, internal.messages.run, { messageId })
+        await ctx.scheduler.runAfter(0, internal.messages.run, { apiKey, messageId })
         return threadId
     }
 })
 
 export const createInternal = internalAction({
-    args: { threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { threadId, prompt }) => {
+    args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { apiKey, threadId, prompt }) => {
+        const openrouter = createOpenRouter({ apiKey: apiKey || process.env.OPENROUTER_API_KEY })
         const response = await generateText({
             model: openrouter.chat('openai/gpt-4.1-nano'),
             system: 'You are a helpful assistant that generates a small title for a chat thread based on the provided user message. The title should be concise, descriptive and small.',
