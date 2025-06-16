@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useAction, useMutation } from 'convex/react'
-import { LoaderCircleIcon, SendHorizontalIcon, SquareIcon } from 'lucide-react'
+import { ChevronDownIcon, LoaderCircleIcon, SendHorizontalIcon, SquareIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -8,9 +8,11 @@ import { useSidebar } from '@/components/ui/sidebar'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
 import { useAiChat } from '@/hooks/use-ai-chat'
+import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
 
 export function Input() {
+    const { models, selectedModel, setSelectedModel } = useStore()
     const { open } = useSidebar()
     const navigate = useNavigate()
     const send = useAction(api.messages.send)
@@ -82,7 +84,7 @@ export function Input() {
                                     onChange={(event) => setSelectedModel(event.target.value)}
                                 >
                                     {models.map((model) => (
-                                        <option key={model.id} value={model.id}>
+                                        <option key={model._id} value={model._id}>
                                             {model.label}
                                         </option>
                                     ))}
