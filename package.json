@@ -7,6 +7,8 @@
     "scripts": {
         "dev": "vite",
         "convex": "convex dev",
+        "server": "bun run server.ts",
+        "server:dev": "bun --watch server.ts",
         "build": "tsc -b && vite build",
         "lint": "eslint .",
         "preview": "vite preview"
