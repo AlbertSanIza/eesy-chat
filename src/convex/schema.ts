@@ -7,6 +7,7 @@ export default defineSchema({
         userId: v.string(),
         pinned: v.boolean(),
         shared: v.boolean(),
+        branched: v.boolean(),
         updateTime: v.number()
     }).index('by_user_and_update_time', ['userId', 'updateTime']),
     messages: defineTable({
