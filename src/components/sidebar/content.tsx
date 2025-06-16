@@ -92,7 +92,7 @@ export function AppSidebarContent() {
         <ShadSidebarContent className="gap-0">
             {sortedGroups.map((groupTitle) => (
                 <SidebarGroup key={groupTitle}>
-                    <SidebarGroupLabel className="text-[#560E2B] dark:text-[#C46195]">
+                    <SidebarGroupLabel className="text-group-label">
                         {groupTitle === 'Pinned' && <PinIcon className="mr-1 size-3!" />}
                         {groupTitle}
                     </SidebarGroupLabel>

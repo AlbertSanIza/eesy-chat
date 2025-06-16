@@ -41,6 +41,7 @@
     --color-sidebar-ring: var(--sidebar-ring);
     --color-scrollbar: var(--scrollbar);
     --color-home-accent: var(--home-accent);
+    --color-group-label: var(--group-label);
 }
 
 :root {
@@ -78,6 +79,7 @@
     --sidebar-ring: oklch(65.6% 0.241 354.308);
     --scrollbar: #dd9fc0;
     --home-accent: #f5dcef;
+    --group-label: #560e2b;
 }
 
 .dark {
@@ -115,6 +117,7 @@
     --sidebar-ring: oklch(0.556 0 0);
     --scrollbar: #48414b;
     --home-accent: #2c2633;
+    --group-label: #c46195;
 }
 
 @layer base {
