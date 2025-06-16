@@ -3,7 +3,6 @@ import { v } from 'convex/values'
 
 export default defineSchema({
     threads: defineTable({
-        name: v.string(),
         userId: v.string(),
         pinned: v.boolean(),
         shared: v.boolean(),
