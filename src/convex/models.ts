@@ -1,6 +1,6 @@
 import { v } from 'convex/values'
 
-import { query } from './_generated/server'
+import { internalQuery, query } from './_generated/server'
 
 export const findAll = query({
     args: {},
@@ -14,7 +14,13 @@ export const findAll = query({
     }
 })
 
-export const findOne = query({
-    args: { id: v.id('models') },
-    handler: async (ctx, { id }) => await ctx.db.get(id)
+export const openRouterId = internalQuery({
+    args: { modelId: v.id('models') },
+    handler: async (ctx, { modelId }) => {
+        const model = await ctx.db.get(modelId)
+        if (model?.openRouterId) {
+            return model.openRouterId
+        }
+        return 'openai/gpt-4.1-nano'
+    }
 })
