@@ -1,5 +1,5 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
-import { useQuery } from 'convex/react'
+import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
+import { useMutation, useQuery } from 'convex/react'
 import { GitForkIcon, Loader2Icon } from 'lucide-react'
 import { Fragment } from 'react'
 
@@ -18,11 +18,18 @@ export const Route = createFileRoute('/(app)/$threadId')({
 })
 
 function RouteComponent() {
+    const navigate = useNavigate()
     const { open, isMobile } = useSidebar()
+    const branchOff = useMutation(api.branching.copy)
     const { threadId } = useParams({ from: '/(app)/$threadId' })
     const thread = useStore(({ threads }) => threads.find((thread) => thread._id === threadId))
     const messages = useQuery(api.messages.findAll, { threadId: threadId as Id<'threads'> })
     useDocumentTitle(thread?.name)
+
+    const handleBranchOff = async (currentThreadId: Id<'threads'>, messageId: Id<'messages'>) => {
+        const newThreadId = await branchOff({ threadId: currentThreadId, messageId: messageId })
+        await navigate({ to: `/${newThreadId}` })
+    }
 
     if (!thread) {
         return 'Loading...'
@@ -43,7 +50,7 @@ function RouteComponent() {
                                 <div className="pointer-events-none -mt-3 flex items-center gap-2 opacity-0 transition-opacity group-hover/assistant-message:pointer-events-auto group-hover/assistant-message:opacity-100">
                                     <Tooltip>
                                         <TooltipTrigger>
-                                            <Button size="icon" variant="default" className="size-7">
+                                            <Button size="icon" variant="default" className="size-7" onClick={() => handleBranchOff(thread._id, message._id)}>
                                                 <GitForkIcon />
                                             </Button>
                                         </TooltipTrigger>
