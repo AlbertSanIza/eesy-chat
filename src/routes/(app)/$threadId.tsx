@@ -4,6 +4,7 @@ import { GitForkIcon, Loader2Icon } from 'lucide-react'
 import { Fragment } from 'react'
 
 import { AssistantMessage } from '@/components/messages/assistant'
+import { UserMessage } from '@/components/messages/user'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { api } from '@/convex/_generated/api'
@@ -38,9 +39,7 @@ function RouteComponent() {
             <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 sm:px-14">
                 {messages?.map((message) => (
                     <Fragment key={message._id}>
-                        <div className="ml-auto w-fit rounded-lg border bg-sidebar px-4 py-3 text-right text-[#492C61] dark:bg-[#2C2632] dark:text-[#F2EBFA]">
-                            {message.prompt}
-                        </div>
+                        <UserMessage message={{ id: message._id, content: message.prompt, role: 'user' }} />
                         <div className="group/assistant-message">
                             {message.status !== 'pending' && <ServerMessage messageId={message._id} />}
                             {(message.status === 'pending' || message.status === 'streaming') && <Loader2Icon className="size-4 animate-spin" />}
