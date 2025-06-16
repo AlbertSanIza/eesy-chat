@@ -27,7 +27,7 @@ export default defineSchema({
         provider: v.string(),
         label: v.string(),
         enabled: v.boolean(),
-        withKey: v.optional(v.boolean())
+        withKey: v.boolean()
     })
         .index('by_provider_and_label', ['provider', 'label'])
         .index('by_openRouterId', ['openRouterId'])
