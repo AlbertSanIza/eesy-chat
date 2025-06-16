@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useStore } from '@/lib/zustand/store'
-import { KeyIcon, Trash2Icon } from 'lucide-react'
+import { KeyIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Label } from './ui/label'
 
@@ -11,8 +11,8 @@ export function ApiKeyDialog() {
     const [tempApiKey, setTempApiKey] = useState(openRouterApiKey || '')
     const [isOpen, setIsOpen] = useState(false)
 
-    const handleSave = () => {
-        setOpenRouterApiKey(tempApiKey.trim())
+    const handleCancel = () => {
+        setTempApiKey('')
         setIsOpen(false)
     }
 
@@ -22,9 +22,9 @@ export function ApiKeyDialog() {
         setIsOpen(false)
     }
 
-    const handleCancel = () => {
-        setTempApiKey(openRouterApiKey || '')
+    const handleSave = () => {
         setIsOpen(false)
+        setOpenRouterApiKey(tempApiKey.trim())
     }
 
     const handleOpenChange = (open: boolean) => {
@@ -64,28 +64,21 @@ export function ApiKeyDialog() {
                             autoComplete="off"
                             className="col-span-3"
                             placeholder="sk-or-v1-..."
-                            value={tempApiKey}
                             onChange={(event) => setTempApiKey(event.target.value)}
                         />
-                        {tempApiKey && !hasValidKey && <p className="text-sm text-destructive">API key should start with "sk-or-v1-"</p>}
+                        {tempApiKey && !hasValidKey && <p className="text-xs text-destructive">API key should start with "sk-or-v1-"</p>}
                     </div>
-                    {openRouterApiKey && (
-                        <div className="text-sm text-muted-foreground">
-                            Current key: {openRouterApiKey.slice(0, 8)}...{openRouterApiKey.slice(-4)}
-                        </div>
-                    )}
                 </div>
-                <DialogFooter className="gap-2">
+                <DialogFooter className="gap-3">
                     <Button variant="outline" onClick={handleCancel}>
                         Cancel
                     </Button>
-                    {openRouterApiKey && (
+                    {openRouterApiKey && isOpen && (
                         <Button variant="destructive" onClick={handleClear}>
-                            <Trash2Icon className="mr-2 h-4 w-4" />
-                            Clear
+                            Delete
                         </Button>
                     )}
-                    <Button onClick={handleSave} disabled={!hasValidKey}>
+                    <Button className="bg-sidebar text-sidebar-foreground dark:bg-pink-800" onClick={handleSave} disabled={!hasValidKey}>
                         Save API Key
                     </Button>
                 </DialogFooter>
