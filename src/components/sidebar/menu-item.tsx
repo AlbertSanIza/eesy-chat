@@ -85,17 +85,17 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
                 >
                     <Link to={`/$threadId`} params={{ threadId: thread._id }}>
                         {!isEditing && thread.shared && (
-                            <Button size="icon" variant="ghost" className="-ml-1 size-6 hover:bg-sidebar dark:hover:bg-sidebar">
-                                <a
-                                    href={`/shared/${thread._id}`}
-                                    onClick={(event) => {
-                                        event.preventDefault()
-                                        event.stopPropagation()
-                                        window.open(`/shared/${thread._id}`, '_blank', 'noopener,noreferrer')
-                                    }}
-                                >
-                                    <LinkIcon className="size-4" />
-                                </a>
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                className="-ml-1 size-6 hover:bg-sidebar dark:hover:bg-sidebar"
+                                onClick={(event) => {
+                                    event.preventDefault()
+                                    event.stopPropagation()
+                                    window.open(`/shared/${thread._id}`, '_blank', 'noopener,noreferrer')
+                                }}
+                            >
+                                <LinkIcon className="size-4" />
                             </Button>
                         )}
                         {isEditing && (
