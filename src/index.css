@@ -160,7 +160,7 @@
     @apply my-12 dark:border-[#DC749E];
 }
 .markdown a {
-    @apply text-blue-500 hover:underline;
+    @apply text-pink-500 hover:underline dark:text-pink-300;
 }
 .markdown table {
     @apply w-full table-auto border-collapse;
