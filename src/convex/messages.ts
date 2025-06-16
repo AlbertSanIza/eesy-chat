@@ -4,8 +4,9 @@ import { smoothStream, streamText } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { Id } from './_generated/dataModel'
-import { action, internalAction, internalMutation, internalQuery, query, QueryCtx } from './_generated/server'
+import type { Id } from './_generated/dataModel'
+import type { QueryCtx } from './_generated/server'
+import { action, internalAction, internalMutation, internalQuery, query } from './_generated/server'
 
 const openrouter = createOpenRouter()
 
