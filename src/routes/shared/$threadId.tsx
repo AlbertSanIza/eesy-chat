@@ -21,7 +21,7 @@ function RouteComponent() {
     if (!thread) {
         return (
             <div className="fixed inset-0 flex items-center justify-center">
-                <Loader2Icon className="h-6 w-6 animate-spin text-gray-500" />
+                <Loader2Icon className="size-6 animate-spin" />
             </div>
         )
     }
@@ -34,8 +34,8 @@ function RouteComponent() {
             <Messages data={thread.messages} />
         </div>
     ) : (
-        <div className="fixed inset-0 flex flex-col items-center justify-center gap-4">
-            <p className="text-xl">Sorry, this thread is not shared or does not exist.</p>
+        <div className="fixed inset-0 flex flex-col items-center justify-center gap-2">
+            <p className="text-lg">Sorry, this thread is not shared or does not exist.</p>
             <Button variant="default" asChild>
                 <Link to="/">Lets Chat!</Link>
             </Button>
