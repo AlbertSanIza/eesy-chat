@@ -4,7 +4,8 @@ import { smoothStream, streamText } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { action, internalAction, internalMutation, internalQuery, query } from './_generated/server'
+import { Id } from './_generated/dataModel'
+import { action, internalAction, internalMutation, internalQuery, query, QueryCtx } from './_generated/server'
 
 const openrouter = createOpenRouter()
 
@@ -27,22 +28,14 @@ export const findOne = internalQuery({
     handler: async (ctx, { messageId }) => await ctx.db.get(messageId)
 })
 
-export const body = internalQuery({
+export const body = query({
     args: { messageId: v.id('messages') },
-    handler: async (ctx, args) => {
-        const message = await ctx.db.get(args.messageId)
-        if (!message) {
-            throw new Error('Message Not Found')
+    handler: async (ctx, { messageId }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return ''
         }
-        let text = ''
-        if (message.status !== 'pending') {
-            const chunks = await ctx.db
-                .query('chunks')
-                .withIndex('by_message', (q) => q.eq('messageId', args.messageId))
-                .collect()
-            text = chunks.map((chunk) => chunk.text).join('')
-        }
-        return { text, status: message.status }
+        return await getMessageBody(ctx, messageId)
     }
 })
 
@@ -53,12 +46,10 @@ export const history = internalQuery({
             .query('messages')
             .filter((q) => q.eq(q.field('threadId'), threadId))
             .collect()
-        const joined = await Promise.all(
-            messages.map(async (message) => ({ message, response: await ctx.runQuery(internal.messages.body, { messageId: message._id }) }))
-        )
+        const joined = await Promise.all(messages.map(async (message) => ({ message, response: await getMessageBody(ctx, message._id) })))
         return joined.flatMap((item) => {
             const user: Message = { id: item.message._id, role: 'user', content: item.message.prompt }
-            const assistant: Message = { id: item.message._id, role: 'assistant', content: item.response.text }
+            const assistant: Message = { id: item.message._id, role: 'assistant', content: item.response }
             if (!assistant.content) {
                 return [user]
             }
@@ -130,3 +121,11 @@ export const removeAll = internalMutation({
         await Promise.all(messages.map((message) => ctx.runMutation(internal.chunks.removeAll, { messageId: message._id })))
     }
 })
+
+export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>) {
+    const chunks = await ctx.db
+        .query('chunks')
+        .withIndex('by_message', (q) => q.eq('messageId', messageId))
+        .collect()
+    return chunks.map((chunk) => chunk.text).join('')
+}
