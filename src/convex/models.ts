@@ -14,16 +14,21 @@ export const list = query({
     }
 })
 
-export const data = internalQuery({
-    args: { apiKey: v.optional(v.string()), openRouterId: v.string() },
-    handler: async (ctx, { apiKey, openRouterId }) => {
-        const model = await ctx.db
-            .query('models')
-            .withIndex('by_openRouterId', (q) => q.eq('openRouterId', openRouterId))
-            .first()
-        if (!model || !model.enabled || (!apiKey && model.withKey === true)) {
-            return { openRouterId: 'openai/gpt-4.1-nano', provider: 'OpenAI', label: 'GPT-4.1 Nano' }
+export const findOne = internalQuery({
+    args: { modelId: v.id('models') },
+    handler: async (ctx, { modelId }) => {
+        const model = await ctx.db.get(modelId)
+        if (!model) {
+            return {
+                _id: 'jd7z8x9y2a1b3c4d5e6f7g8h',
+                openRouterId: 'openai/gpt-4.1-nano',
+                provider: 'OpenAI',
+                label: 'GPT-4.1 Nano',
+                enabled: true,
+                withKey: false,
+                _creationTime: Date.now()
+            }
         }
-        return { openRouterId: model.openRouterId, provider: model.provider, label: model.label }
+        return model
     }
 })
