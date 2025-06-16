@@ -75,8 +75,15 @@ export const send = action({
 export const create = internalMutation({
     args: { threadId: v.id('threads'), openRouterId: v.string(), prompt: v.string() },
     handler: async (ctx, { threadId, openRouterId, prompt }) => {
-        const model: { openRouterId: string; label: string } = await ctx.runQuery(internal.models.data, { openRouterId })
-        return await ctx.db.insert('messages', { threadId, status: 'pending', model: model.openRouterId, prompt })
+        const model: { openRouterId: string; provider: string; label: string } = await ctx.runQuery(internal.models.data, { openRouterId })
+        return await ctx.db.insert('messages', {
+            threadId,
+            status: 'pending',
+            openRouterId: model.openRouterId,
+            provider: model.provider,
+            label: model.label,
+            prompt
+        })
     }
 })
 
@@ -93,7 +100,7 @@ export const run = internalAction({
         const history = await ctx.runQuery(internal.messages.history, { threadId: message.threadId })
         const { textStream } = streamText({
             system: 'You are a helpful assistant. Respond to the user in Markdown format.',
-            model: openrouter.chat(message.model),
+            model: openrouter.chat(message.openRouterId),
             messages: [...history, { role: 'user', content: message.prompt }],
             experimental_transform: smoothStream({ chunking: 'line' })
         })

@@ -12,8 +12,10 @@ export default defineSchema({
     }).index('by_user_and_update_time', ['userId', 'updateTime']),
     messages: defineTable({
         threadId: v.id('threads'),
-        status: v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error'), v.literal('timeout')),
-        model: v.string(),
+        status: v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error')),
+        openRouterId: v.string(),
+        provider: v.string(),
+        label: v.string(),
         prompt: v.string()
     }).index('by_thread', ['threadId']),
     chunks: defineTable({

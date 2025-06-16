@@ -44,7 +44,9 @@ export const copyMessagesInternal = internalMutation({
             const newMessageId = await ctx.db.insert('messages', {
                 threadId: newThreadId,
                 status: message.status,
-                model: message.model,
+                openRouterId: message.openRouterId,
+                provider: message.provider,
+                label: message.label,
                 prompt: message.prompt
             })
             await ctx.scheduler.runAfter(0, internal.branching.copyChunksInternal, { messageId: message._id, newMessageId })

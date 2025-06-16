@@ -58,7 +58,7 @@ function RouteComponent() {
                                         </TooltipTrigger>
                                         <TooltipContent side="bottom">Branch Off</TooltipContent>
                                     </Tooltip>
-                                    <span className="text-sm">{message.model}</span>
+                                    <span className="text-sm">{`${message.provider}: ${message.label}`}</span>
                                 </div>
                             )}
                         </div>

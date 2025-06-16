@@ -16,14 +16,14 @@ export const list = query({
 
 export const data = internalQuery({
     args: { openRouterId: v.string() },
-    handler: async (ctx, { openRouterId }): Promise<{ openRouterId: string; label: string }> => {
+    handler: async (ctx, { openRouterId }) => {
         const model = await ctx.db
             .query('models')
             .withIndex('by_openRouterId', (q) => q.eq('openRouterId', openRouterId))
             .first()
         if (model) {
-            return { openRouterId: model.openRouterId, label: model.label }
+            return { openRouterId: model.openRouterId, provider: model.provider, label: model.label }
         }
-        return { openRouterId: 'openai/gpt-4.1-nano', label: 'GPT-4.1 Nano' }
+        return { openRouterId: 'openai/gpt-4.1-nano', provider: 'OpenAI', label: 'GPT-4.1 Nano' }
     }
 })
