@@ -182,22 +182,22 @@ function ThreadContextMenu({
         <ContextMenu>
             <ContextMenuTrigger>{children}</ContextMenuTrigger>
             <ContextMenuContent>
-                <ContextMenuItem onClick={onEdit}>
+                <ContextMenuItem className="hover:bg-sidebar!" onClick={onEdit}>
                     <TextCursorIcon />
                     Rename
                 </ContextMenuItem>
-                <ContextMenuItem onClick={onTogglePin}>
+                <ContextMenuItem className="hover:bg-sidebar!" onClick={onTogglePin}>
                     {thread.pinned ? <PinOffIcon /> : <PinIcon />}
                     {thread.pinned ? 'Unpin' : 'Pin'}
                 </ContextMenuItem>
-                <ContextMenuItem onClick={handleShareToggle}>
+                <ContextMenuItem className="hover:bg-sidebar!" onClick={handleShareToggle}>
                     {thread.shared ? <UnlinkIcon /> : <LinkIcon />}
                     {thread.shared ? 'Unshare' : 'Share'}
                 </ContextMenuItem>
                 {!thread.pinned && <ContextMenuSeparator />}
                 {!thread.pinned && (
                     <DeleteThreadDialog thread={thread} onDelete={onDelete}>
-                        <ContextMenuItem onSelect={(event) => event.preventDefault()}>
+                        <ContextMenuItem className="hover:bg-sidebar!" onSelect={(event) => event.preventDefault()}>
                             <Trash2Icon />
                             Delete
                         </ContextMenuItem>
