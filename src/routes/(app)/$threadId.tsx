@@ -5,7 +5,6 @@ import { Fragment } from 'react'
 
 import { AssistantMessage } from '@/components/messages/assistant'
 import { Button } from '@/components/ui/button'
-import { useSidebar } from '@/components/ui/sidebar'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
@@ -19,7 +18,6 @@ export const Route = createFileRoute('/(app)/$threadId')({
 
 function RouteComponent() {
     const navigate = useNavigate()
-    const { open, isMobile } = useSidebar()
     const branchOff = useMutation(api.branching.copy)
     const { threadId } = useParams({ from: '/(app)/$threadId' })
     const messages = useQuery(api.messages.findAll, { threadId: threadId as Id<'threads'> })
@@ -36,7 +34,7 @@ function RouteComponent() {
     }
 
     return (
-        <div className={cn('w-full pt-14 pb-36 sm:pt-8', open && !isMobile && 'max-w-[calc(100vw-var(--sidebar-width))]')}>
+        <div className={cn('w-full max-w-full overflow-hidden pt-14 pb-36 sm:pt-8')}>
             <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 sm:px-14">
                 {messages?.map((message) => (
                     <Fragment key={message._id}>
