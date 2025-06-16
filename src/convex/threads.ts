@@ -21,8 +21,8 @@ export const list = query({
 })
 
 export const create = mutation({
-    args: { apiKey: v.optional(v.string()), openRouterId: v.string(), prompt: v.string() },
-    handler: async (ctx, { apiKey, openRouterId, prompt }) => {
+    args: { modelId: v.id('models'), apiKey: v.optional(v.string()), prompt: v.string() },
+    handler: async (ctx, { modelId, apiKey, prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
@@ -36,8 +36,7 @@ export const create = mutation({
             updateTime: Date.now()
         })
         await ctx.scheduler.runAfter(0, internal.threads.createInternal, { apiKey, threadId, prompt })
-        const messageId = await ctx.runMutation(internal.messages.create, { threadId, openRouterId, prompt })
-        await ctx.scheduler.runAfter(0, internal.messages.run, { apiKey, messageId })
+        await ctx.scheduler.runAfter(0, internal.messages.create, { modelId, threadId, prompt })
         return threadId
     }
 })
