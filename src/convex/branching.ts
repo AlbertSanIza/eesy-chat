@@ -2,7 +2,7 @@ import { v } from 'convex/values'
 
 import { internalMutation, mutation } from './_generated/server'
 
-export const copyThread = mutation({
+export const copy = mutation({
     args: { threadId: v.id('threads') },
     handler: async (ctx, { threadId }) => {
         const identity = await ctx.auth.getUserIdentity()
@@ -41,7 +41,6 @@ export const copyMessagesInternal = internalMutation({
                 prompt: message.prompt
             })
         }
-
         return true
     }
 })
@@ -60,7 +59,6 @@ export const copyChunksInternal = internalMutation({
                 text: chunk.text
             })
         }
-
         return true
     }
 })
