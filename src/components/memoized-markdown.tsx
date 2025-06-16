@@ -71,7 +71,7 @@ const MemoizedMarkdownBlock = memo(
                 components={{
                     code: CodeHighlight,
                     table: ({ children }) => (
-                        <div className="overflow-hidden rounded-lg border">
+                        <div className="mb-4 overflow-hidden rounded-lg border">
                             <table>{children}</table>
                         </div>
                     )
