@@ -44,7 +44,7 @@ export function ApiKeyDialog() {
             <DialogTrigger asChild>
                 <Button variant="outline" size="icon" className="relative">
                     <KeyIcon />
-                    {openRouterApiKey && <div className="absolute right-1.5 bottom-1.5 size-2 rounded-full bg-green-500" />}
+                    {openRouterApiKey && <div className="absolute right-1.5 bottom-1.5 size-1 rounded-full bg-green-500" />}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
@@ -52,10 +52,6 @@ export function ApiKeyDialog() {
                     <DialogTitle>OpenRouter API Key</DialogTitle>
                     <DialogDescription>
                         Enter your OpenRouter API key to use AI models. Your key is stored locally and never sent to our servers.
-                        <br />
-                        <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                            Get your API key from OpenRouter →
-                        </a>
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
