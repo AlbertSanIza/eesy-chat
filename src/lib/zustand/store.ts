@@ -10,11 +10,13 @@ export const useStore = create<{
     models: FunctionReturnType<typeof api.models.list>
     threadSearch: string
     selectedModel: string
+    openRouterApiKey: string | null
     setUser: ({ fullName, imageUrl }: { fullName?: string; imageUrl?: string }) => void
     setThreads: (threads: FunctionReturnType<typeof api.threads.list>) => void
     setModels: (models: FunctionReturnType<typeof api.models.list>) => void
     setThreadSearch: (search: string) => void
     setSelectedModel: (modelId: string) => void
+    setOpenRouterApiKey: (apiKey: string) => void
 }>()(
     persist(
         (set) => ({
@@ -23,6 +25,7 @@ export const useStore = create<{
             models: [],
             threadSearch: '',
             selectedModel: 'openai/gpt-4.1-nano',
+            openRouterApiKey: null,
             setUser: ({ fullName, imageUrl }) => {
                 set({ user: { fullName, imageUrl } })
             },
@@ -37,6 +40,9 @@ export const useStore = create<{
             },
             setSelectedModel: (openRouterId: string) => {
                 set({ selectedModel: openRouterId })
+            },
+            setOpenRouterApiKey: (apiKey: string) => {
+                set({ openRouterApiKey: apiKey })
             }
         }),
         { name: 'eesy-chat-store' }
