@@ -3,9 +3,11 @@ import { smoothStream, streamText } from 'ai'
 import { ConvexHttpClient } from 'convex/browser'
 import { config } from 'dotenv'
 import { Hono } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 import { stream } from 'hono/streaming'
 
-// import { api } from '../src/convex/_generated/api'
+import { api } from '../src/convex/_generated/api'
+import { Id } from '../src/convex/_generated/dataModel'
 
 config({ path: '.env' })
 config({ path: '.env.local', override: true })
@@ -21,20 +23,29 @@ const app = new Hono()
 const httpClient = new ConvexHttpClient(process.env.VITE_CONVEX_URL)
 
 app.post('/', async (c) => {
-    // const messages = await httpClient.query(api.models.findOne, { modelId })
-
-    const openrouter = createOpenRouter({ apiKey: process.env.OPENROUTER_API_KEY })
-    const result = streamText({
-        model: openrouter.chat('openai/gpt-4.1-nano'),
-        onChunk: (chunk) => {
-            console.log(chunk)
-        },
-        prompt: 'Invent a new holiday and describe its traditions.',
-        experimental_transform: smoothStream({ chunking: 'word' })
-    })
-    result.consumeStream()
-    c.header('Content-Type', 'text/plain; charset=utf-8')
-    return stream(c, (stream) => stream.pipe(result.textStream))
+    const { apiKey, messageId }: { apiKey: string; messageId: Id<'messages'> } = await c.req.json()
+    try {
+        const message = await httpClient.query(api.streaming.getMessage, { messageId })
+        if (!message) {
+            throw new HTTPException(404, { message: 'Message Not Found' })
+        }
+        if (message.status !== 'pending') {
+            throw new HTTPException(400, { message: 'Stream is not pending; did it timeout?' })
+        }
+        const history = await httpClient.query(api.streaming.getHistory, { threadId: message.threadId })
+        const openrouter = createOpenRouter({ apiKey: apiKey || process.env.OPENROUTER_API_KEY })
+        const response = streamText({
+            system: 'You are a helpful assistant. Respond to the user in Markdown format.',
+            model: openrouter.chat(message.model),
+            messages: [...history, { role: 'user', content: message.prompt }],
+            experimental_transform: smoothStream({ chunking: 'line' })
+        })
+        response.consumeStream()
+        c.header('Content-Type', 'text/plain; charset=utf-8')
+        return stream(c, (stream) => stream.pipe(response.textStream))
+    } catch {
+        throw new HTTPException(404, { message: 'Message Not Found' })
+    }
 })
 
 export default app

@@ -17,6 +17,7 @@ import type * as branching from "../branching.js";
 import type * as chunks from "../chunks.js";
 import type * as messages from "../messages.js";
 import type * as models from "../models.js";
+import type * as streaming from "../streaming.js";
 import type * as threads from "../threads.js";
 
 /**
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   chunks: typeof chunks;
   messages: typeof messages;
   models: typeof models;
+  streaming: typeof streaming;
   threads: typeof threads;
 }>;
 export declare const api: FilterApi<
