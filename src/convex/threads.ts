@@ -23,7 +23,7 @@ export const findAll = query({
 })
 
 export const create = mutation({
-    args: { openRouterId: v.id('models'), prompt: v.string() },
+    args: { openRouterId: v.string(), prompt: v.string() },
     handler: async (ctx, { openRouterId, prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
