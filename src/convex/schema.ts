@@ -4,6 +4,7 @@ import { v } from 'convex/values'
 export default defineSchema({
     threads: defineTable({
         userId: v.string(),
+        name: v.string(),
         pinned: v.boolean(),
         shared: v.boolean(),
         branched: v.boolean(),
