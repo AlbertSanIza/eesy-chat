@@ -41,8 +41,8 @@ export const useStore = create<{
             setThreadSearch: (search: string) => {
                 set({ threadSearch: search })
             },
-            setSelectedModel: (openRouterId: string) => {
-                set({ selectedModel: openRouterId })
+            setSelectedModel: (model: string) => {
+                set({ selectedModel: model })
             },
             setOpenRouterApiKey: (apiKey: string) => {
                 set({ openRouterApiKey: apiKey })
