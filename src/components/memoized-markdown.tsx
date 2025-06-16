@@ -29,7 +29,7 @@ export const CodeHighlight = ({ className, children, node, ...props }: CodeHighl
                     size="icon"
                     variant="ghost"
                     onClick={() => {
-                        navigator.clipboard.writeText(children as string)
+                        navigator.clipboard.writeText((children as string).trim())
                         setCopied(true)
                         setTimeout(() => setCopied(false), 1000)
                     }}
