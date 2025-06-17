@@ -15,7 +15,6 @@ import type {
 } from "convex/server";
 import type * as create from "../create.js";
 import type * as get from "../get.js";
-import type * as messages from "../messages.js";
 import type * as remove from "../remove.js";
 import type * as streaming from "../streaming.js";
 import type * as update from "../update.js";
@@ -31,7 +30,6 @@ import type * as update from "../update.js";
 declare const fullApi: ApiFromModules<{
   create: typeof create;
   get: typeof get;
-  messages: typeof messages;
   remove: typeof remove;
   streaming: typeof streaming;
   update: typeof update;
