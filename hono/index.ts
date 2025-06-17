@@ -1,7 +1,7 @@
 import { ConvexHttpClient } from 'convex/browser'
 import { config } from 'dotenv'
 import { Hono } from 'hono'
-import { cors } from 'hono/cors'
+// import { cors } from 'hono/cors'
 import { HTTPException } from 'hono/http-exception'
 import { stream } from 'hono/streaming'
 
@@ -26,21 +26,21 @@ const app = new Hono()
 const httpClient = new ConvexHttpClient(process.env.VITE_CONVEX_URL)
 
 // Configure CORS to allow requests from your frontend
-app.use(
-    '*',
-    cors({
-        origin: (origin) => {
-            // Allow requests from localhost development servers
-            if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('https://localhost:') || origin.includes(process.env.DOMAIN_URL!)) {
-                return origin || '*'
-            }
-            return null
-        },
-        allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowHeaders: ['Content-Type', 'Authorization'],
-        credentials: true
-    })
-)
+// app.use(
+//     '*',
+//     cors({
+//         origin: (origin) => {
+//             // Allow requests from localhost development servers
+//             if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('https://localhost:') || origin.includes(process.env.DOMAIN_URL!)) {
+//                 return origin || '*'
+//             }
+//             return null
+//         },
+//         allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//         allowHeaders: ['Content-Type', 'Authorization'],
+//         credentials: true
+//     })
+// )
 
 app.get('/ping', async (c) => {
     return c.text('pong')
