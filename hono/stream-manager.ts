@@ -12,7 +12,10 @@ if (!process.env.VITE_CONVEX_URL) {
 
 const httpClient = new ConvexHttpClient(process.env.VITE_CONVEX_URL)
 
-type Subscriber = WritableStreamDefaultWriter<string>
+type Subscriber = {
+    write: (chunk: string) => Promise<void>
+    close: () => void
+}
 
 class BroadcastStream {
     private subscribers = new Set<Subscriber>()
@@ -39,8 +42,8 @@ class BroadcastStream {
                         delta += textChunk
                         count++
                         this.chunks.push(textChunk)
-                        this.subscribers.forEach((subscriber) => {
-                            subscriber.write(textChunk)
+                        this.subscribers.forEach(async (subscriber) => {
+                            await subscriber.write(textChunk)
                         })
                     }
                     if (count >= 7) {

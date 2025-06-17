@@ -2,6 +2,7 @@ import { ConvexHttpClient } from 'convex/browser'
 import { config } from 'dotenv'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
+import { stream } from 'hono/streaming'
 
 import { api } from '../src/convex/_generated/api'
 import { Id } from '../src/convex/_generated/dataModel'
@@ -49,39 +50,38 @@ app.post('/start', async (c) => {
     }
 })
 
-// app.get('/connect/:messageId', (c) => {
-//     const messageId = c.req.param('messageId') as Id<'messages'>
+app.get('/connect/:messageId', (c) => {
+    const messageId = c.req.param('messageId') as Id<'messages'>
 
-//     return stream(c, async (stream) => {
-//         // 1. Immediately fetch history from Convex to catch the client up
-//         const message = await convex.query(api.streaming.getMessage, { messageId })
-//         if (message?.content) {
-//             await stream.write(message.content)
-//         }
+    return stream(c, async (stream) => {
+        const liveStream = streamManager.get(messageId)
+        if (!liveStream) {
+            await stream.write('data: {"error": "Stream not found"}\n\n')
+            return
+        }
+        const history = liveStream.getHistory()
+        if (history) {
+            await stream.write(history)
+        }
 
-//         // 2. If the stream is already finished, close the connection
-//         if (message?.status !== 'pending') {
-//             await stream.close()
-//             return
-//         }
+        // Create a writer that writes to the Hono stream
+        const writer = {
+            write: async (chunk: string) => {
+                await stream.write(chunk)
+            },
+            close: () => {
+                // Stream will be closed automatically by Hono
+            }
+        }
 
-//         // 3. If it's still live, subscribe to real-time updates
-//         const liveStream = streamManager.get(messageId)
-//         if (liveStream) {
-//             const writer = stream.writable.getWriter()
-//             liveStream.subscribe(writer)
+        // Subscribe to the live stream
+        liveStream.subscribe(writer)
 
-//             // Handle client disconnect
-//             stream.onAbort(() => {
-//                 console.log(`Client disconnected from ${messageId}`)
-//                 liveStream.unsubscribe(writer)
-//                 writer.releaseLock()
-//             })
-//         } else {
-//             // This can happen if the stream finished between the DB check and now
-//             await stream.close()
-//         }
-//     })
-// })
+        // Handle client disconnect
+        c.req.raw.signal.addEventListener('abort', () => {
+            liveStream.unsubscribe(writer)
+        })
+    })
+})
 
 export default app
