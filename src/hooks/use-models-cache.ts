@@ -11,17 +11,10 @@ export function useModelsCache() {
     useEffect(() => {
         if (models) {
             setModels(models)
-            if (!selectedModel) {
+            if (!selectedModel || !models.find((m) => m.model === selectedModel.model)) {
                 const defaultModel = models.find((m) => m.model === 'openai/gpt-4.1-nano')
                 if (defaultModel) {
                     setSelectedModel(defaultModel)
-                }
-            } else if (selectedModel) {
-                if (!models.find((m) => m.model === selectedModel.model)) {
-                    const defaultModel = models.find((m) => m.model === 'openai/gpt-4.1-nano')
-                    if (defaultModel) {
-                        setSelectedModel(defaultModel)
-                    }
                 }
             }
         }
