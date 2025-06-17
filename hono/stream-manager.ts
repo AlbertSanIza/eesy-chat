@@ -88,6 +88,7 @@ class StreamManager {
     private streams = new Map<Id<'messages'>, BroadcastStream>()
 
     exists(messageId: Id<'messages'>): boolean {
+        console.log('Checking existence of stream for message ID:', messageId)
         return this.streams.has(messageId)
     }
     create(history: Message[], message: Doc<'messages'>, apiKey: string) {
@@ -95,12 +96,15 @@ class StreamManager {
             return
         }
         const stream = new BroadcastStream(history, message, apiKey)
+        console.log('Created stream for message ID:', message._id)
         this.streams.set(message._id, stream)
     }
     get(messageId: Id<'messages'>): BroadcastStream | undefined {
+        console.log('Retrieving stream for message ID:', messageId)
         return this.streams.get(messageId)
     }
     delete(messageId: Id<'messages'>) {
+        console.log('Deleting stream for message ID:', messageId)
         this.streams.delete(messageId)
     }
 }
