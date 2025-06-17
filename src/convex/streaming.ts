@@ -1,8 +1,9 @@
-import { Message } from 'ai'
+import type { Message } from 'ai'
 import { v } from 'convex/values'
 
-import { Id } from './_generated/dataModel'
-import { internalAction, mutation, query, QueryCtx } from './_generated/server'
+import type { Id } from './_generated/dataModel'
+import type { QueryCtx } from './_generated/server'
+import { internalAction, mutation, query } from './_generated/server'
 
 export const run = internalAction({
     args: { apiKey: v.string(), messageId: v.id('messages') },

@@ -7,15 +7,15 @@ import type { Doc } from '@/convex/_generated/dataModel'
 
 export const useStore = create<{
     user: { fullName?: string; imageUrl?: string }
-    threads: FunctionReturnType<typeof api.threads.list>
-    models: FunctionReturnType<typeof api.models.list>
+    threads: FunctionReturnType<typeof api.get.threads>
+    models: FunctionReturnType<typeof api.get.models>
     threadSearch: string
     selectedModel?: Doc<'models'>
     openRouterApiKey: string | null
     openAiApiKey: string | null
     setUser: ({ fullName, imageUrl }: { fullName?: string; imageUrl?: string }) => void
-    setThreads: (threads: FunctionReturnType<typeof api.threads.list>) => void
-    setModels: (models: FunctionReturnType<typeof api.models.list>) => void
+    setThreads: (threads: FunctionReturnType<typeof api.get.threads>) => void
+    setModels: (models: FunctionReturnType<typeof api.get.models>) => void
     setThreadSearch: (search: string) => void
     setSelectedModel: (modelId: Doc<'models'>) => void
     setOpenRouterApiKey: (apiKey: string) => void
@@ -33,10 +33,10 @@ export const useStore = create<{
             setUser: ({ fullName, imageUrl }) => {
                 set({ user: { fullName, imageUrl } })
             },
-            setThreads: (threads: FunctionReturnType<typeof api.threads.list>) => {
+            setThreads: (threads: FunctionReturnType<typeof api.get.threads>) => {
                 set({ threads })
             },
-            setModels: (models: FunctionReturnType<typeof api.models.list>) => {
+            setModels: (models: FunctionReturnType<typeof api.get.models>) => {
                 set({ models })
             },
             setThreadSearch: (search: string) => {
