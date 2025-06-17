@@ -28,23 +28,17 @@ class BroadcastStream {
     }
 
     getReadableStream(): ReadableStream<string> {
-        // Create a new ReadableStream for each client to avoid locking issues
         return new ReadableStream<string>({
             start: (controller) => {
-                // Send existing history immediately
                 const history = this.getHistory()
                 if (history) {
                     controller.enqueue(history)
                 }
-
-                // Create a subscriber that will write to this specific controller
                 const subscriber: Subscriber = {
                     write: async (chunk: string) => {
                         try {
                             controller.enqueue(chunk)
                         } catch {
-                            // Controller might be closed, ignore error
-                            console.log('Controller closed, removing subscriber')
                             this.unsubscribe(subscriber)
                         }
                     },
@@ -57,12 +51,7 @@ class BroadcastStream {
                         this.unsubscribe(subscriber)
                     }
                 }
-
-                // Subscribe this controller to receive updates
                 this.subscribe(subscriber)
-            },
-            cancel: () => {
-                // Clean up when stream is cancelled
             }
         })
     }
