@@ -27,7 +27,6 @@ class BroadcastStream {
         const openrouter = createOpenRouter({ apiKey })
         let delta = ''
         let count = 0
-
         try {
             const result = streamText({
                 system: 'You are a helpful assistant. Respond to the user in Markdown format.',
@@ -38,33 +37,23 @@ class BroadcastStream {
                         const textChunk = result.chunk.textDelta
                         delta += textChunk
                         count++
-                        for (const subscriber of this.subscribers) {
+                        this.subscribers.forEach((subscriber) => {
                             subscriber.write(textChunk)
-                        }
+                        })
                     }
                     if (count >= 7) {
-                        this.convex.mutation(api.streaming.addChunk, {
-                            messageId: this.messageId,
-                            text: delta,
-                            final: false
-                        })
+                        httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: false })
                         delta = ''
                         count = 0
                     }
                 },
                 onFinish: async () => {
-                    // Persist the final chunk and mark as complete
-                    this.convex.mutation(api.streaming.addChunk, {
-                        messageId: this.messageId,
-                        text: delta,
-                        final: true
-                    })
-                    // Clean up
+                    httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: true })
                     this.closeAllSubscribers()
                     streamManager.delete(this.messageId)
                 }
             })
-            await result.consumeStream()
+            result.consumeStream()
         } catch (error) {
             console.error('AI stream failed:', error)
             this.closeAllSubscribers()
@@ -81,9 +70,7 @@ class BroadcastStream {
     }
 
     private closeAllSubscribers() {
-        for (const subscriber of this.subscribers) {
-            subscriber.close()
-        }
+        this.subscribers.forEach((subscriber) => subscriber.close())
         this.subscribers.clear()
     }
 }
