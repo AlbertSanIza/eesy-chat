@@ -8,6 +8,7 @@ import { stream } from 'hono/streaming'
 
 import { api } from '../src/convex/_generated/api'
 import { Id } from '../src/convex/_generated/dataModel'
+import { streamManager } from './stream-manager'
 
 config({ path: '.env' })
 config({ path: '.env.local', override: true })
@@ -60,6 +61,32 @@ app.post('/', async (c) => {
         return stream(c, (stream) => stream.pipe(response.textStream))
     } catch {
         throw new HTTPException(404, { message: 'Message Not Found' })
+    }
+})
+
+app.post('/start', async (c) => {
+    const { apiKey, messageId }: { apiKey: string; messageId: Id<'messages'> } = await c.req.json()
+    if (!apiKey || !messageId) {
+        throw new HTTPException(400, { message: 'API Key and Message ID are required' })
+    }
+    if (streamManager.exists(messageId)) {
+        return c.json({ status: 'Stream already in progress.' }, 200)
+    }
+    try {
+        const message = await httpClient.query(api.streaming.getMessage, { messageId })
+        if (!message) {
+            throw new HTTPException(404, { message: 'Message not found' })
+        }
+        if (message.status !== 'pending') {
+            throw new HTTPException(400, { message: 'Stream is not pending; did it timeout?' })
+        }
+        // await httpClient.mutation(api.streaming.setMessageStreamingToStreaming, { messageId })
+        const history = await httpClient.query(api.streaming.getHistory, { threadId: message.threadId })
+        streamManager.create(history, message, apiKey)
+        return c.json({ status: 'Stream started successfully.' }, 200)
+    } catch (error) {
+        console.error('Failed to start stream:', error)
+        throw new HTTPException(404, { message: 'Failed to start stream' })
     }
 })
 
