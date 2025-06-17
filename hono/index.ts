@@ -1,6 +1,7 @@
 import { ConvexHttpClient } from 'convex/browser'
 import { config } from 'dotenv'
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import { HTTPException } from 'hono/http-exception'
 import { stream } from 'hono/streaming'
 
@@ -17,9 +18,29 @@ if (!process.env.VITE_CONVEX_URL) {
 if (!process.env.OPENROUTER_API_KEY) {
     throw new Error('OPENROUTER_API_KEY is not set in the environment variables.')
 }
+if (!process.env.DOMAIN_URL) {
+    throw new Error('DOMAIN_URL is not set in the environment variables.')
+}
 
 const app = new Hono()
 const httpClient = new ConvexHttpClient(process.env.VITE_CONVEX_URL)
+
+// Configure CORS to allow requests from your frontend
+app.use(
+    '*',
+    cors({
+        origin: (origin) => {
+            // Allow requests from localhost development servers
+            if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('https://localhost:') || origin.includes(process.env.DOMAIN_URL!)) {
+                return origin || '*'
+            }
+            return null
+        },
+        allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowHeaders: ['Content-Type', 'Authorization'],
+        credentials: true
+    })
+)
 
 app.get('/ping', async (c) => {
     return c.text('pong')
