@@ -37,6 +37,7 @@ export const chatQueryOptions = (message: Doc<'messages'>) =>
     queryOptions({
         queryKey: ['chat', message.threadId.toString(), message._id.toString()],
         queryFn: streamedQuery({
+            refetchMode: 'replace',
             queryFn: async function* () {
                 const response = await fetch(`${VITE_RAILWAY_API_URL}/connect/${message._id}`)
                 if (!response.ok) {

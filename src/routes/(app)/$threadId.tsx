@@ -23,7 +23,7 @@ function RouteComponent() {
 
     useEffect(() => {
         if (messages && messages.length > 0 && (messages[messages.length - 1].status === 'pending' || messages[messages.length - 1].status === 'streaming')) {
-            window.scrollTo({ top: document.body.scrollHeight })
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
         }
     }, [messages])
 
@@ -59,9 +59,9 @@ function ServerMessage({ message }: { message: Doc<'messages'> }) {
         <AssistantMessage
             promptMessage={message}
             message={
-                loading
-                    ? { id: message._id, role: 'assistant', content: (data ?? []).join('') }
-                    : { id: message._id, role: 'assistant', content: messageBody?.content || '' }
+                messageBody && !loading
+                    ? { id: message._id, role: 'assistant', content: messageBody?.content || '' }
+                    : { id: message._id, role: 'assistant', content: (data ?? []).join('') }
             }
             showExtras={!loading}
         />
