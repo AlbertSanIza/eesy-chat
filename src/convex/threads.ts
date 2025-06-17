@@ -37,18 +37,3 @@ export const togglePin = mutation({
         await ctx.db.patch(id, { pinned: !thread?.pinned })
     }
 })
-
-export const toggleShared = mutation({
-    args: { id: v.id('threads') },
-    handler: async (ctx, { id }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return
-        }
-        const thread = await ctx.db.get(id)
-        if (!thread || thread.userId !== identity.subject) {
-            return
-        }
-        await ctx.db.patch(id, { shared: !thread?.shared })
-    }
-})

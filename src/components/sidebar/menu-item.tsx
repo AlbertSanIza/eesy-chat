@@ -32,8 +32,8 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     const renameThread = useAction(api.update.threadName)
     const [inputValue, setInputValue] = useState(thread.name)
     const toggleThreadPin = useMutation(api.threads.togglePin)
+    const toggleSharedThread = useMutation(api.update.threadSharedToggle)
     const [optimisticName, setOptimisticName] = useState<string | null>(null)
-    const toggleSharedThread = useMutation(api.threads.toggleShared)
 
     useEffect(() => {
         if (optimisticName && thread.name === optimisticName) {
