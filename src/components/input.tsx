@@ -1,7 +1,7 @@
 import { SignInButton, useUser } from '@clerk/clerk-react'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useAction, useMutation } from 'convex/react'
-import { ChevronDownIcon, LoaderCircleIcon, SendHorizontalIcon, SquareIcon } from 'lucide-react'
+import { ChevronDownIcon, LoaderCircleIcon, SendHorizontalIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 import { ApiKeysDialog } from '@/components/api-keys-dialog'
@@ -118,19 +118,17 @@ export function Input() {
                                 </div>
                                 <ApiKeysDialog />
                             </div>
-                            {status === 'ready' && (
-                                <Button size="icon" type="submit" className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary">
+                            <div className="flex items-center gap-2">
+                                {(status === 'submitted' || status === 'streaming') && <LoaderCircleIcon className="size-4 animate-spin opacity-50" />}
+                                <Button
+                                    size="icon"
+                                    type="submit"
+                                    className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary"
+                                    disabled={status !== 'ready'}
+                                >
                                     <SendHorizontalIcon />
                                 </Button>
-                            )}
-                            {(status === 'submitted' || status === 'streaming') && (
-                                <div className="flex items-center gap-2">
-                                    <LoaderCircleIcon className="size-4 animate-spin opacity-50" />
-                                    <Button size="icon" className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary" onClick={stop}>
-                                        <SquareIcon />
-                                    </Button>
-                                </div>
-                            )}
+                            </div>
                         </div>
                     </div>
                 </form>
