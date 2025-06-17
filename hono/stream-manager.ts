@@ -62,36 +62,28 @@ class BroadcastStream {
 
     private async run(history: Message[], message: Doc<'messages'>, apiKey: string) {
         const openrouter = createOpenRouter({ apiKey })
-        let delta = ''
-        let count = 0
         try {
             const result = streamText({
                 system: 'You are a helpful assistant. Respond to the user in Markdown format.',
                 model: openrouter.chat(message.model),
-                messages: history,
-                onChunk: async (result) => {
-                    if (result.chunk.type === 'text-delta') {
-                        const textChunk = result.chunk.textDelta
-                        delta += textChunk
-                        count++
-                        this.chunks.push(textChunk)
-                        this.subscribers.forEach(async (subscriber) => {
-                            await subscriber.write(textChunk)
-                        })
-                    }
-                    if (count >= 7) {
-                        await httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: false })
-                        delta = ''
-                        count = 0
-                    }
-                },
-                onFinish: async () => {
-                    await httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: true })
-                    this.closeAllSubscribers()
-                    streamManager.deleteWithDelay(this.messageId)
-                }
+                messages: history
             })
-            result.consumeStream()
+            let delta = ''
+            let count = 0
+            for await (const textPart of result.textStream) {
+                delta += textPart
+                count++
+                this.chunks.push(textPart)
+                this.subscribers.forEach((subscriber) => subscriber.write(textPart))
+                if (count >= 40) {
+                    httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: false })
+                    delta = ''
+                    count = 0
+                }
+            }
+            httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: true })
+            this.closeAllSubscribers()
+            streamManager.deleteWithDelay(this.messageId)
         } catch (error) {
             console.error('AI stream failed:', error)
             this.closeAllSubscribers()
