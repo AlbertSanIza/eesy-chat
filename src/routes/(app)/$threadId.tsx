@@ -1,4 +1,4 @@
-import { queryOptions, experimental_streamedQuery as streamedQuery } from '@tanstack/react-query'
+import { queryOptions, experimental_streamedQuery as streamedQuery, useQuery as useTSQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
 import { Loader2Icon } from 'lucide-react'
@@ -43,28 +43,54 @@ function RouteComponent() {
     )
 }
 
+const chatQueryOptions = (message: Doc<'messages'>) =>
+    queryOptions({
+        queryKey: ['chat', message._id],
+        queryFn: streamedQuery({
+            queryFn: async function* () {
+                const response = await fetch(`${VITE_RAILWAY_API_URL}/connect/${message._id}`)
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
+                const reader = response.body?.getReader()
+                const decoder = new TextDecoder()
+                if (!reader) {
+                    throw new Error('No response body')
+                }
+                while (true) {
+                    const { done, value } = await reader.read()
+                    if (done) {
+                        break
+                    }
+                    yield decoder.decode(value, { stream: true })
+                }
+                return ''
+            }
+        }),
+        staleTime: Infinity
+    })
+
 function ServerMessage({ message }: { message: Doc<'messages'> }) {
-    const messageBody = useQuery(api.get.messageBody, message.status !== 'done' ? 'skip' : { messageId: message._id })
-    const query =
-        message.status !== 'done'
-            ? queryOptions({
-                  queryKey: ['chat', message._id, message.status],
-                  queryFn: streamedQuery({
-                      queryFn: () => fetch(`${VITE_RAILWAY_API_URL}/connect/${message._id}`).then((response) => response.json())
-                  })
-              })
-            : null
+    const messageBody = useQuery(api.get.messageBody, message.status === 'done' ? { messageId: message._id } : 'skip')
+    const { data, isLoading, isFetching } = useTSQuery({ ...chatQueryOptions(message), enabled: message.status === 'streaming' })
 
-    return (
-        <div>
-            {JSON.stringify(query)}
-            {import.meta.env.VITE_RAILWAY_API_URL}
-        </div>
-    )
-
-    if (!messageBody) {
+    if (!data && !messageBody) {
         return null
     }
 
-    return <AssistantMessage promptMessage={message} message={messageBody} showExtras />
+    return (
+        <AssistantMessage
+            promptMessage={message}
+            message={
+                message.status === 'streaming' && (isLoading || isFetching)
+                    ? {
+                          id: message._id,
+                          role: 'assistant',
+                          content: (data ?? []).join('')
+                      }
+                    : { id: message._id, role: 'assistant', content: messageBody?.content || '' }
+            }
+            showExtras
+        />
+    )
 }
