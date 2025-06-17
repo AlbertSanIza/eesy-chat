@@ -13,7 +13,6 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as branching from "../branching.js";
 import type * as create from "../create.js";
 import type * as get from "../get.js";
 import type * as messages from "../messages.js";
@@ -30,7 +29,6 @@ import type * as update from "../update.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  branching: typeof branching;
   create: typeof create;
   get: typeof get;
   messages: typeof messages;

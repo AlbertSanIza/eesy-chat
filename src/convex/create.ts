@@ -49,12 +49,12 @@ export const threadBranch = mutation({
             branched: true,
             updateTime: Date.now()
         })
-        await ctx.scheduler.runAfter(0, internal.create.threadBranchInternal, { threadId, newThreadId, messageId })
+        await ctx.scheduler.runAfter(0, internal.create.threadBranchMessagesInternal, { threadId, newThreadId, messageId })
         return newThreadId
     }
 })
 
-export const threadBranchInternal = internalMutation({
+export const threadBranchMessagesInternal = internalMutation({
     args: { threadId: v.id('threads'), newThreadId: v.id('threads'), messageId: v.id('messages') },
     handler: async (ctx, { threadId, newThreadId, messageId }) => {
         const messages = await ctx.db
@@ -73,7 +73,20 @@ export const threadBranchInternal = internalMutation({
                 label: message.label,
                 prompt: message.prompt
             })
-            await ctx.scheduler.runAfter(0, internal.branching.copyChunksInternal, { messageId: message._id, newMessageId })
+            await ctx.scheduler.runAfter(0, internal.create.threadBranchChunksInternal, { messageId: message._id, newMessageId })
+        }
+    }
+})
+
+export const threadBranchChunksInternal = internalMutation({
+    args: { messageId: v.id('messages'), newMessageId: v.id('messages') },
+    handler: async (ctx, { messageId, newMessageId }) => {
+        const chunks = await ctx.db
+            .query('chunks')
+            .withIndex('by_message', (q) => q.eq('messageId', messageId))
+            .collect()
+        for (const chunk of chunks) {
+            await ctx.db.insert('chunks', { messageId: newMessageId, text: chunk.text })
         }
     }
 })
