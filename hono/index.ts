@@ -83,21 +83,10 @@ app.get('/connect/:messageId', (c) => {
         if (history) {
             await stream.write(history)
         }
-
-        // Create a writer that writes to the Hono stream
-        const writer = {
-            write: async (chunk: string) => {
-                await stream.write(chunk)
-            },
-            close: () => {
-                // Stream will be closed automatically by Hono
-            }
-        }
-
-        liveStream.subscribe(writer)
-
+        const aiStream = liveStream.getReadableStream()
+        await stream.pipe(aiStream)
         stream.onAbort(() => {
-            liveStream.unsubscribe(writer)
+            liveStream.cleanup()
         })
     })
 })
