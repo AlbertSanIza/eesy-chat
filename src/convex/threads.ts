@@ -3,7 +3,7 @@ import { generateText } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { action, internalAction, internalMutation, mutation } from './_generated/server'
+import { internalAction, internalMutation, mutation } from './_generated/server'
 
 export const createInternal = internalAction({
     args: { apiKey: v.string(), threadId: v.id('threads'), prompt: v.string() },
@@ -15,17 +15,6 @@ export const createInternal = internalAction({
             messages: [{ role: 'user', content: prompt.trim() }]
         })
         await ctx.scheduler.runAfter(0, internal.threads.renameInternal, { id: threadId, name: response.text.trim() })
-    }
-})
-
-export const rename = action({
-    args: { id: v.id('threads'), name: v.string() },
-    handler: async (ctx, { id, name }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return
-        }
-        await ctx.scheduler.runAfter(0, internal.threads.renameInternal, { id, name })
     }
 })
 
