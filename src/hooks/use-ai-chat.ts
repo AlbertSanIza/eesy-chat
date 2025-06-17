@@ -8,7 +8,7 @@ import { getConvexSiteUrl } from '@/lib/utils'
 
 const URL = `${getConvexSiteUrl()}/stream`
 
-const useChatStore = create<{
+export const useChatStore = create<{
     instances: Record<
         string,
         {
