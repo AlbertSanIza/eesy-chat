@@ -35,14 +35,14 @@ export const create = mutation({
             branched: false,
             updateTime: Date.now()
         })
-        await ctx.scheduler.runAfter(0, internal.threads.createInternal, { apiKey, threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.threads.createInternal, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', threadId, prompt })
         await ctx.scheduler.runAfter(0, internal.messages.create, { modelId, threadId, prompt })
         return threadId
     }
 })
 
 export const createInternal = internalAction({
-    args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), prompt: v.string() },
+    args: { apiKey: v.string(), threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { apiKey, threadId, prompt }) => {
         const openrouter = createOpenRouter({ apiKey: apiKey || process.env.OPENROUTER_API_KEY })
         const response = await generateText({
