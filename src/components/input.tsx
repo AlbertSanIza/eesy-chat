@@ -91,7 +91,7 @@ export function Input() {
                         >
                             <Button
                                 size="sm"
-                                className="text-xs"
+                                className="text-xs opacity-90"
                                 onClick={(event) => {
                                     event.preventDefault()
                                     event.stopPropagation()
