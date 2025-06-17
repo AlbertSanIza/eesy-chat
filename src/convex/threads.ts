@@ -3,22 +3,7 @@ import { generateText } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { action, internalAction, internalMutation, mutation, query } from './_generated/server'
-
-export const list = query({
-    args: {},
-    handler: async (ctx) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return []
-        }
-        return await ctx.db
-            .query('threads')
-            .withIndex('by_user_and_update_time', (q) => q.eq('userId', identity.subject))
-            .order('desc')
-            .collect()
-    }
-})
+import { action, internalAction, internalMutation, mutation } from './_generated/server'
 
 export const create = mutation({
     args: { modelId: v.id('models'), apiKey: v.optional(v.string()), prompt: v.string() },
