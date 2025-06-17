@@ -23,7 +23,7 @@ if (!process.env.OPENROUTER_API_KEY) {
 const app = new Hono()
 const httpClient = new ConvexHttpClient(process.env.VITE_CONVEX_URL)
 
-app.post('/ping', async (c) => {
+app.get('/ping', async (c) => {
     return c.text('pong')
 })
 
