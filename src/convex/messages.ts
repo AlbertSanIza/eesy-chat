@@ -69,7 +69,7 @@ export const send = action({
 export const create = internalMutation({
     args: { apiKey: v.string(), modelId: v.id('models'), threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { apiKey, modelId, threadId, prompt }) => {
-        const model = (await ctx.runQuery(internal.models.findOneInternal, { modelId })) as {
+        const model = (await ctx.runQuery(internal.get.model, { modelId })) as {
             service: 'openRouter' | 'openAi'
             model: string
             provider: string
