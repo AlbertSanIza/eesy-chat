@@ -1,3 +1,4 @@
+import { queryOptions, experimental_streamedQuery as streamedQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
 import { Loader2Icon } from 'lucide-react'
@@ -8,7 +9,7 @@ import { UserMessage } from '@/components/messages/user'
 import { api } from '@/convex/_generated/api'
 import type { Doc, Id } from '@/convex/_generated/dataModel'
 import { useDocumentTitle } from '@/hooks/use-document-title'
-import { cn } from '@/lib/utils'
+import { cn, VITE_RAILWAY_API_URL } from '@/lib/utils'
 import { useStore } from '@/lib/zustand/store'
 
 export const Route = createFileRoute('/(app)/$threadId')({
@@ -43,7 +44,23 @@ function RouteComponent() {
 }
 
 function ServerMessage({ message }: { message: Doc<'messages'> }) {
-    const messageBody = useQuery(api.get.messageBody, { messageId: message._id })
+    const messageBody = useQuery(api.get.messageBody, message.status !== 'done' ? 'skip' : { messageId: message._id })
+    const query =
+        message.status !== 'done'
+            ? queryOptions({
+                  queryKey: ['chat', message._id, message.status],
+                  queryFn: streamedQuery({
+                      queryFn: () => fetch(`${VITE_RAILWAY_API_URL}/connect/${message._id}`).then((response) => response.json())
+                  })
+              })
+            : null
+
+    return (
+        <div>
+            {JSON.stringify(query)}
+            {import.meta.env.VITE_RAILWAY_API_URL}
+        </div>
+    )
 
     if (!messageBody) {
         return null
