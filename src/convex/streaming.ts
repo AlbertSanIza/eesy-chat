@@ -2,7 +2,17 @@ import { Message } from 'ai'
 import { v } from 'convex/values'
 
 import { Id } from './_generated/dataModel'
-import { mutation, query, QueryCtx } from './_generated/server'
+import { internalAction, mutation, query, QueryCtx } from './_generated/server'
+
+export const run = internalAction({
+    args: { apiKey: v.string(), messageId: v.id('messages') },
+    handler: async (ctx, { apiKey, messageId }) => {
+        await fetch('https://easy-chat-dev.up.railway.ap/start', {
+            method: 'POST',
+            body: JSON.stringify({ apiKey, messageId })
+        })
+    }
+})
 
 export const getMessage = query({
     args: { messageId: v.id('messages') },
