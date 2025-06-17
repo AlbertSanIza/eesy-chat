@@ -79,6 +79,7 @@ export const threadBranchMessagesInternal = internalMutation({
         for (const message of messagesToCopy) {
             const newMessageId = await ctx.db.insert('messages', {
                 threadId: newThreadId,
+                type: 'text',
                 status: message.status,
                 service: message.service,
                 model: message.model,
@@ -130,6 +131,7 @@ export const messageInternal = internalMutation({
         }
         const messageId = await ctx.db.insert('messages', {
             threadId,
+            type: 'text',
             status: 'pending',
             service: model.service,
             model: model.model,
