@@ -3,7 +3,7 @@ import { generateText } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { internalAction, internalMutation, mutation } from './_generated/server'
+import { internalAction, internalMutation } from './_generated/server'
 
 export const createInternal = internalAction({
     args: { apiKey: v.string(), threadId: v.id('threads'), prompt: v.string() },
@@ -21,19 +21,4 @@ export const createInternal = internalAction({
 export const renameInternal = internalMutation({
     args: { id: v.id('threads'), name: v.string() },
     handler: async (ctx, { id, name }) => await ctx.db.patch(id, { name: name.trim() || 'Untitled Thread' })
-})
-
-export const togglePin = mutation({
-    args: { id: v.id('threads') },
-    handler: async (ctx, { id }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return
-        }
-        const thread = await ctx.db.get(id)
-        if (!thread || thread.userId !== identity.subject) {
-            return
-        }
-        await ctx.db.patch(id, { pinned: !thread?.pinned })
-    }
 })

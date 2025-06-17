@@ -14,6 +14,21 @@ export const threadName = action({
     }
 })
 
+export const threadPinToggle = mutation({
+    args: { id: v.id('threads') },
+    handler: async (ctx, { id }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return
+        }
+        const thread = await ctx.db.get(id)
+        if (!thread || thread.userId !== identity.subject) {
+            return
+        }
+        await ctx.db.patch(id, { pinned: !thread?.pinned })
+    }
+})
+
 export const threadSharedToggle = mutation({
     args: { id: v.id('threads') },
     handler: async (ctx, { id }) => {
@@ -32,21 +47,6 @@ export const threadSharedToggle = mutation({
 export const renameInternal = internalMutation({
     args: { id: v.id('threads'), name: v.string() },
     handler: async (ctx, { id, name }) => await ctx.db.patch(id, { name: name.trim() || 'Untitled Thread' })
-})
-
-export const togglePin = mutation({
-    args: { id: v.id('threads') },
-    handler: async (ctx, { id }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return
-        }
-        const thread = await ctx.db.get(id)
-        if (!thread || thread.userId !== identity.subject) {
-            return
-        }
-        await ctx.db.patch(id, { pinned: !thread?.pinned })
-    }
 })
 
 export const threadTime = internalMutation({
