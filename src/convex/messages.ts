@@ -75,16 +75,14 @@ export const send = action({
         if (identity === null) {
             return null
         }
-        const messageId = await ctx.runMutation(internal.messages.create, { modelId, threadId, prompt })
-        await ctx.scheduler.runAfter(0, internal.streaming.run, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', messageId })
+        await ctx.runMutation(internal.messages.create, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', modelId, threadId, prompt })
         await ctx.scheduler.runAfter(0, internal.threads.updateTime, { threadId })
-        // await ctx.scheduler.runAfter(0, internal.messages.run, { apiKey, messageId })
     }
 })
 
 export const create = internalMutation({
-    args: { modelId: v.id('models'), threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { modelId, threadId, prompt }) => {
+    args: { apiKey: v.string(), modelId: v.id('models'), threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { apiKey, modelId, threadId, prompt }) => {
         const model = (await ctx.runQuery(internal.models.findOneInternal, { modelId })) as {
             service: 'openRouter' | 'openAi'
             model: string
@@ -103,6 +101,7 @@ export const create = internalMutation({
             label: model.label,
             prompt
         })
+        await ctx.scheduler.runAfter(0, internal.streaming.run, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', messageId })
         return messageId
     }
 })

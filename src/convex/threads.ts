@@ -36,7 +36,7 @@ export const create = mutation({
             updateTime: Date.now()
         })
         await ctx.scheduler.runAfter(0, internal.threads.createInternal, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', threadId, prompt })
-        await ctx.scheduler.runAfter(0, internal.messages.create, { modelId, threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.messages.create, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', modelId, threadId, prompt })
         return threadId
     }
 })
