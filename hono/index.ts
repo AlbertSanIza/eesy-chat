@@ -87,6 +87,7 @@ app.get('/connect/:messageId', (c) => {
         // Create a writer that writes to the Hono stream
         const writer = {
             write: async (chunk: string) => {
+                console.log('🚀 ~ write: ~ chunk:', chunk)
                 await stream.write(chunk)
             },
             close: () => {
