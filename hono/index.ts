@@ -76,7 +76,7 @@ app.get('/connect/:messageId', (c) => {
     return stream(c, async (stream) => {
         const liveStream = streamManager.get(messageId)
         if (!liveStream) {
-            await stream.write('data: {"error": "Stream not found"}\n\n')
+            await stream.write('Stream not found or has ended.')
             return
         }
         const history = liveStream.getHistory()
@@ -87,7 +87,6 @@ app.get('/connect/:messageId', (c) => {
         // Create a writer that writes to the Hono stream
         const writer = {
             write: async (chunk: string) => {
-                console.log('🚀 ~ write: ~ chunk:', chunk)
                 await stream.write(chunk)
             },
             close: () => {
@@ -95,11 +94,9 @@ app.get('/connect/:messageId', (c) => {
             }
         }
 
-        // Subscribe to the live stream
         liveStream.subscribe(writer)
 
-        // Handle client disconnect
-        c.req.raw.signal.addEventListener('abort', () => {
+        stream.onAbort(() => {
             liveStream.unsubscribe(writer)
         })
     })

@@ -47,13 +47,13 @@ class BroadcastStream {
                         })
                     }
                     if (count >= 7) {
-                        httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: false })
+                        await httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: false })
                         delta = ''
                         count = 0
                     }
                 },
                 onFinish: async () => {
-                    httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: true })
+                    await httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: true })
                     this.closeAllSubscribers()
                     streamManager.delete(this.messageId)
                 }
