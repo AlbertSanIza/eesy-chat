@@ -23,7 +23,11 @@ if (!process.env.OPENROUTER_API_KEY) {
 const app = new Hono()
 const httpClient = new ConvexHttpClient(process.env.VITE_CONVEX_URL)
 
-app.post('/', async (c) => {
+app.post('/ping', async (c) => {
+    return c.text('pong')
+})
+
+app.post('/hello', async (c) => {
     const { apiKey, messageId }: { apiKey: string; messageId: Id<'messages'> } = await c.req.json()
     try {
         const message = await httpClient.query(api.streaming.getMessage, { messageId })
@@ -89,39 +93,39 @@ app.post('/start', async (c) => {
     }
 })
 
-app.get('/connect/:messageId', (c) => {
-    const messageId = c.req.param('messageId') as Id<'messages'>
+// app.get('/connect/:messageId', (c) => {
+//     const messageId = c.req.param('messageId') as Id<'messages'>
 
-    return stream(c, async (stream) => {
-        // 1. Immediately fetch history from Convex to catch the client up
-        const message = await convex.query(api.streaming.getMessage, { messageId })
-        if (message?.content) {
-            await stream.write(message.content)
-        }
+//     return stream(c, async (stream) => {
+//         // 1. Immediately fetch history from Convex to catch the client up
+//         const message = await convex.query(api.streaming.getMessage, { messageId })
+//         if (message?.content) {
+//             await stream.write(message.content)
+//         }
 
-        // 2. If the stream is already finished, close the connection
-        if (message?.status !== 'pending') {
-            await stream.close()
-            return
-        }
+//         // 2. If the stream is already finished, close the connection
+//         if (message?.status !== 'pending') {
+//             await stream.close()
+//             return
+//         }
 
-        // 3. If it's still live, subscribe to real-time updates
-        const liveStream = streamManager.get(messageId)
-        if (liveStream) {
-            const writer = stream.writable.getWriter()
-            liveStream.subscribe(writer)
+//         // 3. If it's still live, subscribe to real-time updates
+//         const liveStream = streamManager.get(messageId)
+//         if (liveStream) {
+//             const writer = stream.writable.getWriter()
+//             liveStream.subscribe(writer)
 
-            // Handle client disconnect
-            stream.onAbort(() => {
-                console.log(`Client disconnected from ${messageId}`)
-                liveStream.unsubscribe(writer)
-                writer.releaseLock()
-            })
-        } else {
-            // This can happen if the stream finished between the DB check and now
-            await stream.close()
-        }
-    })
-})
+//             // Handle client disconnect
+//             stream.onAbort(() => {
+//                 console.log(`Client disconnected from ${messageId}`)
+//                 liveStream.unsubscribe(writer)
+//                 writer.releaseLock()
+//             })
+//         } else {
+//             // This can happen if the stream finished between the DB check and now
+//             await stream.close()
+//         }
+//     })
+// })
 
 export default app
