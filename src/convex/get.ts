@@ -100,10 +100,11 @@ export const model = internalQuery({
         if (!model) {
             return {
                 _id: 'kh7cy4mfjaqrdvz6byjf4fhy897hw5mj',
-                openRouterId: 'openai/gpt-4.1-nano',
-                provider: 'OpenAI',
-                label: 'GPT-4.1 Nano',
                 enabled: true,
+                label: 'GPT-4.1 Nano',
+                model: 'openai/gpt-4.1-nano',
+                provider: 'OpenAI',
+                service: 'openRouter',
                 withKey: false,
                 _creationTime: Date.now()
             }
