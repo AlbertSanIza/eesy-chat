@@ -14,7 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as branching from "../branching.js";
-import type * as chunks from "../chunks.js";
+import type * as create from "../create.js";
 import type * as get from "../get.js";
 import type * as messages from "../messages.js";
 import type * as remove from "../remove.js";
@@ -32,7 +32,7 @@ import type * as update from "../update.js";
  */
 declare const fullApi: ApiFromModules<{
   branching: typeof branching;
-  chunks: typeof chunks;
+  create: typeof create;
   get: typeof get;
   messages: typeof messages;
   remove: typeof remove;

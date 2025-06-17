@@ -2,7 +2,7 @@ import { v } from 'convex/values'
 
 import { internalMutation } from './_generated/server'
 
-export const add = internalMutation({
+export const chunk = internalMutation({
     args: { messageId: v.id('messages'), text: v.string(), final: v.boolean() },
     handler: async (ctx, { messageId, text, final }) => {
         const message = await ctx.db.get(messageId)

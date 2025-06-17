@@ -116,12 +116,12 @@ export const run = internalAction({
             delta += textPart
             count++
             if (count === 1) {
-                await ctx.runMutation(internal.chunks.add, { messageId, text: delta, final: false })
+                await ctx.runMutation(internal.create.chunk, { messageId, text: delta, final: false })
                 delta = ''
                 count = 0
             }
         }
-        await ctx.runMutation(internal.chunks.add, { messageId, text: delta, final: true })
+        await ctx.runMutation(internal.create.chunk, { messageId, text: delta, final: true })
     }
 })
 
