@@ -49,11 +49,6 @@ export const threadSharedToggle = mutation({
     }
 })
 
-export const renameInternal = internalMutation({
-    args: { id: v.id('threads'), name: v.string() },
-    handler: async (ctx, { id, name }) => await ctx.db.patch(id, { name: name.trim() || 'Untitled Thread' })
-})
-
 export const threadTime = internalMutation({
     args: { threadId: v.id('threads') },
     handler: async (ctx, { threadId }) => await ctx.db.patch(threadId, { updateTime: Date.now() })
