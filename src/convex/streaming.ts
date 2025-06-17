@@ -6,8 +6,8 @@ import { internalAction, mutation, query, QueryCtx } from './_generated/server'
 
 export const run = internalAction({
     args: { apiKey: v.string(), messageId: v.id('messages') },
-    handler: async (ctx, { apiKey, messageId }) => {
-        await fetch('https://easy-chat-dev.up.railway.ap/start', {
+    handler: async (_, { apiKey, messageId }) => {
+        await fetch(`${process.env.RAILWAY_API_URL}/start`, {
             method: 'POST',
             body: JSON.stringify({ apiKey, messageId })
         })
