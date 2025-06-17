@@ -34,6 +34,25 @@ export const messages = query({
     }
 })
 
+export const messagesHistory = internalQuery({
+    args: { threadId: v.id('threads') },
+    handler: async (ctx, { threadId }): Promise<Message[]> => {
+        const messages = await ctx.db
+            .query('messages')
+            .filter((q) => q.eq(q.field('threadId'), threadId))
+            .collect()
+        const joined = await Promise.all(messages.map(async (message) => ({ message, response: await getMessageBody(ctx, message._id) })))
+        return joined.flatMap((item) => {
+            const user: Message = { id: item.message._id, role: 'user', content: item.message.prompt }
+            const assistant: Message = item.response
+            if (!assistant.content) {
+                return [user]
+            }
+            return [user, assistant]
+        })
+    }
+})
+
 export const message = internalQuery({
     args: { messageId: v.id('messages') },
     handler: async (ctx, { messageId }) => await ctx.db.get(messageId)

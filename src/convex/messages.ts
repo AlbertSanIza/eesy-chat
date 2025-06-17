@@ -4,28 +4,7 @@ import { smoothStream, streamText } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import type { Id } from './_generated/dataModel'
-import type { QueryCtx } from './_generated/server'
-import { action, internalAction, internalMutation, internalQuery, query } from './_generated/server'
-
-export const history = internalQuery({
-    args: { threadId: v.id('threads') },
-    handler: async (ctx, { threadId }): Promise<Message[]> => {
-        const messages = await ctx.db
-            .query('messages')
-            .filter((q) => q.eq(q.field('threadId'), threadId))
-            .collect()
-        const joined = await Promise.all(messages.map(async (message) => ({ message, response: await getMessageBody(ctx, message._id) })))
-        return joined.flatMap((item) => {
-            const user: Message = { id: item.message._id, role: 'user', content: item.message.prompt }
-            const assistant: Message = item.response
-            if (!assistant.content) {
-                return [user]
-            }
-            return [user, assistant]
-        })
-    }
-})
+import { action, internalAction, internalMutation, query } from './_generated/server'
 
 export const shared = query({
     args: { threadId: v.id('threads') },
@@ -34,7 +13,7 @@ export const shared = query({
         if (!thread || !thread.shared) {
             return { name: null, messages: [] }
         }
-        return { name: thread.name, messages: await ctx.runQuery(internal.messages.history, { threadId }) }
+        return { name: thread.name, messages: await ctx.runQuery(internal.get.messagesHistory, { threadId }) }
     }
 })
 
@@ -86,7 +65,7 @@ export const run = internalAction({
         if (message.status !== 'pending') {
             throw new Error('Stream Already Completed')
         }
-        const history = await ctx.runQuery(internal.messages.history, { threadId: message.threadId })
+        const history = await ctx.runQuery(internal.get.messagesHistory, { threadId: message.threadId })
         const openrouter = createOpenRouter({ apiKey: apiKey || process.env.OPENROUTER_API_KEY })
         const { textStream } = streamText({
             system: 'You are a helpful assistant. Respond to the user in Markdown format.',
@@ -108,15 +87,3 @@ export const run = internalAction({
         await ctx.runMutation(internal.create.chunk, { messageId, text: delta, final: true })
     }
 })
-
-export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): Promise<Message> {
-    const chunks = await ctx.db
-        .query('chunks')
-        .withIndex('by_message', (q) => q.eq('messageId', messageId))
-        .collect()
-    return {
-        id: messageId,
-        role: 'assistant',
-        content: chunks.map((chunk) => chunk.text).join('')
-    }
-}
