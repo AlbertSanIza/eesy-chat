@@ -1,8 +1,10 @@
+import { useQuery as useTSQuery } from '@tanstack/react-query'
 import { useQuery } from 'convex/react'
 import { Fragment } from 'react'
 
 import { api } from '@/convex/_generated/api'
-import type { Id } from '@/convex/_generated/dataModel'
+import type { Doc, Id } from '@/convex/_generated/dataModel'
+import { chatQueryOptions } from '@/lib/utils'
 import { useStore } from '@/lib/zustand/store'
 
 export function MessagesCache() {
@@ -18,15 +20,12 @@ export function MessagesCache() {
 function UserMessageCache({ id }: { id: Id<'threads'> }) {
     const messages = useQuery(api.get.messages, { threadId: id })
 
-    return messages?.map((message) => (
-        <Fragment key={message._id}>
-            <AssistantMessageCache key={message._id} id={message._id} />
-        </Fragment>
-    ))
+    return messages?.map((message) => <AssistantMessageCache key={message._id} message={message} />)
 }
 
-function AssistantMessageCache({ id }: { id: Id<'messages'> }) {
-    useQuery(api.get.messageBody, { messageId: id })
+function AssistantMessageCache({ message }: { message: Doc<'messages'> }) {
+    useQuery(api.get.messageBody, { messageId: message._id })
+    useTSQuery({ ...chatQueryOptions(message), enabled: message.status === 'streaming' })
 
     return null
 }
