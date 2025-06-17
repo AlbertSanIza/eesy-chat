@@ -17,6 +17,7 @@ type Subscriber = WritableStreamDefaultWriter<string>
 class BroadcastStream {
     private subscribers = new Set<Subscriber>()
     private messageId: Id<'messages'>
+    private chunks: string[] = []
 
     constructor(history: Message[], message: Doc<'messages'>, apiKey: string) {
         this.messageId = message._id
@@ -37,6 +38,7 @@ class BroadcastStream {
                         const textChunk = result.chunk.textDelta
                         delta += textChunk
                         count++
+                        this.chunks.push(textChunk)
                         this.subscribers.forEach((subscriber) => {
                             subscriber.write(textChunk)
                         })
@@ -67,6 +69,10 @@ class BroadcastStream {
 
     unsubscribe(subscriber: Subscriber) {
         this.subscribers.delete(subscriber)
+    }
+
+    getHistory(): string {
+        return this.chunks.join('')
     }
 
     private closeAllSubscribers() {
