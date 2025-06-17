@@ -132,7 +132,6 @@ class StreamManager {
     private streams = new Map<Id<'messages'>, BroadcastStream>()
 
     exists(messageId: Id<'messages'>): boolean {
-        console.log('Checking existence of stream for message ID:', messageId)
         return this.streams.has(messageId)
     }
     async create(history: Message[], message: Doc<'messages'>, apiKey: string) {
@@ -140,7 +139,6 @@ class StreamManager {
             return
         }
         const stream = new BroadcastStream(history, message, apiKey)
-        console.log('Created stream for message ID:', message._id)
         this.streams.set(message._id, stream)
         await httpClient.mutation(api.streaming.setMessageStreamingToStreaming, { messageId: message._id })
     }
@@ -153,7 +151,7 @@ class StreamManager {
     deleteWithDelay(messageId: Id<'messages'>) {
         setTimeout(() => {
             this.delete(messageId)
-        }, 5000)
+        }, 2000)
     }
 }
 
