@@ -18,6 +18,7 @@ import type * as chunks from "../chunks.js";
 import type * as get from "../get.js";
 import type * as messages from "../messages.js";
 import type * as models from "../models.js";
+import type * as remove from "../remove.js";
 import type * as streaming from "../streaming.js";
 import type * as threads from "../threads.js";
 
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   get: typeof get;
   messages: typeof messages;
   models: typeof models;
+  remove: typeof remove;
   streaming: typeof streaming;
   threads: typeof threads;
 }>;

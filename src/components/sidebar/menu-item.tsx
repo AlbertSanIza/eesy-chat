@@ -29,7 +29,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     const { threadId } = useParams({ strict: false })
     const [isEditing, setIsEditing] = useState(false)
     const renameThread = useAction(api.threads.rename)
-    const deleteThread = useMutation(api.threads.remove)
+    const deleteThread = useMutation(api.remove.thread)
     const [inputValue, setInputValue] = useState(thread.name)
     const toggleThreadPin = useMutation(api.threads.togglePin)
     const [optimisticName, setOptimisticName] = useState<string | null>(null)

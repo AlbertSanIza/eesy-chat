@@ -85,22 +85,6 @@ export const toggleShared = mutation({
     }
 })
 
-export const remove = mutation({
-    args: { id: v.id('threads') },
-    handler: async (ctx, { id }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return
-        }
-        const thread = await ctx.db.get(id)
-        if (!thread || thread.userId !== identity.subject) {
-            return
-        }
-        await ctx.scheduler.runAfter(0, internal.messages.removeAll, { threadId: id })
-        await ctx.db.delete(id)
-    }
-})
-
 export const updateTime = internalMutation({
     args: { threadId: v.id('threads') },
     handler: async (ctx, { threadId }) => await ctx.db.patch(threadId, { updateTime: Date.now() })
