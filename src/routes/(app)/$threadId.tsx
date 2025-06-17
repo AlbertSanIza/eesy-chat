@@ -21,7 +21,7 @@ function RouteComponent() {
     const navigate = useNavigate()
     const branchOff = useMutation(api.branching.copy)
     const { threadId } = useParams({ from: '/(app)/$threadId' })
-    const messages = useQuery(api.messages.list, { threadId: threadId as Id<'threads'> })
+    const messages = useQuery(api.get.messages, { threadId: threadId as Id<'threads'> })
     const thread = useStore(({ threads }) => threads.find((thread) => thread._id === threadId))
     useDocumentTitle(thread?.name)
 

@@ -8,20 +8,6 @@ import type { Id } from './_generated/dataModel'
 import type { QueryCtx } from './_generated/server'
 import { action, internalAction, internalMutation, internalQuery, query } from './_generated/server'
 
-export const list = query({
-    args: { threadId: v.id('threads') },
-    handler: async (ctx, { threadId }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return []
-        }
-        return await ctx.db
-            .query('messages')
-            .filter((q) => q.eq(q.field('threadId'), threadId))
-            .collect()
-    }
-})
-
 export const findOne = internalQuery({
     args: { messageId: v.id('messages') },
     handler: async (ctx, { messageId }) => await ctx.db.get(messageId)
