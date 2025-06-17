@@ -101,11 +101,9 @@ class StreamManager {
         await httpClient.mutation(api.streaming.setMessageStreamingToStreaming, { messageId: message._id })
     }
     get(messageId: Id<'messages'>): BroadcastStream | undefined {
-        console.log('Retrieving stream for message ID:', messageId)
         return this.streams.get(messageId)
     }
     delete(messageId: Id<'messages'>) {
-        console.log('Deleting stream for message ID:', messageId)
         this.streams.delete(messageId)
     }
 
