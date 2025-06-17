@@ -112,7 +112,7 @@ class StreamManager {
     deleteWithDelay(messageId: Id<'messages'>) {
         setTimeout(() => {
             this.delete(messageId)
-        }, 10000) // 10 seconds delay
+        }, 5000)
     }
 }
 
