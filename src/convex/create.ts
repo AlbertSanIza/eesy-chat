@@ -26,6 +26,34 @@ export const thread = mutation({
     }
 })
 
+export const threadBranch = mutation({
+    args: { threadId: v.id('threads'), messageId: v.id('messages') },
+    handler: async (ctx, { threadId, messageId }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return []
+        }
+        const thread = await ctx.db.get(threadId)
+        if (!thread || (!thread.shared && thread.userId !== identity.subject)) {
+            return null
+        }
+        const message = await ctx.db.get(messageId)
+        if (!message || message.threadId !== threadId) {
+            return null
+        }
+        const newThreadId = await ctx.db.insert('threads', {
+            name: thread.name,
+            userId: identity.subject,
+            pinned: false,
+            shared: false,
+            branched: true,
+            updateTime: Date.now()
+        })
+        await ctx.scheduler.runAfter(0, internal.branching.copyMessagesInternal, { threadId, newThreadId, messageId })
+        return newThreadId
+    }
+})
+
 export const threadInternal = internalAction({
     args: { apiKey: v.string(), threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { apiKey, threadId, prompt }) => {

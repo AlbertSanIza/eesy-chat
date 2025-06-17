@@ -19,7 +19,7 @@ export const Route = createFileRoute('/(app)/$threadId')({
 
 function RouteComponent() {
     const navigate = useNavigate()
-    const branchOff = useMutation(api.branching.copy)
+    const branchOff = useMutation(api.create.threadBranch)
     const { threadId } = useParams({ from: '/(app)/$threadId' })
     const messages = useQuery(api.get.messages, { threadId: threadId as Id<'threads'> })
     const thread = useStore(({ threads }) => threads.find((thread) => thread._id === threadId))

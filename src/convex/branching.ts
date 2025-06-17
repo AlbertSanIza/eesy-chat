@@ -1,35 +1,7 @@
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { internalMutation, mutation } from './_generated/server'
-
-export const copy = mutation({
-    args: { threadId: v.id('threads'), messageId: v.id('messages') },
-    handler: async (ctx, { threadId, messageId }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return []
-        }
-        const thread = await ctx.db.get(threadId)
-        if (!thread || (!thread.shared && thread.userId !== identity.subject)) {
-            return null
-        }
-        const message = await ctx.db.get(messageId)
-        if (!message || message.threadId !== threadId) {
-            return null
-        }
-        const newThreadId = await ctx.db.insert('threads', {
-            name: thread.name,
-            userId: identity.subject,
-            pinned: false,
-            shared: false,
-            branched: true,
-            updateTime: Date.now()
-        })
-        await ctx.scheduler.runAfter(0, internal.branching.copyMessagesInternal, { threadId, newThreadId, messageId })
-        return newThreadId
-    }
-})
+import { internalMutation } from './_generated/server'
 
 export const copyMessagesInternal = internalMutation({
     args: { threadId: v.id('threads'), newThreadId: v.id('threads'), messageId: v.id('messages') },
