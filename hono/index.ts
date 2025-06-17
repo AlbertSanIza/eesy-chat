@@ -13,7 +13,7 @@ config({ path: '.env' })
 config({ path: '.env.local', override: true })
 
 if (!process.env.VITE_CONVEX_URL) {
-    throw new Error('CONVEX_URL is not set in the environment variables.')
+    throw new Error('VITE_CONVEX_URL is not set in the environment variables.')
 }
 if (!process.env.OPENROUTER_API_KEY) {
     throw new Error('OPENROUTER_API_KEY is not set in the environment variables.')
