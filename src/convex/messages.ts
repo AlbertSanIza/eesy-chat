@@ -125,18 +125,6 @@ export const run = internalAction({
     }
 })
 
-export const removeAll = internalMutation({
-    args: { threadId: v.id('threads') },
-    handler: async (ctx, { threadId }) => {
-        const messages = await ctx.db
-            .query('messages')
-            .filter((q) => q.eq(q.field('threadId'), threadId))
-            .collect()
-        await Promise.all(messages.map((message) => ctx.db.delete(message._id)))
-        await Promise.all(messages.map((message) => ctx.runMutation(internal.remove.chunksByMessageId, { messageId: message._id })))
-    }
-})
-
 export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): Promise<Message> {
     const chunks = await ctx.db
         .query('chunks')
