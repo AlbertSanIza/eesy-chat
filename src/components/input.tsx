@@ -2,6 +2,7 @@ import { SignInButton, useUser } from '@clerk/clerk-react'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useAction, useMutation } from 'convex/react'
 import { ChevronDownIcon, LoaderCircleIcon, SendHorizontalIcon } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 
 import { ApiKeysDialog } from '@/components/api-keys-dialog'
@@ -22,6 +23,7 @@ export function Input() {
     const { threadId } = useParams({ strict: false })
     const createThread = useMutation(api.create.thread)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
+    const [canScrollDown, setCanScrollDown] = useState(false)
     const [showSignInDialog, setShowSignInDialog] = useState(false)
     const { openRouterApiKey, models, selectedModel, setSelectedModel } = useStore()
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
@@ -31,6 +33,19 @@ export function Input() {
             textAreaRef.current.focus()
         }
     }, [input, threadId])
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.scrollY
+            const windowHeight = window.innerHeight
+            const documentHeight = document.documentElement.scrollHeight
+            const isNearBottom = scrollTop + windowHeight >= documentHeight - 200
+            setCanScrollDown(!isNearBottom)
+        }
+        window.addEventListener('scroll', handleScroll)
+        handleScroll()
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
 
     const handleOnSubmit = async (newInput: string) => {
         textAreaRef.current?.style.setProperty('height', 'auto')
@@ -67,6 +82,27 @@ export function Input() {
                     }}
                     className="z-50 mx-auto max-w-2xl rounded-t-3xl border-x border-t bg-sidebar/30 px-1.5 pt-1.5 shadow-2xl shadow-pink-300 backdrop-blur-sm dark:bg-sidebar/40 dark:shadow-none"
                 >
+                    {canScrollDown && (
+                        <motion.div
+                            className="absolute -top-10 right-0 mb-20"
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                        >
+                            <Button
+                                size="sm"
+                                className="text-xs"
+                                onClick={(event) => {
+                                    event.preventDefault()
+                                    event.stopPropagation()
+                                    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
+                                }}
+                            >
+                                Scroll to bottom
+                                <ChevronDownIcon className="size-4" />
+                            </Button>
+                        </motion.div>
+                    )}
                     <div className="rounded-t-[18px] border-x border-t bg-background/50 p-3 shadow">
                         <textarea
                             rows={2}
