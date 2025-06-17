@@ -20,14 +20,3 @@ export const add = internalMutation({
         }
     }
 })
-
-export const removeByMessageId = internalMutation({
-    args: { messageId: v.id('messages') },
-    handler: async (ctx, { messageId }) => {
-        const chunks = await ctx.db
-            .query('chunks')
-            .withIndex('by_message', (q) => q.eq('messageId', messageId))
-            .collect()
-        await Promise.all(chunks.map((chunk) => ctx.db.delete(chunk._id)))
-    }
-})

@@ -1,7 +1,7 @@
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { mutation } from './_generated/server'
+import { internalMutation, mutation } from './_generated/server'
 
 export const thread = mutation({
     args: { id: v.id('threads') },
@@ -16,5 +16,16 @@ export const thread = mutation({
         }
         await ctx.scheduler.runAfter(0, internal.messages.removeAll, { threadId: id })
         await ctx.db.delete(id)
+    }
+})
+
+export const chunksByMessageId = internalMutation({
+    args: { messageId: v.id('messages') },
+    handler: async (ctx, { messageId }) => {
+        const chunks = await ctx.db
+            .query('chunks')
+            .withIndex('by_message', (q) => q.eq('messageId', messageId))
+            .collect()
+        await Promise.all(chunks.map((chunk) => ctx.db.delete(chunk._id)))
     }
 })
