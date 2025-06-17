@@ -9,6 +9,11 @@ export const getMessage = query({
     handler: async (ctx, { messageId }) => await ctx.db.get(messageId)
 })
 
+export const setMessageStreamingToStreaming = mutation({
+    args: { messageId: v.id('messages') },
+    handler: async (ctx, { messageId }) => await ctx.db.patch(messageId, { status: 'streaming' })
+})
+
 export const getHistory = query({
     args: { threadId: v.id('threads') },
     handler: async (ctx, { threadId }): Promise<Message[]> => {
