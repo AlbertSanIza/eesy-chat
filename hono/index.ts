@@ -33,7 +33,7 @@ app.use(
             }
             return null
         },
-        allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowMethods: ['GET', 'POST'],
         allowHeaders: ['Content-Type', 'Authorization'],
         credentials: true
     })
@@ -76,12 +76,7 @@ app.get('/connect/:messageId', (c) => {
             await stream.write('Stream not found or has ended.')
             return
         }
-        const history = liveStream.getHistory()
-        if (history) {
-            await stream.write(history)
-        }
-        const aiStream = liveStream.getReadableStream()
-        await stream.pipe(aiStream)
+        await stream.pipe(liveStream.getReadableStream())
         stream.onAbort(() => {
             liveStream.cleanup()
         })
