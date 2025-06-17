@@ -62,7 +62,6 @@ app.post('/start', async (c) => {
         if (message.status !== 'pending') {
             return c.json({ status: 'Stream is `not pending; did it timeout?' }, 400)
         }
-        await httpClient.mutation(api.streaming.setMessageStreamingToStreaming, { messageId })
         const history = await httpClient.query(api.streaming.getHistory, { threadId: message.threadId })
         streamManager.create(history, message, apiKey)
         return c.json({ status: 'Stream started successfully.' }, 200)

@@ -91,13 +91,14 @@ class StreamManager {
         console.log('Checking existence of stream for message ID:', messageId)
         return this.streams.has(messageId)
     }
-    create(history: Message[], message: Doc<'messages'>, apiKey: string) {
+    async create(history: Message[], message: Doc<'messages'>, apiKey: string) {
         if (this.exists(message._id)) {
             return
         }
         const stream = new BroadcastStream(history, message, apiKey)
         console.log('Created stream for message ID:', message._id)
         this.streams.set(message._id, stream)
+        await httpClient.mutation(api.streaming.setMessageStreamingToStreaming, { messageId: message._id })
     }
     get(messageId: Id<'messages'>): BroadcastStream | undefined {
         console.log('Retrieving stream for message ID:', messageId)
