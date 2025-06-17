@@ -1,4 +1,8 @@
+import type { Message } from 'ai'
 import { v } from 'convex/values'
+
+import type { Id } from './_generated/dataModel'
+import type { QueryCtx } from './_generated/server'
 import { internalQuery, query } from './_generated/server'
 
 export const threads = query({
@@ -35,6 +39,17 @@ export const message = internalQuery({
     handler: async (ctx, { messageId }) => await ctx.db.get(messageId)
 })
 
+export const messageBody = query({
+    args: { messageId: v.id('messages') },
+    handler: async (ctx, { messageId }): Promise<Message | null> => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return null
+        }
+        return await getMessageBody(ctx, messageId)
+    }
+})
+
 export const models = query({
     args: {},
     handler: async (ctx) => {
@@ -65,3 +80,15 @@ export const model = internalQuery({
         return model
     }
 })
+
+async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): Promise<Message> {
+    const chunks = await ctx.db
+        .query('chunks')
+        .withIndex('by_message', (q) => q.eq('messageId', messageId))
+        .collect()
+    return {
+        id: messageId,
+        role: 'assistant',
+        content: chunks.map((chunk) => chunk.text).join('')
+    }
+}

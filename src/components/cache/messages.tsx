@@ -26,7 +26,7 @@ function UserMessageCache({ id }: { id: Id<'threads'> }) {
 }
 
 function AssistantMessageCache({ id }: { id: Id<'messages'> }) {
-    useQuery(api.messages.body, { messageId: id })
+    useQuery(api.get.messageBody, { messageId: id })
 
     return null
 }

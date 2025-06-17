@@ -70,7 +70,7 @@ function RouteComponent() {
 }
 
 function ServerMessage({ messageId }: { messageId: Id<'messages'> }) {
-    const message = useQuery(api.messages.body, { messageId })
+    const message = useQuery(api.get.messageBody, { messageId })
 
     if (!message) {
         return null

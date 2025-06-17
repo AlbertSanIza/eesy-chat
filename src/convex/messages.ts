@@ -8,17 +8,6 @@ import type { Id } from './_generated/dataModel'
 import type { QueryCtx } from './_generated/server'
 import { action, internalAction, internalMutation, internalQuery, query } from './_generated/server'
 
-export const body = query({
-    args: { messageId: v.id('messages') },
-    handler: async (ctx, { messageId }): Promise<Message | null> => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return null
-        }
-        return await getMessageBody(ctx, messageId)
-    }
-})
-
 export const history = internalQuery({
     args: { threadId: v.id('threads') },
     handler: async (ctx, { threadId }): Promise<Message[]> => {
