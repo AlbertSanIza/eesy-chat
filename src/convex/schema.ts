@@ -12,7 +12,7 @@ export default defineSchema({
     }).index('by_user_and_update_time', ['userId', 'updateTime']),
     messages: defineTable({
         threadId: v.id('threads'),
-        type: v.optional(v.union(v.literal('text'), v.literal('image'))),
+        type: v.union(v.literal('text'), v.literal('image')),
         status: v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error')),
         service: v.union(v.literal('openRouter'), v.literal('openAi')),
         model: v.string(),
