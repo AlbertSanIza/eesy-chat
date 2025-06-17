@@ -1,7 +1,7 @@
 import { useQuery as useTSQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 
 import { AssistantMessage } from '@/components/messages/assistant'
 import { UserMessage } from '@/components/messages/user'
@@ -20,6 +20,12 @@ function RouteComponent() {
     const messages = useQuery(api.get.messages, { threadId: threadId as Id<'threads'> })
     const thread = useStore(({ threads }) => threads.find((thread) => thread._id === threadId))
     useDocumentTitle(thread?.name)
+
+    useEffect(() => {
+        if (messages && messages.length > 0 && (messages[messages.length - 1].status === 'pending' || messages[messages.length - 1].status === 'streaming')) {
+            window.scrollTo({ top: document.body.scrollHeight })
+        }
+    }, [messages])
 
     if (!thread) {
         return 'Loading...'
