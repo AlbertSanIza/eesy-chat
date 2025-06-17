@@ -20,7 +20,7 @@ export function Input() {
     const { isSignedIn } = useUser()
     const send = useAction(api.messages.send)
     const { threadId } = useParams({ strict: false })
-    const createThread = useMutation(api.threads.create)
+    const createThread = useMutation(api.create.thread)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [showSignInDialog, setShowSignInDialog] = useState(false)
     const { openRouterApiKey, models, selectedModel, setSelectedModel } = useStore()

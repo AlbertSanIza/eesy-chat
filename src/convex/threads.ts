@@ -5,27 +5,6 @@ import { v } from 'convex/values'
 import { internal } from './_generated/api'
 import { action, internalAction, internalMutation, mutation } from './_generated/server'
 
-export const create = mutation({
-    args: { modelId: v.id('models'), apiKey: v.optional(v.string()), prompt: v.string() },
-    handler: async (ctx, { modelId, apiKey, prompt }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return null
-        }
-        const threadId = await ctx.db.insert('threads', {
-            name: 'New Thread',
-            userId: identity.subject,
-            pinned: false,
-            shared: false,
-            branched: false,
-            updateTime: Date.now()
-        })
-        await ctx.scheduler.runAfter(0, internal.threads.createInternal, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', threadId, prompt })
-        await ctx.scheduler.runAfter(0, internal.messages.create, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', modelId, threadId, prompt })
-        return threadId
-    }
-})
-
 export const createInternal = internalAction({
     args: { apiKey: v.string(), threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { apiKey, threadId, prompt }) => {
