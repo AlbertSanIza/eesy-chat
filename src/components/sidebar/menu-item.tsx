@@ -123,7 +123,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
                             />
                         )}
                         {!isEditing && <div className="h-fit w-full truncate">{displayName}</div>}
-                        {!isEditing && (
+                        {!isEditing && status === 'ready' && (
                             <div
                                 className="-mr-1 hidden group-hover/sidebar-menu-button:flex"
                                 onClick={(event) => {
