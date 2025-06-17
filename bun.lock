@@ -24,6 +24,7 @@
         "@radix-ui/react-slot": "^1.2.3",
         "@radix-ui/react-tooltip": "^1.2.7",
         "@tailwindcss/vite": "^4.1.10",
+        "@tanstack/eslint-plugin-query": "^5.78.0",
         "@tanstack/react-query": "^5.80.7",
         "@tanstack/react-router": "^1.121.21",
         "@tanstack/react-router-devtools": "^1.121.21",
@@ -433,6 +434,8 @@
     "@tailwindcss/oxide-win32-x64-msvc": ["@tailwindcss/oxide-win32-x64-msvc@4.1.10", "", { "os": "win32", "cpu": "x64" }, "sha512-sGiJTjcBSfGq2DVRtaSljq5ZgZS2SDHSIfhOylkBvHVjwOsodBhnb3HdmiKkVuUGKD0I7G63abMOVaskj1KpOA=="],
 
     "@tailwindcss/vite": ["@tailwindcss/vite@4.1.10", "", { "dependencies": { "@tailwindcss/node": "4.1.10", "@tailwindcss/oxide": "4.1.10", "tailwindcss": "4.1.10" }, "peerDependencies": { "vite": "^5.2.0 || ^6" } }, "sha512-QWnD5HDY2IADv+vYR82lOhqOlS1jSCUUAmfem52cXAhRTKxpDh3ARX8TTXJTCCO7Rv7cD2Nlekabv02bwP3a2A=="],
+
+    "@tanstack/eslint-plugin-query": ["@tanstack/eslint-plugin-query@5.78.0", "", { "dependencies": { "@typescript-eslint/utils": "^8.18.1" }, "peerDependencies": { "eslint": "^8.57.0 || ^9.0.0" } }, "sha512-hYkhWr3UP0CkAsn/phBVR98UQawbw8CmTSgWtdgEBUjI60/GBaEIkpgi/Bp/2I8eIDK4+vdY7ac6jZx+GR+hEQ=="],
 
     "@tanstack/history": ["@tanstack/history@1.121.21", "", {}, "sha512-8BFGA7fpElicM1aEfZRDoEiWgMrNb/fVuJjSKv+nYtbp7jdtqt57fROi/uDGf6PLlgJbMoT3GWxqveZisOUEKA=="],
 
