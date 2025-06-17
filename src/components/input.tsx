@@ -47,7 +47,7 @@ export function Input() {
             handleInputChange({ id: threadId, value: '' })
             return
         }
-        const newThreadId = await createThread({ apiKey: openRouterApiKey || undefined, prompt: input.trim(), modelId: selectedModel._id })
+        const newThreadId = await createThread({ apiKey: openRouterApiKey || undefined, modelId: selectedModel._id, prompt: input.trim() })
         if (newThreadId) {
             await navigate({ to: `/${newThreadId}` })
             handleInputChange({ id: 'home', value: '' })
