@@ -76,8 +76,9 @@ export const send = action({
             return null
         }
         const messageId = await ctx.runMutation(internal.messages.create, { modelId, threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.streaming.run, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', messageId })
         await ctx.scheduler.runAfter(0, internal.threads.updateTime, { threadId })
-        await ctx.scheduler.runAfter(0, internal.messages.run, { apiKey, messageId })
+        // await ctx.scheduler.runAfter(0, internal.messages.run, { apiKey, messageId })
     }
 })
 
@@ -102,7 +103,6 @@ export const create = internalMutation({
             label: model.label,
             prompt
         })
-        // await ctx.runMutation(internal.chunks.add, { messageId, text: prompt, final: true })
         return messageId
     }
 })
