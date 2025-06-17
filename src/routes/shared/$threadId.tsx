@@ -15,10 +15,10 @@ export const Route = createFileRoute('/shared/$threadId')({
 function RouteComponent() {
     const { threadId } = useParams({ from: Route.fullPath })
 
-    const thread = useQuery(api.messages.shared, { threadId: threadId as Id<'threads'> })
-    useDocumentTitle(thread?.name ? `Shared: ${thread.name}` : undefined)
+    const sharedThread = useQuery(api.get.sharedThread, { threadId: threadId as Id<'threads'> })
+    useDocumentTitle(sharedThread?.name ? `Shared: ${sharedThread.name}` : undefined)
 
-    if (!thread) {
+    if (!sharedThread) {
         return (
             <div className="fixed inset-0 flex items-center justify-center">
                 <Loader2Icon className="size-6 animate-spin" />
@@ -26,12 +26,12 @@ function RouteComponent() {
         )
     }
 
-    return thread.name ? (
+    return sharedThread.name ? (
         <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
             <div className="sticky top-6 z-50 w-fit rounded-lg border bg-sidebar/60 px-4 py-3 text-2xl font-semibold tracking-tight backdrop-blur-sm">
-                {thread.name}
+                {sharedThread.name}
             </div>
-            <Messages data={thread.messages} />
+            <Messages data={sharedThread.messages} />
         </div>
     ) : (
         <div className="fixed inset-0 flex flex-col items-center justify-center gap-2">

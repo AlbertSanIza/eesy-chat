@@ -1,21 +1,9 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-import type { Message } from 'ai'
 import { smoothStream, streamText } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { action, internalAction, internalMutation, query } from './_generated/server'
-
-export const shared = query({
-    args: { threadId: v.id('threads') },
-    handler: async (ctx, { threadId }): Promise<{ name: string | null; messages: Message[] }> => {
-        const thread = await ctx.db.get(threadId)
-        if (!thread || !thread.shared) {
-            return { name: null, messages: [] }
-        }
-        return { name: thread.name, messages: await ctx.runQuery(internal.get.messagesHistory, { threadId }) }
-    }
-})
+import { action, internalAction, internalMutation } from './_generated/server'
 
 export const send = action({
     args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), modelId: v.id('models'), prompt: v.string() },

@@ -1,6 +1,7 @@
 import type { Message } from 'ai'
 import { v } from 'convex/values'
 
+import { internal } from './_generated/api'
 import type { Id } from './_generated/dataModel'
 import type { QueryCtx } from './_generated/server'
 import { internalQuery, query } from './_generated/server'
@@ -17,6 +18,17 @@ export const threads = query({
             .withIndex('by_user_and_update_time', (q) => q.eq('userId', identity.subject))
             .order('desc')
             .collect()
+    }
+})
+
+export const sharedThread = query({
+    args: { threadId: v.id('threads') },
+    handler: async (ctx, { threadId }): Promise<{ name: string | null; messages: Message[] }> => {
+        const thread = await ctx.db.get(threadId)
+        if (!thread || !thread.shared) {
+            return { name: null, messages: [] }
+        }
+        return { name: thread.name, messages: await ctx.runQuery(internal.get.messagesHistory, { threadId }) }
     }
 })
 
