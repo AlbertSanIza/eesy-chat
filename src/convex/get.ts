@@ -30,6 +30,11 @@ export const messages = query({
     }
 })
 
+export const message = internalQuery({
+    args: { messageId: v.id('messages') },
+    handler: async (ctx, { messageId }) => await ctx.db.get(messageId)
+})
+
 export const models = query({
     args: {},
     handler: async (ctx) => {

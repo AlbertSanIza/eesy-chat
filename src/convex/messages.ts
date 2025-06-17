@@ -8,11 +8,6 @@ import type { Id } from './_generated/dataModel'
 import type { QueryCtx } from './_generated/server'
 import { action, internalAction, internalMutation, internalQuery, query } from './_generated/server'
 
-export const findOne = internalQuery({
-    args: { messageId: v.id('messages') },
-    handler: async (ctx, { messageId }) => await ctx.db.get(messageId)
-})
-
 export const body = query({
     args: { messageId: v.id('messages') },
     handler: async (ctx, { messageId }): Promise<Message | null> => {
@@ -95,7 +90,7 @@ export const create = internalMutation({
 export const run = internalAction({
     args: { apiKey: v.optional(v.string()), messageId: v.id('messages') },
     handler: async (ctx, { apiKey, messageId }) => {
-        const message = await ctx.runQuery(internal.messages.findOne, { messageId })
+        const message = await ctx.runQuery(internal.get.message, { messageId })
         if (!message) {
             throw new Error('Message Not Found')
         }
