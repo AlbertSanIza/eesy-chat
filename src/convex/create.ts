@@ -3,7 +3,7 @@ import { generateText } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { internalAction, internalMutation, mutation } from './_generated/server'
+import { action, internalAction, internalMutation, mutation } from './_generated/server'
 
 export const thread = mutation({
     args: { modelId: v.id('models'), apiKey: v.optional(v.string()), prompt: v.string() },
@@ -101,6 +101,18 @@ export const threadInternal = internalAction({
             messages: [{ role: 'user', content: prompt.trim() }]
         })
         await ctx.scheduler.runAfter(0, internal.update.threadNameInternal, { id: threadId, name: response.text.trim() })
+    }
+})
+
+export const message = action({
+    args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), modelId: v.id('models'), prompt: v.string() },
+    handler: async (ctx, { apiKey, threadId, modelId, prompt }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return null
+        }
+        await ctx.runMutation(internal.messages.create, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', modelId, threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
     }
 })
 

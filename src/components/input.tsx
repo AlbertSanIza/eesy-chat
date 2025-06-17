@@ -18,7 +18,7 @@ export function Input() {
     const { open } = useSidebar()
     const navigate = useNavigate()
     const { isSignedIn } = useUser()
-    const send = useAction(api.messages.send)
+    const send = useAction(api.create.message)
     const { threadId } = useParams({ strict: false })
     const createThread = useMutation(api.create.thread)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)

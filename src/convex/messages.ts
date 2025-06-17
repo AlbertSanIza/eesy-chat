@@ -1,19 +1,7 @@
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { action, internalMutation } from './_generated/server'
-
-export const send = action({
-    args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), modelId: v.id('models'), prompt: v.string() },
-    handler: async (ctx, { apiKey, threadId, modelId, prompt }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return null
-        }
-        await ctx.runMutation(internal.messages.create, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', modelId, threadId, prompt })
-        await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
-    }
-})
+import { internalMutation } from './_generated/server'
 
 export const create = internalMutation({
     args: { apiKey: v.string(), modelId: v.id('models'), threadId: v.id('threads'), prompt: v.string() },
