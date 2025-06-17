@@ -10,8 +10,13 @@ export const threadName = action({
         if (identity === null) {
             return
         }
-        await ctx.scheduler.runAfter(0, internal.threads.renameInternal, { id, name })
+        await ctx.scheduler.runAfter(0, internal.update.threadNameInternal, { id, name })
     }
+})
+
+export const threadNameInternal = internalMutation({
+    args: { id: v.id('threads'), name: v.string() },
+    handler: async (ctx, { id, name }) => await ctx.db.patch(id, { name: name.trim() || 'Untitled Thread' })
 })
 
 export const threadPinToggle = mutation({
