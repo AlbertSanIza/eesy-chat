@@ -55,14 +55,14 @@ class BroadcastStream {
                 onFinish: async () => {
                     await httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: true })
                     this.closeAllSubscribers()
-                    streamManager.delete(this.messageId)
+                    streamManager.deleteWithDelay(this.messageId)
                 }
             })
             result.consumeStream()
         } catch (error) {
             console.error('AI stream failed:', error)
             this.closeAllSubscribers()
-            streamManager.delete(this.messageId)
+            streamManager.deleteWithDelay(this.messageId)
         }
     }
 
@@ -107,6 +107,13 @@ class StreamManager {
     delete(messageId: Id<'messages'>) {
         console.log('Deleting stream for message ID:', messageId)
         this.streams.delete(messageId)
+    }
+
+    deleteWithDelay(messageId: Id<'messages'>) {
+        console.log('Scheduling deletion of stream for message ID:', messageId, 'in 10 seconds')
+        setTimeout(() => {
+            this.delete(messageId)
+        }, 10000) // 10 seconds delay
     }
 }
 
