@@ -35,17 +35,24 @@ export function Input() {
     }, [input, threadId])
 
     useEffect(() => {
-        const handleScroll = () => {
+        const handleScrollAndResize = () => {
             const scrollTop = window.scrollY
             const windowHeight = window.innerHeight
             const documentHeight = document.documentElement.scrollHeight
+            const isScrollable = documentHeight > windowHeight + 10
             const isNearBottom = scrollTop + windowHeight >= documentHeight - 200
-            setCanScrollDown(!isNearBottom)
+            setCanScrollDown(isScrollable && !isNearBottom)
         }
-        window.addEventListener('scroll', handleScroll)
-        handleScroll()
-        return () => window.removeEventListener('scroll', handleScroll)
-    }, [])
+
+        window.addEventListener('scroll', handleScrollAndResize)
+        window.addEventListener('resize', handleScrollAndResize)
+        handleScrollAndResize()
+
+        return () => {
+            window.removeEventListener('scroll', handleScrollAndResize)
+            window.removeEventListener('resize', handleScrollAndResize)
+        }
+    }, [threadId])
 
     const handleOnSubmit = async (newInput: string) => {
         textAreaRef.current?.style.setProperty('height', 'auto')
