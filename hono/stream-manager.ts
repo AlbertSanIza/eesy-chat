@@ -110,7 +110,6 @@ class StreamManager {
     }
 
     deleteWithDelay(messageId: Id<'messages'>) {
-        console.log('Scheduling deletion of stream for message ID:', messageId, 'in 10 seconds')
         setTimeout(() => {
             this.delete(messageId)
         }, 10000) // 10 seconds delay
