@@ -2,18 +2,6 @@ import { v } from 'convex/values'
 
 import { internalQuery, query } from './_generated/server'
 
-export const list = query({
-    args: {},
-    handler: async (ctx) => {
-        return await ctx.db
-            .query('models')
-            .withIndex('by_provider_and_label')
-            .filter((q) => q.eq(q.field('enabled'), true))
-            .order('asc')
-            .collect()
-    }
-})
-
 export const findOne = query({
     args: { modelId: v.id('models') },
     handler: async (ctx, { modelId }) => {
