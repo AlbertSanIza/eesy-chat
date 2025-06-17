@@ -84,8 +84,3 @@ export const toggleShared = mutation({
         await ctx.db.patch(id, { shared: !thread?.shared })
     }
 })
-
-export const updateTime = internalMutation({
-    args: { threadId: v.id('threads') },
-    handler: async (ctx, { threadId }) => await ctx.db.patch(threadId, { updateTime: Date.now() })
-})

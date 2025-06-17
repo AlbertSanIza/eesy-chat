@@ -1,0 +1,55 @@
+import { v } from 'convex/values'
+
+import { internal } from './_generated/api'
+import { action, internalMutation, mutation } from './_generated/server'
+
+export const threadName = action({
+    args: { id: v.id('threads'), name: v.string() },
+    handler: async (ctx, { id, name }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return
+        }
+        await ctx.scheduler.runAfter(0, internal.threads.renameInternal, { id, name })
+    }
+})
+
+export const renameInternal = internalMutation({
+    args: { id: v.id('threads'), name: v.string() },
+    handler: async (ctx, { id, name }) => await ctx.db.patch(id, { name: name.trim() || 'Untitled Thread' })
+})
+
+export const togglePin = mutation({
+    args: { id: v.id('threads') },
+    handler: async (ctx, { id }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return
+        }
+        const thread = await ctx.db.get(id)
+        if (!thread || thread.userId !== identity.subject) {
+            return
+        }
+        await ctx.db.patch(id, { pinned: !thread?.pinned })
+    }
+})
+
+export const toggleShared = mutation({
+    args: { id: v.id('threads') },
+    handler: async (ctx, { id }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return
+        }
+        const thread = await ctx.db.get(id)
+        if (!thread || thread.userId !== identity.subject) {
+            return
+        }
+        await ctx.db.patch(id, { shared: !thread?.shared })
+    }
+})
+
+export const threadTime = internalMutation({
+    args: { threadId: v.id('threads') },
+    handler: async (ctx, { threadId }) => await ctx.db.patch(threadId, { updateTime: Date.now() })
+})

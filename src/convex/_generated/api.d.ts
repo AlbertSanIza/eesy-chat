@@ -20,6 +20,7 @@ import type * as messages from "../messages.js";
 import type * as remove from "../remove.js";
 import type * as streaming from "../streaming.js";
 import type * as threads from "../threads.js";
+import type * as update from "../update.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   remove: typeof remove;
   streaming: typeof streaming;
   threads: typeof threads;
+  update: typeof update;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
