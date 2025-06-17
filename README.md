@@ -30,7 +30,6 @@ MIT
 `VITE_CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key.
 `VITE_CONVEX_URL`: Your Convex URL.
 `VITE_RAILWAY_API_URL`: Your Railway API URL.
-`DOMAIN_URL`: Your domain URL (e.g., http://localhost:5173 for local development or VITE_RAILWAY_API_URL on railway).
 
 ## Installation
 
