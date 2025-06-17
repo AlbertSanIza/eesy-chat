@@ -8,7 +8,7 @@ import { internalAction, mutation, query } from './_generated/server'
 export const run = internalAction({
     args: { apiKey: v.string(), messageId: v.id('messages') },
     handler: async (_, { apiKey, messageId }) => {
-        await fetch(`${process.env.RAILWAY_API_URL}/start`, {
+        await fetch(`${process.env.VITE_RAILWAY_API_URL}/start`, {
             method: 'POST',
             body: JSON.stringify({ apiKey, messageId })
         })
