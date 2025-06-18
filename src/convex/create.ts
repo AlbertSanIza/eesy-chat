@@ -281,6 +281,33 @@ export const imageMessageInternal = internalMutation({
     }
 })
 
+export const voiceMessageInternal = internalMutation({
+    args: { apiKey: v.string(), threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { apiKey, threadId, prompt }) => {
+        const model = await ctx.db
+            .query('models')
+            .withIndex('by_provider_and_label')
+            .filter((q) => q.eq(q.field('provider'), 'ElevenLabs'))
+            .filter((q) => q.eq(q.field('label'), 'ElevenLabs VoiceGen'))
+            .first()
+        if (!model) {
+            throw new Error('Model Not Found')
+        }
+        const messageId = await ctx.db.insert('messages', {
+            threadId,
+            type: 'sound',
+            status: 'pending',
+            service: model.service,
+            model: model.model,
+            provider: model.provider,
+            label: model.label,
+            prompt
+        })
+        await ctx.scheduler.runAfter(0, internal.eleven.generateVoiceInternal, { apiKey, messageId, prompt })
+        return messageId
+    }
+})
+
 export const chunk = internalMutation({
     args: { messageId: v.id('messages'), text: v.string(), final: v.boolean() },
     handler: async (ctx, { messageId, text, final }) => {
