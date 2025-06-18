@@ -70,12 +70,20 @@ export function Input() {
             return
         }
         if (threadId) {
+            if (isImageThread && openAiApiKey) {
+                sendImage({
+                    apiKey: openAiApiKey || undefined,
+                    threadId: threadId as Id<'threads'>,
+                    prompt: newInput.trim()
+                })
+            } else {
             send({
                 apiKey: openRouterApiKey || undefined,
                 threadId: threadId as Id<'threads'>,
                 prompt: newInput.trim(),
                 modelId: selectedModel._id
             })
+            }
             handleInputChange({ id: threadId, value: '' })
             return
         }
