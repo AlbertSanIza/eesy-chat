@@ -10,6 +10,7 @@ export function AssistantMessage({ promptMessage, message, showExtras }: { promp
     if (promptMessage?.type === 'image') {
         return <ImageMessage message={promptMessage} content={message.content} />
     }
+
     if (promptMessage?.type === 'sound') {
         return <VoiceMessage message={promptMessage} content={message.content} />
     }
