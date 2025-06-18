@@ -7,37 +7,43 @@ import { useState } from 'react'
 import { Label } from './ui/label'
 
 export function ApiKeysDialog() {
-    const { openRouterApiKey, openAiApiKey, setOpenRouterApiKey, setOpenAiApiKey } = useStore()
+    const { openRouterApiKey, openAiApiKey, elevenLabsApiKey, setOpenRouterApiKey, setOpenAiApiKey, setElevenLabsApiKey } = useStore()
     const [tempOpenRouterApiKey, setTempOpenRouterApiKey] = useState(openRouterApiKey || '')
     const [tempOpenAiApiKey, setTempOpenAiApiKey] = useState(openAiApiKey || '')
+    const [tempElevenLabsApiKey, setTempElevenLabsApiKey] = useState(elevenLabsApiKey || '')
     const [isOpen, setIsOpen] = useState(false)
 
     const handleSave = () => {
         setIsOpen(false)
         setOpenRouterApiKey(tempOpenRouterApiKey.trim())
         setOpenAiApiKey(tempOpenAiApiKey.trim())
+        setElevenLabsApiKey(tempElevenLabsApiKey.trim())
     }
 
     const handleOpenChange = (open: boolean) => {
         if (open) {
             setTempOpenRouterApiKey(openRouterApiKey || '')
             setTempOpenAiApiKey(openAiApiKey || '')
+            setTempElevenLabsApiKey(elevenLabsApiKey || '')
         }
         setIsOpen(open)
     }
 
     const isValidOpenRouterApiKey = (key: string) => key.trim().length === 0 || key.startsWith('sk-or-v1-')
     const isValidOpenAiApiKey = (key: string) => key.trim().length === 0 || key.startsWith('sk-')
+    const isValidElevenLabsApiKey = (key: string) => key.trim().length === 0 || key.length >= 32
 
     const hasValidOpenRouterKey = isValidOpenRouterApiKey(tempOpenRouterApiKey)
     const hasValidOpenAiKey = isValidOpenAiApiKey(tempOpenAiApiKey)
-    const allKeysValid = hasValidOpenRouterKey && hasValidOpenAiKey
+    const hasValidElevenLabsKey = isValidElevenLabsApiKey(tempElevenLabsApiKey)
+    const allKeysValid = hasValidOpenRouterKey && hasValidOpenAiKey && hasValidElevenLabsKey
 
     const hasStoredOpenRouterKey = !!openRouterApiKey?.trim()
     const hasStoredOpenAiKey = !!openAiApiKey?.trim()
-    const hasAllStoredKeys = hasStoredOpenRouterKey && hasStoredOpenAiKey
-    const hasPartialStoredKeys = (hasStoredOpenRouterKey || hasStoredOpenAiKey) && !hasAllStoredKeys
-    const hasNoStoredKeys = !hasStoredOpenRouterKey && !hasStoredOpenAiKey
+    const hasStoredElevenLabsKey = !!elevenLabsApiKey?.trim()
+    const hasAllStoredKeys = hasStoredOpenRouterKey && hasStoredOpenAiKey && hasStoredElevenLabsKey
+    const hasPartialStoredKeys = (hasStoredOpenRouterKey || hasStoredOpenAiKey || hasStoredElevenLabsKey) && !hasAllStoredKeys
+    const hasNoStoredKeys = !hasStoredOpenRouterKey && !hasStoredOpenAiKey && !hasStoredElevenLabsKey
 
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -96,6 +102,28 @@ export function ApiKeysDialog() {
                             )}
                         </div>
                         {tempOpenAiApiKey && !hasValidOpenAiKey && <p className="text-xs text-destructive">OpenAI API key should start with "sk-"</p>}
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="elevenlabs-api-key">ElevenLabs API Key (Voice Gen)</Label>
+                        <div className="flex gap-2">
+                            <Input
+                                type="password"
+                                autoComplete="off"
+                                className="flex-1"
+                                id="elevenlabs-api-key"
+                                placeholder="Your ElevenLabs API key..."
+                                value={tempElevenLabsApiKey}
+                                onChange={(event) => setTempElevenLabsApiKey(event.target.value)}
+                            />
+                            {tempElevenLabsApiKey && (
+                                <Button variant="destructive" size="icon" onClick={() => setTempElevenLabsApiKey('')} type="button">
+                                    <XIcon className="size-4" />
+                                </Button>
+                            )}
+                        </div>
+                        {tempElevenLabsApiKey && !hasValidElevenLabsKey && (
+                            <p className="text-xs text-destructive">ElevenLabs API key should be at least 32 characters</p>
+                        )}
                     </div>
                 </div>
                 <DialogFooter className="gap-3">
