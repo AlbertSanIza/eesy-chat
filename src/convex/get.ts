@@ -113,6 +113,11 @@ export const model = internalQuery({
     }
 })
 
+export const storageUrl = query({
+    args: { storageId: v.id('_storage') },
+    handler: async (ctx, { storageId }) => await ctx.storage.getUrl(storageId)
+})
+
 export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): Promise<Message> {
     const message = await ctx.db.get(messageId)
     if (!message) {
