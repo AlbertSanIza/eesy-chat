@@ -78,19 +78,17 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
 
     return (
         <div className="group/sound-message">
-            <div className="flex items-center gap-1.5">
-                <div className="mb-1.5 flex flex-1 flex-col gap-3 rounded-lg border bg-muted/30 p-4">
-                    <audio ref={audioRef} src={content} preload="metadata" />
-                    <div className="flex items-center gap-3">
-                        <Button variant="outline" size="icon" onClick={togglePlay}>
-                            {isPlaying ? <PauseIcon /> : <PlayIcon />}
-                        </Button>
-                        <div className="flex-1">
-                            <Progress className="cursor-pointer" value={duration ? (currentTime / duration) * 100 : 0} onClick={handleSeek} />
-                            <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-                                <span>{formatTime(currentTime)}</span>
-                                <span>{formatTime(duration)}</span>
-                            </div>
+            <div className="mb-1.5 flex items-center gap-1.5">
+                <Button variant="outline" size="icon" onClick={togglePlay}>
+                    {isPlaying ? <PauseIcon /> : <PlayIcon />}
+                </Button>
+                <audio ref={audioRef} src={content} preload="metadata" />
+                <div className="mt-2 flex flex-1 items-center rounded-lg">
+                    <div className="w-full">
+                        <Progress className="cursor-pointer dark:bg-[#2C2632]" value={duration ? (currentTime / duration) * 100 : 0} onClick={handleSeek} />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                            <span>{formatTime(currentTime)}</span>
+                            <span>{formatTime(duration)}</span>
                         </div>
                     </div>
                 </div>
