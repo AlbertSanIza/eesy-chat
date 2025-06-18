@@ -20,16 +20,8 @@ export default defineSchema({
         provider: v.string(),
         label: v.string(),
         prompt: v.string(),
-        imageUrl: v.optional(v.string())
+        storageId: v.optional(v.id('_storage'))
     }).index('by_thread', ['threadId']),
-    images: defineTable({
-        messageId: v.id('messages'),
-        url: v.string()
-    }).index('by_message', ['messageId']),
-    sounds: defineTable({
-        messageId: v.id('messages'),
-        url: v.string()
-    }).index('by_message', ['messageId']),
     chunks: defineTable({
         messageId: v.id('messages'),
         text: v.string()
