@@ -22,7 +22,7 @@ export function AssistantMessage({ promptMessage, message, showExtras }: { promp
     }
 
     if (promptMessage?.type === 'image') {
-        return <ImageMessage status={promptMessage.status} content={message.content} prompt={promptMessage.prompt} />
+        return <ImageMessage message={promptMessage} content={message.content} />
     }
 
     return (
