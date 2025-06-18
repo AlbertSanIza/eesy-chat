@@ -79,23 +79,8 @@ app.get('/connect/:messageId', (c) => {
             await stream.write('Stream not found or has ended.')
             return
         }
-
-        const keepAliveInterval = setInterval(async () => {
-            try {
-                await stream.write('')
-            } catch {
-                clearInterval(keepAliveInterval)
-            }
-        }, 5000)
-
-        try {
-            await stream.pipe(liveStream.getReadableStream())
-        } finally {
-            clearInterval(keepAliveInterval)
-        }
-
+        await stream.pipe(liveStream.getReadableStream())
         stream.onAbort(() => {
-            clearInterval(keepAliveInterval)
             liveStream.cleanup()
         })
     })
