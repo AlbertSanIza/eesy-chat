@@ -63,13 +63,15 @@ export function Input() {
                     setSelectedModel(voiceGenModel)
                 }
             } else if (!isImageThread && !isVoiceThread) {
-                const gpt41Model = models.find((model) => model.model === 'openai/gpt-4.1-nano')
-                if (gpt41Model) {
-                    setSelectedModel(gpt41Model)
+                if (selectedModel?.label === 'GPT ImageGen' || selectedModel?.label === 'ElevenLabs VoiceGen') {
+                    const gpt41Model = models.find((model) => model.model === 'openai/gpt-4.1-nano')
+                    if (gpt41Model) {
+                        setSelectedModel(gpt41Model)
+                    }
                 }
             }
         }
-    }, [elevenLabsApiKey, isImageThread, isVoiceThread, models, openAiApiKey, setSelectedModel, threadId])
+    }, [elevenLabsApiKey, isImageThread, isVoiceThread, models, openAiApiKey, selectedModel?.label, setSelectedModel, threadId])
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
