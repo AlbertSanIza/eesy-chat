@@ -1,6 +1,7 @@
 import { DownloadIcon, PauseIcon, PlayIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
+import { MessageOptions } from '@/components/messages/options'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { Doc } from '@/convex/_generated/dataModel'
@@ -16,15 +17,12 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
         if (!audio) {
             return
         }
-
         const updateTime = () => setCurrentTime(audio.currentTime)
         const updateDuration = () => setDuration(audio.duration)
         const onEnded = () => setIsPlaying(false)
-
         audio.addEventListener('timeupdate', updateTime)
         audio.addEventListener('loadedmetadata', updateDuration)
         audio.addEventListener('ended', onEnded)
-
         return () => {
             audio.removeEventListener('timeupdate', updateTime)
             audio.removeEventListener('loadedmetadata', updateDuration)
@@ -77,29 +75,32 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
     }
 
     return (
-        <div className="flex flex-col gap-3 rounded-lg border bg-muted/30 p-4">
-            <audio ref={audioRef} src={content} preload="metadata" />
-            <div className="flex items-center gap-3">
-                <Button variant="outline" size="icon" onClick={togglePlay}>
-                    {isPlaying ? <PauseIcon className="size-4" /> : <PlayIcon className="size-4" />}
-                </Button>
-                <div className="flex-1">
-                    <div className="h-2 cursor-pointer rounded-full bg-muted" onClick={handleSeek}>
-                        <div
-                            className="h-full rounded-full bg-primary transition-all"
-                            style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
-                        />
+        <div className="group/image-message">
+            <div className="flex flex-col gap-3 rounded-lg border bg-muted/30 p-4">
+                <audio ref={audioRef} src={content} preload="metadata" />
+                <div className="flex items-center gap-3">
+                    <Button variant="outline" size="icon" onClick={togglePlay}>
+                        {isPlaying ? <PauseIcon className="size-4" /> : <PlayIcon className="size-4" />}
+                    </Button>
+                    <div className="flex-1">
+                        <div className="h-2 cursor-pointer rounded-full bg-muted" onClick={handleSeek}>
+                            <div
+                                className="h-full rounded-full bg-primary transition-all"
+                                style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
+                            />
+                        </div>
+                        <div className="mt-1 flex justify-between text-xs text-muted-foreground">
+                            <span>{formatTime(currentTime)}</span>
+                            <span>{formatTime(duration)}</span>
+                        </div>
                     </div>
-                    <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-                        <span>{formatTime(currentTime)}</span>
-                        <span>{formatTime(duration)}</span>
-                    </div>
+                    <Button variant="outline" size="icon" onClick={downloadAudio}>
+                        <DownloadIcon className="size-4" />
+                    </Button>
                 </div>
-                <Button variant="outline" size="icon" onClick={downloadAudio}>
-                    <DownloadIcon className="size-4" />
-                </Button>
+                <p className="text-xs text-muted-foreground">"{content}"</p>
             </div>
-            <p className="text-xs text-muted-foreground">"{content}"</p>
+            <MessageOptions message={message} onCopy={() => {}} className="group-hover/sound-message:opacity-100" />
         </div>
     )
 }
