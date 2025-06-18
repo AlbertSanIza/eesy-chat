@@ -29,7 +29,7 @@ export default defineSchema({
     models: defineTable({
         service: v.union(v.literal('openRouter'), v.literal('openAi'), v.literal('elevenLabs')),
         model: v.string(),
-        provider: v.union(v.literal('Google'), v.literal('Anthropic'), v.literal('OpenAI')),
+        provider: v.union(v.literal('Google'), v.literal('Anthropic'), v.literal('OpenAI'), v.literal('ElevenLabs')),
         label: v.string(),
         enabled: v.boolean(),
         withKey: v.boolean()
