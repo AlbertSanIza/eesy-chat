@@ -50,10 +50,8 @@ export function ImageMessage({ message, content }: { message: Doc<'messages'>; c
                             alt={message.prompt}
                         />
                     </DialogTrigger>
-                    <DialogContent className="max-h-[95vh] max-w-[95vw] border-0 bg-transparent p-0 shadow-none">
-                        <div className="relative flex items-center justify-center">
-                            <img className="max-h-[95vh] max-w-full rounded-lg object-contain" src={content} alt={message.prompt} />
-                        </div>
+                    <DialogContent className="border-0 bg-transparent p-0 backdrop-blur">
+                        <img className="rounded-lg object-contain" src={content} alt={message.prompt} />
                     </DialogContent>
                 </Dialog>
                 <Tooltip>
