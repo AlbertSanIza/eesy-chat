@@ -9,6 +9,7 @@ export const run = internalAction({
     handler: async (_, { apiKey, messageId }) => {
         await fetch(`${process.env.VITE_RAILWAY_API_URL}/start`, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ apiKey, messageId })
         })
     }
