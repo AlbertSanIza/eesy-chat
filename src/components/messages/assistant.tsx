@@ -5,6 +5,7 @@ import { ImageMessage } from '@/components/messages/image-dialog'
 import { MessageOptions } from '@/components/messages/options'
 import { VoiceMessage } from '@/components/messages/voice-message'
 import type { Doc } from '@/convex/_generated/dataModel'
+import { Loader2Icon } from 'lucide-react'
 
 export function AssistantMessage({ promptMessage, message, showExtras }: { promptMessage?: Doc<'messages'>; message: Message; showExtras?: boolean }) {
     if (promptMessage?.type === 'image') {
@@ -20,6 +21,7 @@ export function AssistantMessage({ promptMessage, message, showExtras }: { promp
             <div className="markdown">
                 <MemoizedMarkdown id={message.id} content={message.content} />
             </div>
+            {(promptMessage?.status === 'pending' || promptMessage?.status === 'streaming') && <Loader2Icon className="animate-spin" />}
             {showExtras && promptMessage && (
                 <MessageOptions
                     className="group-hover/text-message:opacity-100"
