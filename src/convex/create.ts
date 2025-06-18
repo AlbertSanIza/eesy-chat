@@ -307,18 +307,7 @@ export const generateImageInternal = internalAction({
         const openai = createOpenAI({ apiKey })
         const { image } = await generateImage({ model: openai.image('dall-e-3'), prompt, size: '1024x1024' })
         const storageId = await ctx.storage.store(new Blob([image.uint8Array], { type: image.mimeType }))
-        await ctx.runMutation(internal.create.updateMessageWithImage, { messageId, storageId })
-    }
-})
-
-export const updateMessageWithImage = internalMutation({
-    args: { messageId: v.id('messages'), storageId: v.id('_storage') },
-    handler: async (ctx, { messageId, storageId }) => await ctx.db.patch(messageId, { storageId, status: 'done' })
-})
-
-export const updateMessageStatus = internalMutation({
-    args: { messageId: v.id('messages'), status: v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error')) },
-    handler: async (ctx, { messageId, status }) => {
-        await ctx.db.patch(messageId, { status })
+        await ctx.runMutation(internal.update.messageStorageId, { messageId, storageId })
+        await ctx.runMutation(internal.update.messageStatus, { messageId, status: 'done' })
     }
 })
