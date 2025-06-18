@@ -87,6 +87,9 @@ export function Input() {
         if (!selectedModel) {
             return
         }
+        if (isImageThread && !openAiApiKey) {
+            return
+        }
         if (threadId) {
             if (isImageThread && openAiApiKey) {
                 sendImage({
@@ -162,7 +165,7 @@ export function Input() {
                             onKeyDown={async (event) => {
                                 if (event.key === 'Enter' && !event.shiftKey) {
                                     event.preventDefault()
-                                    if (status === 'ready') {
+                                    if (status === 'ready' && !(isImageThread && !openAiApiKey)) {
                                         handleOnSubmit(input)
                                     }
                                 }
@@ -208,7 +211,7 @@ export function Input() {
                                     size="icon"
                                     type="submit"
                                     className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary"
-                                    disabled={status !== 'ready' || availableModels.length === 0}
+                                    disabled={status !== 'ready' || availableModels.length === 0 || (isImageThread && !openAiApiKey)}
                                 >
                                     <SendHorizontalIcon />
                                 </Button>
