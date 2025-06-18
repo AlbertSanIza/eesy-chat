@@ -21,9 +21,11 @@ class BroadcastStream {
     private subscribers = new Set<Subscriber>()
     private messageId: Id<'messages'>
     private chunks: string[] = []
+    private keepAliveInterval: NodeJS.Timeout | null = null
 
     constructor(history: Message[], message: Doc<'messages'>, apiKey: string) {
         this.messageId = message._id
+        this.startKeepAlive()
         this.run(history, message, apiKey)
     }
 
@@ -57,7 +59,21 @@ class BroadcastStream {
     }
 
     cleanup() {
+        this.stopKeepAlive()
         this.closeAllSubscribers()
+    }
+
+    private startKeepAlive() {
+        this.keepAliveInterval = setInterval(() => {
+            this.subscribers.forEach((subscriber) => subscriber.write(''))
+        }, 1000)
+    }
+
+    private stopKeepAlive() {
+        if (this.keepAliveInterval) {
+            clearInterval(this.keepAliveInterval)
+            this.keepAliveInterval = null
+        }
     }
 
     private async run(history: Message[], message: Doc<'messages'>, apiKey: string) {
@@ -82,10 +98,12 @@ class BroadcastStream {
                 }
             }
             httpClient.mutation(api.streaming.addChunk, { messageId: message._id, text: delta, final: true })
+            this.stopKeepAlive()
             this.closeAllSubscribers()
             streamManager.deleteWithDelay(this.messageId)
         } catch (error) {
             console.error('AI stream failed:', error)
+            this.stopKeepAlive()
             this.closeAllSubscribers()
             streamManager.deleteWithDelay(this.messageId)
         }
