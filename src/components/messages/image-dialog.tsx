@@ -37,7 +37,7 @@ export function ImageMessage({ message, content }: { message: Doc<'messages'>; c
     }
 
     if (message.status === 'streaming') {
-        return <Skeleton className="size-40 rounded-lg" />
+        return <Skeleton className="size-40 rounded-lg border bg-sidebar" />
     }
     return (
         <div className="group/image-message">
