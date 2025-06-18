@@ -130,6 +130,13 @@ export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): 
             content: message.storageId ? (await ctx.storage.getUrl(message.storageId)) || 'Image generation in progress...' : 'Image generation in progress...'
         }
     }
+    if (message.type === 'sound') {
+        return {
+            id: messageId,
+            role: 'assistant',
+            content: message.storageId ? (await ctx.storage.getUrl(message.storageId)) || 'Audio generation in progress...' : 'Audio generation in progress...'
+        }
+    }
     const chunks = await ctx.db
         .query('chunks')
         .withIndex('by_message', (q) => q.eq('messageId', messageId))
