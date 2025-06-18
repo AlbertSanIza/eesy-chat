@@ -1,15 +1,16 @@
 import { SignInButton, UserButton, useUser } from '@clerk/clerk-react'
 import { Link } from '@tanstack/react-router'
 import { Unauthenticated } from 'convex/react'
+import { SearchIcon } from 'lucide-react'
 
 import { AppSidebarContent } from '@/components/sidebar/content'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { useStore } from '@/lib/zustand/store'
-import { SearchIcon } from 'lucide-react'
 
 export function AppSidebar() {
     const { user, threadSearch, setThreadSearch } = useStore()
@@ -18,7 +19,12 @@ export function AppSidebar() {
     return (
         <Sidebar variant="floating">
             <SidebarHeader className="pb-0">
-                <h1 className="my-1.5 border-transparent text-center text-xl font-light">eesy.chat</h1>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <h1 className="my-1.5 border-transparent text-center text-xl font-light">eesy.chat</h1>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">THIS IS NOT THE REAL T3.CHAT BUT JUST A TRIBUTE TO IT</TooltipContent>
+                </Tooltip>
                 <Button className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary" asChild>
                     <Link to="/">New Chat</Link>
                 </Button>
