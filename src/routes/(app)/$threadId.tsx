@@ -49,10 +49,6 @@ function ServerMessage({ message }: { message: Doc<'messages'> }) {
     const messageBody = useQuery(api.get.messageBody, message.status === 'done' ? { messageId: message._id } : 'skip')
     const { data, isLoading, isFetching } = useTSQuery({ ...chatQueryOptions(message), enabled: message.status === 'streaming' })
 
-    if (!data && !messageBody) {
-        return null
-    }
-
     const loading = message.status === 'streaming' && (isLoading || isFetching)
 
     return (
