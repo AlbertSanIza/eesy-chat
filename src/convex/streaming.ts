@@ -1,8 +1,6 @@
 import type { Message } from 'ai'
 import { v } from 'convex/values'
 
-import type { Id } from './_generated/dataModel'
-import type { QueryCtx } from './_generated/server'
 import { internalAction, mutation, query } from './_generated/server'
 
 export const run = internalAction({
@@ -53,11 +51,3 @@ export const addChunk = mutation({
         }
     }
 })
-
-export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): Promise<Message> {
-    const chunks = await ctx.db
-        .query('chunks')
-        .withIndex('by_message', (q) => q.eq('messageId', messageId))
-        .collect()
-    return { id: messageId, role: 'assistant', content: chunks.map((chunk) => chunk.text).join('') }
-}
