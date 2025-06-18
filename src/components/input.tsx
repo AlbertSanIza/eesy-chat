@@ -27,6 +27,16 @@ export function Input() {
     const [showSignInDialog, setShowSignInDialog] = useState(false)
     const { openRouterApiKey, models, selectedModel, setSelectedModel } = useStore()
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
+    const { threads, openRouterApiKey, openAiApiKey, models, selectedModel, setSelectedModel } = useStore()
+
+    const currentThread = threads.find((thread) => thread._id === threadId)
+    const isImageThread = currentThread?.type === 'image'
+    const availableModels = models.filter((model) => {
+        if ((!threadId || isImageThread) && model.label === 'GPT ImageGen' && openAiApiKey) {
+            return true
+        }
+        return openRouterApiKey || !model.withKey
+    })
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
