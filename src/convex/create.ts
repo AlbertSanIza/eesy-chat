@@ -173,7 +173,7 @@ export const threadBranchStorageInternal = internalAction({
     handler: async (ctx, { newMessageId, storageId }) => {
         const storageBlob = await ctx.storage.get(storageId)
         if (storageBlob) {
-            await ctx.runMutation(internal.update.messageStorageId, { id: newMessageId, storageId: await ctx.storage.store(storageBlob) })
+            await ctx.runMutation(internal.update.messageStorageId, { messageId: newMessageId, storageId: await ctx.storage.store(storageBlob) })
         }
     }
 })
