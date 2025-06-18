@@ -79,8 +79,26 @@ app.get('/connect/:messageId', (c) => {
             await stream.write('Stream not found or has ended.')
             return
         }
-        await stream.pipe(liveStream.getReadableStream())
+
+        // Send periodic keep-alive signals to prevent client timeout
+        const keepAliveInterval = setInterval(async () => {
+            try {
+                // Send a keep-alive signal (invisible to the user)
+                await stream.write('')
+            } catch {
+                // Connection closed, clear interval
+                clearInterval(keepAliveInterval)
+            }
+        }, 10000) // Every 10 seconds
+
+        try {
+            await stream.pipe(liveStream.getReadableStream())
+        } finally {
+            clearInterval(keepAliveInterval)
+        }
+
         stream.onAbort(() => {
+            clearInterval(keepAliveInterval)
             liveStream.cleanup()
         })
     })
