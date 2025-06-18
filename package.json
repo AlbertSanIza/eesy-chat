@@ -22,6 +22,7 @@
         "@ai-sdk/react": "^1.2.12",
         "@clerk/clerk-react": "^5.32.0",
         "@convex-dev/persistent-text-streaming": "^0.2.3",
+        "@elevenlabs/elevenlabs-js": "^2.2.0",
         "@eslint/js": "^9.29.0",
         "@openrouter/ai-sdk-provider": "^0.7.2",
         "@radix-ui/react-alert-dialog": "^1.1.14",
