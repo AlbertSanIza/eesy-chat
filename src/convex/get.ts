@@ -122,7 +122,7 @@ export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): 
         return {
             id: messageId,
             role: 'assistant',
-            content: message.imageUrl || 'Image generation in progress...'
+            content: message.storageId ? (await ctx.storage.getUrl(message.storageId)) || 'Image generation in progress...' : 'Image generation in progress...'
         }
     }
     const chunks = await ctx.db
