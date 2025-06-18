@@ -65,7 +65,7 @@ export function ImageMessage({ message, content }: { message: Doc<'messages'>; c
                     <TooltipContent side="bottom">Download</TooltipContent>
                 </Tooltip>
             </div>
-            <MessageOptions message={message} onCopy={handleCopy} />
+            <MessageOptions message={message} onCopy={handleCopy} className="group-hover/image-message:opacity-100" />
         </div>
     )
 }
