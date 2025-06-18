@@ -114,6 +114,17 @@ export const model = internalQuery({
 })
 
 export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): Promise<Message> {
+    const message = await ctx.db.get(messageId)
+    if (!message) {
+        throw new Error('Message Not Found')
+    }
+    if (message.type === 'image') {
+        return {
+            id: messageId,
+            role: 'assistant',
+            content: message.imageUrl || 'Image generation in progress...'
+        }
+    }
     const chunks = await ctx.db
         .query('chunks')
         .withIndex('by_message', (q) => q.eq('messageId', messageId))
