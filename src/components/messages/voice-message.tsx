@@ -77,7 +77,7 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
     }
 
     if (message.status === 'pending' || message.status === 'streaming') {
-        return <Skeleton className="h-20 w-full rounded-lg border bg-sidebar" />
+        return <Skeleton className="mb-1.5 h-9 w-full rounded-lg border bg-sidebar" />
     }
 
     return (
