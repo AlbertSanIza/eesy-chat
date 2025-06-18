@@ -32,14 +32,21 @@ export function ApiKeysDialog() {
     const hasValidOpenRouterKey = isValidOpenRouterApiKey(tempOpenRouterApiKey)
     const hasValidOpenAiKey = isValidOpenAiApiKey(tempOpenAiApiKey)
     const allKeysValid = hasValidOpenRouterKey && hasValidOpenAiKey
-    const hasAnyStoredKey = openRouterApiKey || openAiApiKey
+
+    const hasStoredOpenRouterKey = !!openRouterApiKey?.trim()
+    const hasStoredOpenAiKey = !!openAiApiKey?.trim()
+    const hasAllStoredKeys = hasStoredOpenRouterKey && hasStoredOpenAiKey
+    const hasPartialStoredKeys = (hasStoredOpenRouterKey || hasStoredOpenAiKey) && !hasAllStoredKeys
+    const hasNoStoredKeys = !hasStoredOpenRouterKey && !hasStoredOpenAiKey
 
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 <Button variant="outline" size="icon" className="relative">
                     <KeyIcon />
-                    {hasAnyStoredKey && <div className="absolute right-1.5 bottom-1.5 size-1 rounded-full bg-green-500" />}
+                    {hasAllStoredKeys && <div className="absolute right-1.5 bottom-1.5 size-1 rounded-full bg-green-500" />}
+                    {hasPartialStoredKeys && <div className="absolute right-1.5 bottom-1.5 size-1 rounded-full bg-orange-500" />}
+                    {hasNoStoredKeys && <div className="absolute right-1.5 bottom-1.5 size-1 rounded-full bg-red-500" />}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
