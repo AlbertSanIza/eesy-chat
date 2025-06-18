@@ -53,3 +53,10 @@ export const threadTime = internalMutation({
     args: { threadId: v.id('threads') },
     handler: async (ctx, { threadId }) => await ctx.db.patch(threadId, { updateTime: Date.now() })
 })
+
+export const messageStorageId = internalMutation({
+    args: { id: v.id('messages'), storageId: v.id('_storage') },
+    handler: async (ctx, { id, storageId }) => {
+        await ctx.db.patch(id, { storageId })
+    }
+})

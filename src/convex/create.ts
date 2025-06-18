@@ -117,7 +117,7 @@ export const threadBranchMessagesInternal = internalMutation({
         for (const message of messagesToCopy) {
             const newMessageId = await ctx.db.insert('messages', {
                 threadId: newThreadId,
-                type: 'text',
+                type: message.type,
                 status: message.status,
                 service: message.service,
                 model: message.model,
@@ -125,7 +125,20 @@ export const threadBranchMessagesInternal = internalMutation({
                 label: message.label,
                 prompt: message.prompt
             })
+            if (message.storageId) {
+                await ctx.scheduler.runAfter(0, internal.create.threadBranchStorageInternal, { newMessageId, storageId: message.storageId })
+            }
             await ctx.scheduler.runAfter(0, internal.create.threadBranchChunksInternal, { messageId: message._id, newMessageId })
+        }
+    }
+})
+
+export const threadBranchStorageInternal = internalAction({
+    args: { newMessageId: v.id('messages'), storageId: v.id('_storage') },
+    handler: async (ctx, { newMessageId, storageId }) => {
+        const storageBlob = await ctx.storage.get(storageId)
+        if (storageBlob) {
+            await ctx.runMutation(internal.update.messageStorageId, { id: newMessageId, storageId: await ctx.storage.store(storageBlob) })
         }
     }
 })
