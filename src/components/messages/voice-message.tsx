@@ -85,7 +85,11 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
                 <audio ref={audioRef} src={content} preload="metadata" />
                 <div className="mt-2 flex flex-1 items-center rounded-lg">
                     <div className="w-full">
-                        <Progress className="cursor-pointer dark:bg-[#2C2632]" value={duration ? (currentTime / duration) * 100 : 0} onClick={handleSeek} />
+                        <Progress
+                            className="cursor-pointer dark:bg-[#2C2632] [&>div]:bg-pink-400/60!"
+                            onClick={handleSeek}
+                            value={duration ? (currentTime / duration) * 100 : 0}
+                        />
                         <div className="flex justify-between text-xs text-muted-foreground">
                             <span>{formatTime(currentTime)}</span>
                             <span>{formatTime(duration)}</span>
