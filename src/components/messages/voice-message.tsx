@@ -75,8 +75,8 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
     }
 
     return (
-        <div className="group/image-message">
-            <div className="flex flex-col gap-3 rounded-lg border bg-muted/30 p-4">
+        <div className="group/sound-message">
+            <div className="mb-1.5 flex flex-col gap-3 rounded-lg border bg-muted/30 p-4">
                 <audio ref={audioRef} src={content} preload="metadata" />
                 <div className="flex items-center gap-3">
                     <Button variant="outline" size="icon" onClick={togglePlay}>
@@ -98,7 +98,6 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
                         <DownloadIcon className="size-4" />
                     </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">"{content}"</p>
             </div>
             <MessageOptions message={message} onCopy={() => {}} className="group-hover/sound-message:opacity-100" />
         </div>
