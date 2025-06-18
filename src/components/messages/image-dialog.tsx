@@ -36,7 +36,7 @@ export function ImageMessage({ message, content }: { message: Doc<'messages'>; c
         }
     }
 
-    if (message.status === 'streaming') {
+    if (message.status === 'pending' || message.status === 'streaming') {
         return <Skeleton className="size-60 rounded-lg border bg-sidebar" />
     }
 
