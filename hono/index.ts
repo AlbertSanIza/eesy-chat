@@ -80,16 +80,13 @@ app.get('/connect/:messageId', (c) => {
             return
         }
 
-        // Send periodic keep-alive signals to prevent client timeout
         const keepAliveInterval = setInterval(async () => {
             try {
-                // Send a keep-alive signal (invisible to the user)
                 await stream.write('')
             } catch {
-                // Connection closed, clear interval
                 clearInterval(keepAliveInterval)
             }
-        }, 10000) // Every 10 seconds
+        }, 5000)
 
         try {
             await stream.pipe(liveStream.getReadableStream())
