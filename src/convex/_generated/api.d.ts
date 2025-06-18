@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as create from "../create.js";
+import type * as eleven from "../eleven.js";
 import type * as get from "../get.js";
 import type * as remove from "../remove.js";
 import type * as streaming from "../streaming.js";
@@ -29,6 +30,7 @@ import type * as update from "../update.js";
  */
 declare const fullApi: ApiFromModules<{
   create: typeof create;
+  eleven: typeof eleven;
   get: typeof get;
   remove: typeof remove;
   streaming: typeof streaming;
