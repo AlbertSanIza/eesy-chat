@@ -2,7 +2,7 @@ import { bundledLanguages } from 'shiki'
 import { createHighlighterCore } from 'shiki/core'
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 
-const highlighterPromise = await createHighlighterCore({
+const highlighterPromise = createHighlighterCore({
     themes: [import('@shikijs/themes/github-light'), import('@shikijs/themes/github-dark')],
     langs: [import('@shikijs/langs/bash'), import('@shikijs/langs/typescript'), import('@shikijs/langs/javascript')],
     engine: createJavaScriptRegexEngine()
