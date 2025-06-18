@@ -18,6 +18,9 @@ if (!process.env.VITE_CONVEX_URL) {
 if (!process.env.OPENROUTER_API_KEY) {
     throw new Error('OPENROUTER_API_KEY is not set in the environment variables.')
 }
+if (!process.env.DOMAIN_URL) {
+    throw new Error('DOMAIN_URL is not set in the environment variables.')
+}
 
 const app = new Hono()
 const httpClient = new ConvexHttpClient(process.env.VITE_CONVEX_URL)
@@ -28,7 +31,7 @@ app.use(
     cors({
         origin: (origin) => {
             // Allow requests from localhost development servers
-            if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('https://localhost:')) {
+            if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('https://localhost:') || origin.includes(process.env.DOMAIN_URL!)) {
                 return origin || '*'
             }
             return null
