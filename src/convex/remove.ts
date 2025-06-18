@@ -26,6 +26,11 @@ export const messagesByThreadId = internalMutation({
             .query('messages')
             .filter((q) => q.eq(q.field('threadId'), threadId))
             .collect()
+        for (const message of messages) {
+            if (message.storageId) {
+                await ctx.storage.delete(message.storageId)
+            }
+        }
         await Promise.all(messages.map((message) => ctx.db.delete(message._id)))
         await Promise.all(messages.map((message) => ctx.runMutation(internal.remove.chunksByMessageId, { messageId: message._id })))
     }
