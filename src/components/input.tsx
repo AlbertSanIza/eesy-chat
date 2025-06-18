@@ -205,7 +205,7 @@ export function Input() {
                                 <div className="grid grid-cols-1 text-sm">
                                     <select
                                         className="col-start-1 row-start-1 h-9 cursor-pointer appearance-none rounded-md border bg-background pr-7 pl-2 shadow-xs outline-none hover:bg-accent hover:text-accent-foreground"
-                                        disabled={isImageThread}
+                                        disabled={isImageThread || isVoiceThread}
                                         value={selectedModel?._id}
                                         onChange={(event) => {
                                             const modelId = event.target.value
