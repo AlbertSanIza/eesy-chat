@@ -12,6 +12,7 @@ MIT
 - [TailwindCSS](https://tailwindcss.com/)
 - [Tanstack Router](https://tanstack.com/router)
 - [Zustand](https://zustand-demo.pmnd.rs/)
+- [AI SDK](https://ai-sdk.dev/)
 - [Vercel](https://vercel.com/)
 - [Clerk](https://clerk.com/)
 - [Convex](https://convex.dev/)
