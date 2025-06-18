@@ -13,8 +13,9 @@ export const thread = mutation({
             return null
         }
         const threadId = await ctx.db.insert('threads', {
-            name: 'New Thread',
             userId: identity.subject,
+            type: 'text',
+            name: 'New Thread',
             pinned: false,
             shared: false,
             branched: false,
@@ -55,8 +56,9 @@ export const threadBranch = mutation({
             return null
         }
         const newThreadId = await ctx.db.insert('threads', {
-            name: thread.name,
             userId: identity.subject,
+            type: thread.type || 'text',
+            name: thread.name,
             pinned: false,
             shared: false,
             branched: true,
