@@ -36,12 +36,15 @@ export function Input() {
     const isImageThread = currentThread?.type === 'image'
     const isVoiceThread = currentThread?.type === 'sound'
     const availableModels = models.filter((model) => {
-        if ((!threadId || isImageThread) && model.label === 'GPT ImageGen' && openAiApiKey) {
-            return true
+        // Image generation model - only available when creating new thread or in image thread
+        if (model.label === 'GPT ImageGen') {
+            return (!threadId || isImageThread) && openAiApiKey
         }
-        if ((!threadId || isVoiceThread) && model.label === 'ElevenLabs VoiceGen' && elevenLabsApiKey) {
-            return true
+        // Voice generation model - only available when creating new thread or in voice thread
+        if (model.label === 'ElevenLabs VoiceGen') {
+            return (!threadId || isVoiceThread) && elevenLabsApiKey
         }
+        // For regular text models, check if we have the required API key
         return openRouterApiKey || !model.withKey
     })
     const isImageGenModel = selectedModel?.label === 'GPT ImageGen'
@@ -51,22 +54,22 @@ export function Input() {
         if (models.length > 0 && threadId) {
             if (isImageThread && openAiApiKey) {
                 const imageGenModel = models.find((model) => model.label === 'GPT ImageGen')
-                if (imageGenModel && selectedModel?._id !== imageGenModel._id) {
+                if (imageGenModel) {
                     setSelectedModel(imageGenModel)
                 }
             } else if (isVoiceThread && elevenLabsApiKey) {
                 const voiceGenModel = models.find((model) => model.label === 'ElevenLabs VoiceGen')
-                if (voiceGenModel && selectedModel?._id !== voiceGenModel._id) {
+                if (voiceGenModel) {
                     setSelectedModel(voiceGenModel)
                 }
-            } else if (!isImageThread && !isVoiceThread && currentThread) {
+            } else if (!isImageThread && !isVoiceThread) {
                 const gpt41Model = models.find((model) => model.model === 'openai/gpt-4.1-nano')
-                if (gpt41Model && selectedModel?._id !== gpt41Model._id) {
+                if (gpt41Model) {
                     setSelectedModel(gpt41Model)
                 }
             }
         }
-    }, [currentThread, isImageThread, isVoiceThread, models, openAiApiKey, elevenLabsApiKey, selectedModel?._id, setSelectedModel, threadId])
+    }, [elevenLabsApiKey, isImageThread, isVoiceThread, models, openAiApiKey, setSelectedModel, threadId])
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
