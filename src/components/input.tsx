@@ -22,10 +22,11 @@ export function Input() {
     const send = useAction(api.create.message)
     const { threadId } = useParams({ strict: false })
     const createThread = useMutation(api.create.thread)
+    const sendImage = useAction(api.create.imageMessage)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [canScrollDown, setCanScrollDown] = useState(false)
+    const createImageThread = useMutation(api.create.imageThread)
     const [showSignInDialog, setShowSignInDialog] = useState(false)
-    const { openRouterApiKey, models, selectedModel, setSelectedModel } = useStore()
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
     const { threads, openRouterApiKey, openAiApiKey, models, selectedModel, setSelectedModel } = useStore()
 
@@ -37,6 +38,7 @@ export function Input() {
         }
         return openRouterApiKey || !model.withKey
     })
+    const isImageGenModel = selectedModel?.label === 'GPT ImageGen'
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
@@ -77,17 +79,23 @@ export function Input() {
                     prompt: newInput.trim()
                 })
             } else {
-            send({
-                apiKey: openRouterApiKey || undefined,
-                threadId: threadId as Id<'threads'>,
-                prompt: newInput.trim(),
-                modelId: selectedModel._id
-            })
+                send({
+                    apiKey: openRouterApiKey || undefined,
+                    threadId: threadId as Id<'threads'>,
+                    prompt: newInput.trim(),
+                    modelId: selectedModel._id
+                })
             }
             handleInputChange({ id: threadId, value: '' })
             return
         }
-        const newThreadId = await createThread({ apiKey: openRouterApiKey || undefined, modelId: selectedModel._id, prompt: input.trim() })
+        let newThreadId
+        if (isImageGenModel && openAiApiKey) {
+            newThreadId = await createImageThread({ apiKey: openAiApiKey, prompt: input.trim() })
+        } else {
+            newThreadId = await createThread({ apiKey: openRouterApiKey || undefined, modelId: selectedModel._id, prompt: input.trim() })
+        }
+
         if (newThreadId) {
             await navigate({ to: `/${newThreadId}` })
             handleInputChange({ id: 'home', value: '' })
@@ -165,13 +173,11 @@ export function Input() {
                                             }
                                         }}
                                     >
-                                        {models
-                                            .filter((model) => openRouterApiKey || !model.withKey)
-                                            .map((model) => (
-                                                <option key={model._id} value={model._id}>
-                                                    {model.label}
-                                                </option>
-                                            ))}
+                                        {availableModels.map((model) => (
+                                            <option key={model._id} value={model._id}>
+                                                {model.label}
+                                            </option>
+                                        ))}
                                     </select>
                                     <ChevronDownIcon
                                         aria-hidden="true"
@@ -186,7 +192,7 @@ export function Input() {
                                     size="icon"
                                     type="submit"
                                     className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary"
-                                    disabled={status !== 'ready'}
+                                    disabled={status !== 'ready' || availableModels.length === 0}
                                 >
                                     <SendHorizontalIcon />
                                 </Button>
