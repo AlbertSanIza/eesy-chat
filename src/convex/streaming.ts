@@ -2,6 +2,7 @@ import type { Message } from 'ai'
 import { v } from 'convex/values'
 
 import { internalAction, mutation, query } from './_generated/server'
+import { getMessageBody } from './get'
 
 export const run = internalAction({
     args: { apiKey: v.string(), messageId: v.id('messages') },

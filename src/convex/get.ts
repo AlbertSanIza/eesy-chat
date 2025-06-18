@@ -113,7 +113,7 @@ export const model = internalQuery({
     }
 })
 
-async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): Promise<Message> {
+export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): Promise<Message> {
     const chunks = await ctx.db
         .query('chunks')
         .withIndex('by_message', (q) => q.eq('messageId', messageId))
