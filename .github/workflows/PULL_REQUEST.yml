@@ -1,0 +1,23 @@
+name: On Pull Request
+on:
+    pull_request:
+        types: [opened, synchronize, reopened, ready_for_review]
+    workflow_dispatch:
+jobs:
+    install_format_lint_build:
+        if: github.event.pull_request.draft == false
+        name: Install, Prettier, Lint, Build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Setup Bun
+              uses: oven-sh/setup-bun@v2
+            - name: Install
+              run: bun install
+            - name: Prettier
+              run: bun prettier
+            - name: Linter
+              run: bun lint
+            - name: Build
+              run: bun run build

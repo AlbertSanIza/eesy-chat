@@ -9,6 +9,7 @@
         "hono": "bun run --hot hono/index.ts",
         "server:dev": "bun --watch server.ts",
         "build": "tsc -b && vite build",
+        "prettier": "prettier --check .",
         "lint": "eslint .",
         "preview": "vite preview"
     },
