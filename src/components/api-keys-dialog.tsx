@@ -111,7 +111,7 @@ export function ApiKeysDialog() {
                                 autoComplete="off"
                                 className="flex-1"
                                 id="elevenlabs-api-key"
-                                placeholder="Your ElevenLabs API key..."
+                                placeholder="sk_..."
                                 value={tempElevenLabsApiKey}
                                 onChange={(event) => setTempElevenLabsApiKey(event.target.value)}
                             />
