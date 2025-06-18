@@ -21,7 +21,11 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
         }
         const updateTime = () => setCurrentTime(audio.currentTime)
         const updateDuration = () => setDuration(audio.duration)
-        const onEnded = () => setIsPlaying(false)
+        const onEnded = () => {
+            setIsPlaying(false)
+            setCurrentTime(0)
+            audio.currentTime = 0
+        }
         audio.addEventListener('timeupdate', updateTime)
         audio.addEventListener('loadedmetadata', updateDuration)
         audio.addEventListener('ended', onEnded)
