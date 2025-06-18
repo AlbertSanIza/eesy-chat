@@ -27,10 +27,10 @@ MIT
 
 ## Environment Variables
 
-`OPENROUTER_API_KEY`: Your OpenRouter API key.
-`VITE_CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key.
-`VITE_CONVEX_URL`: Your Convex URL.
-`VITE_RAILWAY_API_URL`: Your Railway API URL.
+- `OPENROUTER_API_KEY`: Your OpenRouter API key.
+- `VITE_CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key.
+- `VITE_CONVEX_URL`: Your Convex URL.
+- `VITE_RAILWAY_API_URL`: Your Railway API URL.
 
 ## Installation
 
