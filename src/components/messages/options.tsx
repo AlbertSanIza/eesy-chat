@@ -8,7 +8,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { api } from '@/convex/_generated/api'
 import type { Doc } from '@/convex/_generated/dataModel'
 
-export function MessageOptions({ message, content }: { message: Doc<'messages'>; content: string }) {
+export function MessageOptions({ message, onCopy }: { message: Doc<'messages'>; onCopy: () => void }) {
     const navigate = useNavigate()
     const [copied, setCopied] = useState(false)
     const branchOff = useMutation(api.create.threadBranch)
@@ -22,7 +22,7 @@ export function MessageOptions({ message, content }: { message: Doc<'messages'>;
                         variant="ghost"
                         className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]"
                         onClick={() => {
-                            navigator.clipboard.writeText(content)
+                            onCopy()
                             setCopied(true)
                             setTimeout(() => setCopied(false), 1000)
                         }}
