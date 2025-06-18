@@ -3,9 +3,10 @@ import { marked } from 'marked'
 import type { JSX, ReactNode } from 'react'
 import { memo, useMemo, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import ShikiHighlighter, { isInlineCode, type Element } from 'react-shiki'
+import { isInlineCode, type Element } from 'react-shiki'
 import remarkGfm from 'remark-gfm'
 
+import { ShorthandCodeHighlighter } from '@/components/shorthand-code-highlighter'
 import { Button } from '@/components/ui/button'
 
 interface CodeHighlightProps {
@@ -22,10 +23,10 @@ export const CodeHighlight = ({ className, children, node, ...props }: CodeHighl
 
     return !isInline ? (
         <div className="mb-4 overflow-hidden rounded-lg border bg-sidebar dark:bg-[#372D3D] [&_.shiki]:bg-transparent! [&>pre>pre]:rounded-t-lg!">
-            <div className="flex items-center justify-between p-1 pl-4 text-sm">
+            <div className="flex items-center p-1 pl-4 text-sm">
                 {language}
                 <Button
-                    className="text-xs"
+                    className="ml-auto self-end"
                     size="icon"
                     variant="ghost"
                     onClick={() => {
@@ -38,18 +39,11 @@ export const CodeHighlight = ({ className, children, node, ...props }: CodeHighl
                     <CopyIcon className={`absolute transition-opacity ${copied ? 'opacity-0' : 'rotate-0 opacity-100'}`} />
                 </Button>
             </div>
-            <ShikiHighlighter
-                defaultColor="light-dark()"
-                className="overflow-auto rounded-none border-t bg-[#F5ECF9] p-2 text-sm dark:bg-[#1B161F]"
+            <ShorthandCodeHighlighter
                 language={language}
-                showLanguage={false}
-                addDefaultStyles={false}
-                theme={{ light: 'github-light', dark: 'github-dark' }}
-                showLineNumbers
-                {...props}
-            >
-                {String(children).trim()}
-            </ShikiHighlighter>
+                code={String(children).trim()}
+                className="overflow-auto rounded-none border-t bg-[#F5ECF9] p-2 text-sm dark:bg-[#1B161F]"
+            />
         </div>
     ) : (
         <code className={className} {...props}>
