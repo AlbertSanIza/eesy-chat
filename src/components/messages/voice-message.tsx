@@ -3,7 +3,9 @@ import { useEffect, useRef, useState } from 'react'
 
 import { MessageOptions } from '@/components/messages/options'
 import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import type { Doc } from '@/convex/_generated/dataModel'
 
 export function VoiceMessage({ message, content }: { message: Doc<'messages'>; content: string }) {
@@ -76,28 +78,30 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
 
     return (
         <div className="group/sound-message">
-            <div className="mb-1.5 flex flex-col gap-3 rounded-lg border bg-muted/30 p-4">
-                <audio ref={audioRef} src={content} preload="metadata" />
-                <div className="flex items-center gap-3">
-                    <Button variant="outline" size="icon" onClick={togglePlay}>
-                        {isPlaying ? <PauseIcon className="size-4" /> : <PlayIcon className="size-4" />}
-                    </Button>
-                    <div className="flex-1">
-                        <div className="h-2 cursor-pointer rounded-full bg-muted" onClick={handleSeek}>
-                            <div
-                                className="h-full rounded-full bg-primary transition-all"
-                                style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
-                            />
-                        </div>
-                        <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-                            <span>{formatTime(currentTime)}</span>
-                            <span>{formatTime(duration)}</span>
+            <div className="flex items-center gap-1.5">
+                <div className="mb-1.5 flex flex-1 flex-col gap-3 rounded-lg border bg-muted/30 p-4">
+                    <audio ref={audioRef} src={content} preload="metadata" />
+                    <div className="flex items-center gap-3">
+                        <Button variant="outline" size="icon" onClick={togglePlay}>
+                            {isPlaying ? <PauseIcon /> : <PlayIcon />}
+                        </Button>
+                        <div className="flex-1">
+                            <Progress className="cursor-pointer" value={duration ? (currentTime / duration) * 100 : 0} onClick={handleSeek} />
+                            <div className="mt-1 flex justify-between text-xs text-muted-foreground">
+                                <span>{formatTime(currentTime)}</span>
+                                <span>{formatTime(duration)}</span>
+                            </div>
                         </div>
                     </div>
-                    <Button variant="outline" size="icon" onClick={downloadAudio}>
-                        <DownloadIcon className="size-4" />
-                    </Button>
                 </div>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button size="icon" variant="ghost" className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]" onClick={downloadAudio}>
+                            <DownloadIcon />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">Download</TooltipContent>
+                </Tooltip>
             </div>
             <MessageOptions message={message} onCopy={() => {}} className="group-hover/sound-message:opacity-100" />
         </div>
