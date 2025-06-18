@@ -1,9 +1,8 @@
-import { useQuery } from 'convex/react'
 import { DownloadIcon, PauseIcon, PlayIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { api } from '@/convex/_generated/api'
+import { Skeleton } from '@/components/ui/skeleton'
 import type { Doc } from '@/convex/_generated/dataModel'
 
 export function VoiceMessage({ message, content }: { message: Doc<'messages'>; content: string }) {
@@ -12,12 +11,11 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
     const [duration, setDuration] = useState(0)
     const [currentTime, setCurrentTime] = useState(0)
 
-    // Get the audio URL from storage
-    const audioUrl = useQuery(api.get.storageUrl, message.storageId ? { storageId: message.storageId } : 'skip')
-
     useEffect(() => {
         const audio = audioRef.current
-        if (!audio) return
+        if (!audio) {
+            return
+        }
 
         const updateTime = () => setCurrentTime(audio.currentTime)
         const updateDuration = () => setDuration(audio.duration)
@@ -32,7 +30,7 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
             audio.removeEventListener('loadedmetadata', updateDuration)
             audio.removeEventListener('ended', onEnded)
         }
-    }, [audioUrl])
+    }, [content])
 
     const togglePlay = () => {
         const audio = audioRef.current
@@ -64,9 +62,9 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
     }
 
     const downloadAudio = () => {
-        if (audioUrl) {
+        if (content) {
             const a = document.createElement('a')
-            a.href = audioUrl
+            a.href = content
             a.download = `voice-${message._id}.mp3`
             document.body.appendChild(a)
             a.click()
@@ -75,56 +73,16 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
     }
 
     if (message.status === 'pending' || message.status === 'streaming') {
-        return (
-            <div className="flex items-center gap-3 rounded-lg border bg-muted/30 p-4">
-                <div className="flex size-10 items-center justify-center rounded-full bg-primary/10">
-                    <div className="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                </div>
-                <div className="flex-1">
-                    <p className="text-sm font-medium">Generating voice...</p>
-                    <p className="text-xs text-muted-foreground">"{content}"</p>
-                </div>
-            </div>
-        )
-    }
-
-    if (message.status === 'error') {
-        return (
-            <div className="flex items-center gap-3 rounded-lg border border-destructive/20 bg-destructive/5 p-4">
-                <div className="flex size-10 items-center justify-center rounded-full bg-destructive/10">
-                    <span className="text-destructive">✕</span>
-                </div>
-                <div className="flex-1">
-                    <p className="text-sm font-medium text-destructive">Voice generation failed</p>
-                    <p className="text-xs text-muted-foreground">"{content}"</p>
-                </div>
-            </div>
-        )
-    }
-
-    if (!audioUrl) {
-        return (
-            <div className="flex items-center gap-3 rounded-lg border bg-muted/30 p-4">
-                <div className="flex size-10 items-center justify-center rounded-full bg-muted">
-                    <span>🔊</span>
-                </div>
-                <div className="flex-1">
-                    <p className="text-sm font-medium">Loading audio...</p>
-                    <p className="text-xs text-muted-foreground">"{content}"</p>
-                </div>
-            </div>
-        )
+        return <Skeleton className="h-20 w-full rounded-lg border bg-sidebar" />
     }
 
     return (
         <div className="flex flex-col gap-3 rounded-lg border bg-muted/30 p-4">
-            <audio ref={audioRef} src={audioUrl} preload="metadata" />
-
+            <audio ref={audioRef} src={content} preload="metadata" />
             <div className="flex items-center gap-3">
                 <Button variant="outline" size="icon" onClick={togglePlay}>
                     {isPlaying ? <PauseIcon className="size-4" /> : <PlayIcon className="size-4" />}
                 </Button>
-
                 <div className="flex-1">
                     <div className="h-2 cursor-pointer rounded-full bg-muted" onClick={handleSeek}>
                         <div
@@ -137,12 +95,10 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
                         <span>{formatTime(duration)}</span>
                     </div>
                 </div>
-
                 <Button variant="outline" size="icon" onClick={downloadAudio}>
                     <DownloadIcon className="size-4" />
                 </Button>
             </div>
-
             <p className="text-xs text-muted-foreground">"{content}"</p>
         </div>
     )
