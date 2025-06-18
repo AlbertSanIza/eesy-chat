@@ -7,18 +7,21 @@ import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { api } from '@/convex/_generated/api'
 import type { Doc } from '@/convex/_generated/dataModel'
+import { cn } from '@/lib/utils'
 
 export function MessageOptions({
     message,
     showCopy = true,
     showBranchOff = true,
     showModel = true,
+    className,
     onCopy
 }: {
     message: Doc<'messages'>
     showCopy?: boolean
     showBranchOff?: boolean
     showModel?: boolean
+    className?: string
     onCopy: () => void
 }) {
     const navigate = useNavigate()
@@ -26,7 +29,7 @@ export function MessageOptions({
     const branchOff = useMutation(api.create.threadBranch)
 
     return (
-        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover/image-message:opacity-100">
+        <div className={cn('flex items-center gap-1 opacity-0 transition-opacity', className)}>
             {showCopy && (
                 <Tooltip>
                     <TooltipTrigger asChild>
