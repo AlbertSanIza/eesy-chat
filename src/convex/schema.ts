@@ -15,7 +15,7 @@ export default defineSchema({
         threadId: v.id('threads'),
         type: v.union(v.literal('text'), v.literal('image'), v.literal('sound')),
         status: v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error')),
-        service: v.union(v.literal('openRouter'), v.literal('openAi')),
+        service: v.union(v.literal('openRouter'), v.literal('openAi'), v.literal('elevenLabs')),
         model: v.string(),
         provider: v.string(),
         label: v.string(),
@@ -27,9 +27,9 @@ export default defineSchema({
         text: v.string()
     }).index('by_message', ['messageId']),
     models: defineTable({
-        service: v.union(v.literal('openRouter'), v.literal('openAi')),
+        service: v.union(v.literal('openRouter'), v.literal('openAi'), v.literal('elevenLabs')),
         model: v.string(),
-        provider: v.string(),
+        provider: v.union(v.literal('Google'), v.literal('Anthropic'), v.literal('OpenAI')),
         label: v.string(),
         enabled: v.boolean(),
         withKey: v.boolean()
