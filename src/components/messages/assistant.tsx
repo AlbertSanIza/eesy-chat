@@ -5,6 +5,7 @@ import { CheckIcon, CopyIcon, GitForkIcon } from 'lucide-react'
 import { useState } from 'react'
 
 import { MemoizedMarkdown } from '@/components/memoized-markdown'
+import { ImageMessage } from '@/components/messages/image-dialog'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { api } from '@/convex/_generated/api'
@@ -18,6 +19,10 @@ export function AssistantMessage({ promptMessage, message, showExtras }: { promp
     const handleBranchOff = async (currentThreadId: Id<'threads'>, messageId: Id<'messages'>) => {
         const newThreadId = await branchOff({ threadId: currentThreadId, messageId: messageId })
         await navigate({ to: `/${newThreadId}` })
+    }
+
+    if (promptMessage?.type === 'image') {
+        return <ImageMessage status={promptMessage.status} content={message.content} prompt={promptMessage.prompt} />
     }
 
     return (
