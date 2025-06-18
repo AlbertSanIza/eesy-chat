@@ -16,9 +16,9 @@ export function MessageOptions({
     onCopy
 }: {
     message: Doc<'messages'>
-    showCopy: boolean
-    showBranchOff: boolean
-    showModel: boolean
+    showCopy?: boolean
+    showBranchOff?: boolean
+    showModel?: boolean
     onCopy: () => void
 }) {
     const navigate = useNavigate()
