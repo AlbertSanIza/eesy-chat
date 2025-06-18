@@ -27,6 +27,28 @@ export const thread = mutation({
     }
 })
 
+export const imageThread = mutation({
+    args: { apiKey: v.optional(v.string()), prompt: v.string() },
+    handler: async (ctx, { apiKey, prompt }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return null
+        }
+        const threadId = await ctx.db.insert('threads', {
+            userId: identity.subject,
+            type: 'image',
+            name: 'New Thread',
+            pinned: false,
+            shared: false,
+            branched: false,
+            updateTime: Date.now()
+        })
+        await ctx.scheduler.runAfter(0, internal.create.imageThreadTitleInternal, { threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.create.imageMessageInternal, { apiKey: apiKey || process.env.OPENAI_API_KEY || '', threadId, prompt })
+        return threadId
+    }
+})
+
 export const threadInternal = internalAction({
     args: { apiKey: v.string(), threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { apiKey, threadId, prompt }) => {
@@ -34,6 +56,19 @@ export const threadInternal = internalAction({
         const response = await generateText({
             model: openrouter.chat('openai/gpt-4.1-nano'),
             system: 'You are a helpful assistant that generates a small title for a chat thread based on the provided user message. The title should be concise, descriptive and small.',
+            messages: [{ role: 'user', content: prompt.trim() }]
+        })
+        await ctx.scheduler.runAfter(0, internal.update.threadNameInternal, { id: threadId, name: response.text.trim() })
+    }
+})
+
+export const imageThreadTitleInternal = internalAction({
+    args: { threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { threadId, prompt }) => {
+        const openrouter = createOpenRouter({ apiKey: process.env.OPENROUTER_API_KEY })
+        const response = await generateText({
+            model: openrouter.chat('openai/gpt-4.1-nano'),
+            system: "You are a helpful assistant that generates a small title for an image generation thread based on the provided user prompt. The title should be concise, descriptive and indicate it's for image generation.",
             messages: [{ role: 'user', content: prompt.trim() }]
         })
         await ctx.scheduler.runAfter(0, internal.update.threadNameInternal, { id: threadId, name: response.text.trim() })
@@ -119,6 +154,18 @@ export const message = action({
     }
 })
 
+export const imageMessage = action({
+    args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { apiKey, threadId, prompt }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return null
+        }
+        await ctx.runMutation(internal.create.imageMessageInternal, { threadId, prompt, apiKey: apiKey || process.env.OPENAI_API_KEY || '' })
+        await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
+    }
+})
+
 export const messageInternal = internalMutation({
     args: { apiKey: v.string(), modelId: v.id('models'), threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { apiKey, modelId, threadId, prompt }) => {
@@ -142,6 +189,33 @@ export const messageInternal = internalMutation({
             prompt
         })
         await ctx.scheduler.runAfter(0, internal.streaming.run, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', messageId })
+        return messageId
+    }
+})
+
+export const imageMessageInternal = internalMutation({
+    args: { apiKey: v.string(), threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { apiKey, threadId, prompt }) => {
+        const model = await ctx.db
+            .query('models')
+            .withIndex('by_provider_and_label')
+            .filter((q) => q.eq(q.field('provider'), 'OpenAI'))
+            .filter((q) => q.eq(q.field('label'), 'GPT ImageGen'))
+            .first()
+        if (!model) {
+            throw new Error('Model Not Found')
+        }
+        const messageId = await ctx.db.insert('messages', {
+            threadId,
+            type: 'image',
+            status: 'pending',
+            service: model.service,
+            model: model.model,
+            provider: model.provider,
+            label: model.label,
+            prompt
+        })
+        await ctx.scheduler.runAfter(0, internal.create.generateImageInternal, { apiKey, messageId, prompt })
         return messageId
     }
 })
