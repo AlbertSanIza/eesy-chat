@@ -14,7 +14,6 @@ export const Route = createFileRoute('/shared/$threadId')({
 
 function RouteComponent() {
     const { threadId } = useParams({ from: Route.fullPath })
-
     const sharedThread = useQuery(api.get.sharedThread, { threadId: threadId as Id<'threads'> })
     useDocumentTitle(sharedThread?.name ? `Shared: ${sharedThread.name}` : undefined)
 
