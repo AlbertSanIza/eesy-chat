@@ -42,9 +42,13 @@ export function InputModelsSelect() {
 
     useEffect(() => {
         if (!availableModels.some((m) => m._id === model?._id)) {
-            setModel(availableModels[0])
+            let defaultModel
+            if (thread?.type === 'text') {
+                defaultModel = models.find((m) => m.model === 'openai/gpt-4.1-nano')
+            }
+            setModel(defaultModel || availableModels[0])
         }
-    }, [availableModels, model, setModel])
+    }, [availableModels, model?._id, models, setModel, thread?.type])
 
     return (
         !!availableModels.length && (
