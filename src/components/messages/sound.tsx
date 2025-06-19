@@ -10,14 +10,14 @@ import type { Id } from '@/convex/_generated/dataModel'
 
 export function SoundMessage({
     threadId,
-    modelProviderAndLabel,
+    provider,
     message,
-    content
+    showOptions
 }: {
     threadId?: Id<'threads'>
-    modelProviderAndLabel: string
+    provider?: string
     message: Message
-    content: string
+    showOptions?: boolean
 }) {
     const audioRef = useRef<HTMLAudioElement>(null)
     const [isPlaying, setIsPlaying] = useState(false)
@@ -44,7 +44,7 @@ export function SoundMessage({
             audio.removeEventListener('loadedmetadata', updateDuration)
             audio.removeEventListener('ended', onEnded)
         }
-    }, [content])
+    }, [])
 
     const togglePlay = () => {
         const audio = audioRef.current
@@ -76,9 +76,9 @@ export function SoundMessage({
     }
 
     const downloadAudio = () => {
-        if (content) {
+        if (message.experimental_attachments?.[0]?.url) {
             const a = document.createElement('a')
-            a.href = content
+            a.href = message.experimental_attachments?.[0]?.url
             a.download = `voice-${message.id}.mp3`
             document.body.appendChild(a)
             a.click()
@@ -92,7 +92,7 @@ export function SoundMessage({
                 <Button variant="outline" size="icon" onClick={togglePlay}>
                     {isPlaying ? <PauseIcon /> : <PlayIcon />}
                 </Button>
-                <audio ref={audioRef} src={content} preload="metadata" />
+                <audio ref={audioRef} src={message.experimental_attachments?.[0]?.url} preload="metadata" />
                 <div className="mt-2 flex flex-1 items-center rounded-lg">
                     <div className="w-full">
                         <Progress
@@ -117,12 +117,13 @@ export function SoundMessage({
                     </Tooltip>
                 )}
             </div>
-            {threadId && (
+            {showOptions && threadId && (
                 <MessageOptions
-                    threadId={threadId}
-                    messageId={message.id as Id<'messages'>}
-                    modelProviderAndLabel={modelProviderAndLabel}
                     className="group-hover/sound-message:opacity-100"
+                    onCopy={() => {}}
+                    threadId={threadId}
+                    provider={provider}
+                    messageId={message.id as Id<'messages'>}
                 />
             )}
         </div>

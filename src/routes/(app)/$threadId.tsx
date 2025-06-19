@@ -4,9 +4,9 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
 import { Fragment, useEffect } from 'react'
 
-import { AssistantMessage } from '@/components/messages/assistant'
 import { ImageMessage } from '@/components/messages/image'
 import { SoundMessage } from '@/components/messages/sound'
+import { TextMessage } from '@/components/messages/text'
 import { UserMessage } from '@/components/messages/user'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
@@ -60,11 +60,7 @@ function ServerMessage({ promptMessage }: { promptMessage: Doc<'messages'> }) {
 
     if (promptMessage.type === 'image') {
         return messageBody ? (
-            <ImageMessage
-                message={messageBody}
-                threadId={promptMessage?.threadId}
-                modelProviderAndLabel={`${promptMessage.provider}: ${promptMessage.label}`}
-            />
+            <ImageMessage message={messageBody} threadId={promptMessage.threadId} provider={`${promptMessage.provider}: ${promptMessage.label}`} showOptions />
         ) : (
             <Skeleton className="size-60 rounded-lg border bg-sidebar" />
         )
@@ -72,12 +68,7 @@ function ServerMessage({ promptMessage }: { promptMessage: Doc<'messages'> }) {
 
     if (promptMessage.type === 'sound') {
         return messageBody ? (
-            <SoundMessage
-                message={messageBody}
-                threadId={promptMessage?.threadId}
-                content={messageBody.experimental_attachments?.[0]?.url || ''}
-                modelProviderAndLabel={`${promptMessage.provider}: ${promptMessage.label}`}
-            />
+            <SoundMessage message={messageBody} threadId={promptMessage?.threadId} provider={`${promptMessage.provider}: ${promptMessage.label}`} />
         ) : (
             <Skeleton className="mb-1.5 h-9 w-full rounded-lg border bg-sidebar" />
         )
@@ -86,5 +77,12 @@ function ServerMessage({ promptMessage }: { promptMessage: Doc<'messages'> }) {
     const message: Message =
         isLoading || isFetching || !messageBody ? { id: promptMessage._id, role: 'assistant', content: (data ?? []).join('') } : messageBody
 
-    return <AssistantMessage message={message} promptMessage={promptMessage} showExtras />
+    return (
+        <TextMessage
+            message={message}
+            threadId={promptMessage.threadId}
+            showOptions={promptMessage.status === 'done'}
+            provider={`${promptMessage.provider}: ${promptMessage.label}`}
+        />
+    )
 }
