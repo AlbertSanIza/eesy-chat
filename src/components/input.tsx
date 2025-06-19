@@ -23,10 +23,7 @@ export function Input() {
     const key = useStore((state) => state.key)
     const send = useAction(api.create.message)
     const model = useStore((state) => state.model)
-    const models = useStore((state) => state.models)
     const { threadId } = useParams({ strict: false })
-    const threads = useStore((state) => state.threads)
-    const setModel = useStore((state) => state.setModel)
     const createThread = useMutation(api.create.thread)
     const sendImage = useAction(api.create.imageMessage)
     const sendVoice = useAction(api.create.voiceMessage)
@@ -36,44 +33,12 @@ export function Input() {
     const createVoiceThread = useMutation(api.create.voiceThread)
     const [showSignInDialog, setShowSignInDialog] = useState(false)
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
+    const thread = useStore((state) => state.threads.find((thread) => thread._id === threadId))
 
-    const currentThread = threads.find((thread) => thread._id === threadId)
-    const isImageThread = currentThread?.type === 'image'
-    const isSoundThread = currentThread?.type === 'sound'
-    const availableModels = models.filter((model) => {
-        if (model.model === 'dall-e-3') {
-            return (!threadId || isImageThread) && key.openAi
-        }
-        if (model.label === 'eleven_monolingual_v2') {
-            return (!threadId || isSoundThread) && key.elevenLabs
-        }
-        return key.openRouter || !model.withKey
-    })
+    const isImageThread = thread?.type === 'image'
+    const isSoundThread = thread?.type === 'sound'
     const isImageGenModel = model?.model === 'dall-e-3'
     const isSoundGenModel = model?.model === 'eleven_monolingual_v2'
-
-    useEffect(() => {
-        if (models.length > 0 && threadId) {
-            if (isImageThread && key.openAi) {
-                const imageGenModel = models.find((model) => model.model === 'dall-e-3')
-                if (imageGenModel) {
-                    setModel(imageGenModel)
-                }
-            } else if (isSoundThread && key.elevenLabs) {
-                const soundGenModel = models.find((model) => model.model === 'eleven_monolingual_v2')
-                if (soundGenModel) {
-                    setModel(soundGenModel)
-                }
-            } else if (!isImageThread && !isSoundThread) {
-                if (model?.model === 'dall-e-3' || model?.model === 'eleven_monolingual_v2') {
-                    const gpt41Model = models.find((model) => model.model === 'openai/gpt-4.1-nano')
-                    if (gpt41Model) {
-                        setModel(gpt41Model)
-                    }
-                }
-            }
-        }
-    }, [key.elevenLabs, isImageThread, isSoundThread, models, key.openAi, model?.model, setModel, threadId])
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
@@ -157,6 +122,7 @@ export function Input() {
         <div className="fixed bottom-0 left-0 flex w-full">
             <div className={cn('hidden h-full transition-[width,height] duration-75 ease-linear md:block', open ? 'w-(--sidebar-width)' : 'w-0')} />
             <div className="flex-1 px-4 sm:px-8">
+                hello {model?.model}
                 <form
                     onSubmit={(event) => {
                         event.preventDefault()
@@ -218,9 +184,7 @@ export function Input() {
                                     size="icon"
                                     type="submit"
                                     className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary"
-                                    disabled={
-                                        status !== 'ready' || availableModels.length === 0 || (isImageThread && !key.openAi) || (isSoundThread && !key.openAi)
-                                    }
+                                    disabled={status !== 'ready' || !model}
                                 >
                                     <SendHorizontalIcon />
                                 </Button>

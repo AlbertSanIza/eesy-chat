@@ -1,5 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { ChevronDownIcon } from 'lucide-react'
+import { useEffect } from 'react'
 
 import { useStore } from '@/lib/zustand/store'
 
@@ -38,6 +39,12 @@ export function InputModelsSelect() {
             }
             return true
         })
+
+    useEffect(() => {
+        if (!availableModels.some((m) => m._id === model?._id)) {
+            setModel(availableModels[0])
+        }
+    }, [availableModels, model, setModel])
 
     return (
         !!availableModels.length && (
