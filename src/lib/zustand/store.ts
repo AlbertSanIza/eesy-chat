@@ -11,9 +11,9 @@ export const useStore = create<{
     models: FunctionReturnType<typeof api.get.models>
     model?: Doc<'models'>
     key: {
-        openRouter?: string
-        openAi?: string
-        elevenLabs?: string
+        openRouter: string
+        openAi: string
+        elevenLabs: string
     }
     threadSearch: string
     setUser: ({ isSignedIn, fullName, imageUrl }: { isSignedIn: boolean; fullName?: string; imageUrl?: string }) => void
@@ -29,7 +29,11 @@ export const useStore = create<{
             threads: [],
             models: [],
             model: undefined,
-            key: {},
+            key: {
+                openRouter: '',
+                openAi: '',
+                elevenLabs: ''
+            },
             threadSearch: '',
             setUser: ({ isSignedIn, fullName, imageUrl }) => {
                 set({ user: { isSignedIn, fullName, imageUrl } })

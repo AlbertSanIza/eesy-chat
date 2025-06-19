@@ -1,46 +1,38 @@
+import { KeyIcon, XIcon } from 'lucide-react'
+import { useState } from 'react'
+
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { useStore } from '@/lib/zustand/store'
-import { KeyIcon, XIcon } from 'lucide-react'
-import { useState } from 'react'
-import { Label } from './ui/label'
 
 export function ApiKeysDialog() {
-    const { openRouterApiKey, openAiApiKey, elevenLabsApiKey, setOpenRouterApiKey, setOpenAiApiKey, setElevenLabsApiKey } = useStore()
-    const [tempOpenRouterApiKey, setTempOpenRouterApiKey] = useState(openRouterApiKey || '')
-    const [tempOpenAiApiKey, setTempOpenAiApiKey] = useState(openAiApiKey || '')
-    const [tempElevenLabsApiKey, setTempElevenLabsApiKey] = useState(elevenLabsApiKey || '')
+    const key = useStore((state) => state.key)
     const [isOpen, setIsOpen] = useState(false)
-
-    const handleSave = () => {
-        setIsOpen(false)
-        setOpenRouterApiKey(tempOpenRouterApiKey.trim())
-        setOpenAiApiKey(tempOpenAiApiKey.trim())
-        setElevenLabsApiKey(tempElevenLabsApiKey.trim())
-    }
+    const [tempKey, setTempKey] = useState(key)
+    const setKey = useStore((state) => state.setKey)
 
     const handleOpenChange = (open: boolean) => {
         if (open) {
-            setTempOpenRouterApiKey(openRouterApiKey || '')
-            setTempOpenAiApiKey(openAiApiKey || '')
-            setTempElevenLabsApiKey(elevenLabsApiKey || '')
+            setTempKey(key)
         }
         setIsOpen(open)
     }
 
-    const isValidOpenRouterApiKey = (key: string) => key.trim().length === 0 || key.startsWith('sk-or-v1-')
-    const isValidOpenAiApiKey = (key: string) => key.trim().length === 0 || key.startsWith('sk-')
-    const isValidElevenLabsApiKey = (key: string) => key.trim().length === 0 || key.length >= 32
+    const handleSave = () => {
+        setIsOpen(false)
+        setKey(tempKey)
+    }
 
-    const hasValidOpenRouterKey = isValidOpenRouterApiKey(tempOpenRouterApiKey)
-    const hasValidOpenAiKey = isValidOpenAiApiKey(tempOpenAiApiKey)
-    const hasValidElevenLabsKey = isValidElevenLabsApiKey(tempElevenLabsApiKey)
+    const hasValidOpenRouterKey = tempKey.openRouter.trim().length === 0 || tempKey.openRouter.startsWith('sk-or-v1-') || false
+    const hasValidOpenAiKey = tempKey.openAi.trim().length === 0 || tempKey.openAi.startsWith('sk-') || false
+    const hasValidElevenLabsKey = tempKey.elevenLabs.trim().length === 0 || (tempKey.elevenLabs.length ?? 0) >= 32
     const allKeysValid = hasValidOpenRouterKey && hasValidOpenAiKey && hasValidElevenLabsKey
 
-    const hasStoredOpenRouterKey = !!openRouterApiKey?.trim()
-    const hasStoredOpenAiKey = !!openAiApiKey?.trim()
-    const hasStoredElevenLabsKey = !!elevenLabsApiKey?.trim()
+    const hasStoredOpenRouterKey = !!key.openRouter.trim()
+    const hasStoredOpenAiKey = !!key.openAi.trim()
+    const hasStoredElevenLabsKey = !!key.elevenLabs.trim()
     const hasAllStoredKeys = hasStoredOpenRouterKey && hasStoredOpenAiKey && hasStoredElevenLabsKey
     const hasPartialStoredKeys = (hasStoredOpenRouterKey || hasStoredOpenAiKey || hasStoredElevenLabsKey) && !hasAllStoredKeys
     const hasNoStoredKeys = !hasStoredOpenRouterKey && !hasStoredOpenAiKey && !hasStoredElevenLabsKey
@@ -70,16 +62,16 @@ export function ApiKeysDialog() {
                                 className="flex-1"
                                 id="openrouter-api-key"
                                 placeholder="sk-or-v1-..."
-                                value={tempOpenRouterApiKey}
-                                onChange={(event) => setTempOpenRouterApiKey(event.target.value)}
+                                value={tempKey.openRouter}
+                                onChange={(event) => setTempKey({ ...tempKey, openRouter: event.target.value })}
                             />
-                            {tempOpenRouterApiKey && (
-                                <Button variant="destructive" size="icon" onClick={() => setTempOpenRouterApiKey('')} type="button">
+                            {tempKey.openRouter && (
+                                <Button variant="destructive" size="icon" onClick={() => setTempKey({ ...tempKey, openRouter: '' })} type="button">
                                     <XIcon className="size-4" />
                                 </Button>
                             )}
                         </div>
-                        {tempOpenRouterApiKey && !hasValidOpenRouterKey && (
+                        {tempKey.openRouter && !hasValidOpenRouterKey && (
                             <p className="text-xs text-destructive">OpenRouter API key should start with "sk-or-v1-"</p>
                         )}
                     </div>
@@ -92,16 +84,16 @@ export function ApiKeysDialog() {
                                 className="flex-1"
                                 id="openai-api-key"
                                 placeholder="sk-..."
-                                value={tempOpenAiApiKey}
-                                onChange={(event) => setTempOpenAiApiKey(event.target.value)}
+                                value={tempKey.openAi}
+                                onChange={(event) => setTempKey({ ...tempKey, openAi: event.target.value })}
                             />
-                            {tempOpenAiApiKey && (
-                                <Button variant="destructive" size="icon" onClick={() => setTempOpenAiApiKey('')} type="button">
+                            {tempKey.openAi && (
+                                <Button variant="destructive" size="icon" onClick={() => setTempKey({ ...tempKey, openAi: '' })} type="button">
                                     <XIcon className="size-4" />
                                 </Button>
                             )}
                         </div>
-                        {tempOpenAiApiKey && !hasValidOpenAiKey && <p className="text-xs text-destructive">OpenAI API key should start with "sk-"</p>}
+                        {tempKey.openAi && !hasValidOpenAiKey && <p className="text-xs text-destructive">OpenAI API key should start with "sk-"</p>}
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="elevenlabs-api-key">ElevenLabs API Key (Voice Gen)</Label>
@@ -110,18 +102,18 @@ export function ApiKeysDialog() {
                                 type="password"
                                 autoComplete="off"
                                 className="flex-1"
-                                id="elevenlabs-api-key"
                                 placeholder="sk_..."
-                                value={tempElevenLabsApiKey}
-                                onChange={(event) => setTempElevenLabsApiKey(event.target.value)}
+                                id="elevenlabs-api-key"
+                                value={tempKey.elevenLabs}
+                                onChange={(event) => setTempKey({ ...tempKey, elevenLabs: event.target.value })}
                             />
-                            {tempElevenLabsApiKey && (
-                                <Button variant="destructive" size="icon" onClick={() => setTempElevenLabsApiKey('')} type="button">
+                            {tempKey.elevenLabs && (
+                                <Button variant="destructive" size="icon" onClick={() => setTempKey({ ...tempKey, elevenLabs: '' })} type="button">
                                     <XIcon className="size-4" />
                                 </Button>
                             )}
                         </div>
-                        {tempElevenLabsApiKey && !hasValidElevenLabsKey && (
+                        {tempKey.elevenLabs && !hasValidElevenLabsKey && (
                             <p className="text-xs text-destructive">ElevenLabs API key should be at least 32 characters</p>
                         )}
                     </div>
