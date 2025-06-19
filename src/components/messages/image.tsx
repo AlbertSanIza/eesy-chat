@@ -7,7 +7,17 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import type { Id } from '@/convex/_generated/dataModel'
 
-export function ImageMessage({ threadId, modelProviderAndLabel, message }: { threadId?: Id<'threads'>; modelProviderAndLabel: string; message: Message }) {
+export function ImageMessage({
+    threadId,
+    provider,
+    message,
+    showOptions
+}: {
+    threadId?: Id<'threads'>
+    provider?: string
+    message: Message
+    showOptions?: boolean
+}) {
     const handleDownload = async () => {
         try {
             const response = await fetch(message.experimental_attachments![0]!.url)
@@ -55,7 +65,7 @@ export function ImageMessage({ threadId, modelProviderAndLabel, message }: { thr
                         <img className="rounded-lg object-contain" src={message.experimental_attachments?.[0]?.url} alt={message.content} />
                     </DialogContent>
                 </Dialog>
-                {threadId && (
+                {showOptions && (
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button size="icon" variant="ghost" className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]" onClick={handleDownload}>
@@ -66,13 +76,13 @@ export function ImageMessage({ threadId, modelProviderAndLabel, message }: { thr
                     </Tooltip>
                 )}
             </div>
-            {threadId && (
+            {showOptions && threadId && (
                 <MessageOptions
                     className="group-hover/image-message:opacity-100"
                     threadId={threadId}
+                    provider={provider}
                     onCopy={handleCopy}
                     messageId={message.id as Id<'messages'>}
-                    modelProviderAndLabel={modelProviderAndLabel}
                 />
             )}
         </div>
