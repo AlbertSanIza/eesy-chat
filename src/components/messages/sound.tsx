@@ -106,7 +106,7 @@ export function SoundMessage({
                         </div>
                     </div>
                 </div>
-                {threadId && (
+                {showOptions && (
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button size="icon" variant="ghost" className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]" onClick={downloadAudio}>
@@ -117,10 +117,9 @@ export function SoundMessage({
                     </Tooltip>
                 )}
             </div>
-            {showOptions && threadId && (
+            {showOptions && (
                 <MessageOptions
                     className="group-hover/sound-message:opacity-100"
-                    onCopy={() => {}}
                     threadId={threadId}
                     provider={provider}
                     messageId={message.id as Id<'messages'>}

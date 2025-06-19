@@ -76,7 +76,7 @@ export function ImageMessage({
                     </Tooltip>
                 )}
             </div>
-            {showOptions && threadId && (
+            {showOptions && (
                 <MessageOptions
                     className="group-hover/image-message:opacity-100"
                     threadId={threadId}
