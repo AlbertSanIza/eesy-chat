@@ -10,40 +10,9 @@ interface GroupedThreads {
     [key: string]: Doc<'threads'>[]
 }
 
-function getTimeGroup(timestamp: number): string {
-    const now = new Date()
-    const threadDate = new Date(timestamp)
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    const startOfYesterday = new Date(startOfToday)
-    startOfYesterday.setDate(startOfYesterday.getDate() - 1)
-    if (threadDate >= startOfToday) {
-        return 'Today'
-    } else if (threadDate >= startOfYesterday) {
-        return 'Yesterday'
-    } else {
-        const diff = now.getTime() - threadDate.getTime()
-        const dayInMs = 24 * 60 * 60 * 1000
-        const weekInMs = 7 * dayInMs
-        const monthInMs = 30 * dayInMs
-        const yearInMs = 365 * dayInMs
-        if (diff < weekInMs) {
-            const days = Math.floor(diff / dayInMs)
-            return `${days} Days ago`
-        } else if (diff < monthInMs) {
-            const weeks = Math.floor(diff / weekInMs)
-            return `${weeks} Week${weeks === 1 ? '' : 's'} Ago`
-        } else if (diff < yearInMs) {
-            const months = Math.floor(diff / monthInMs)
-            return `${months} Month${months === 1 ? '' : 's'} Ago`
-        } else {
-            const years = Math.floor(diff / yearInMs)
-            return `${years} Year${years === 1 ? '' : 's'} Ago`
-        }
-    }
-}
-
 export function AppSidebarContent() {
-    const { threads, threadSearch } = useStore()
+    const threads = useStore((state) => state.threads)
+    const threadSearch = useStore((state) => state.threadSearch)
 
     const groupedThreads = useMemo(() => {
         if (!threads) {
@@ -107,4 +76,36 @@ export function AppSidebarContent() {
             ))}
         </ShadSidebarContent>
     )
+}
+
+function getTimeGroup(timestamp: number): string {
+    const now = new Date()
+    const threadDate = new Date(timestamp)
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const startOfYesterday = new Date(startOfToday)
+    startOfYesterday.setDate(startOfYesterday.getDate() - 1)
+    if (threadDate >= startOfToday) {
+        return 'Today'
+    } else if (threadDate >= startOfYesterday) {
+        return 'Yesterday'
+    } else {
+        const diff = now.getTime() - threadDate.getTime()
+        const dayInMs = 24 * 60 * 60 * 1000
+        const weekInMs = 7 * dayInMs
+        const monthInMs = 30 * dayInMs
+        const yearInMs = 365 * dayInMs
+        if (diff < weekInMs) {
+            const days = Math.floor(diff / dayInMs)
+            return `${days} Days ago`
+        } else if (diff < monthInMs) {
+            const weeks = Math.floor(diff / weekInMs)
+            return `${weeks} Week${weeks === 1 ? '' : 's'} Ago`
+        } else if (diff < yearInMs) {
+            const months = Math.floor(diff / monthInMs)
+            return `${months} Month${months === 1 ? '' : 's'} Ago`
+        } else {
+            const years = Math.floor(diff / yearInMs)
+            return `${years} Year${years === 1 ? '' : 's'} Ago`
+        }
+    }
 }
