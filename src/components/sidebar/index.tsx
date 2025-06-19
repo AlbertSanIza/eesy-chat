@@ -45,7 +45,7 @@ export function AppSidebar() {
                 </div>
             </SidebarHeader>
             <AppSidebarContent />
-            <SidebarFooter className="relative">
+            <SidebarFooter className="relative min-h-15">
                 <div className={cn('clerk-user-button transition-opacity', (!isLoaded || !isSignedIn) && 'hidden')}>
                     <UserButton showName />
                 </div>
