@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useStore } from '@/lib/zustand/store'
 
-export function ApiKeysDialog() {
+export function InputApiKeys() {
     const key = useStore((state) => state.key)
     const [isOpen, setIsOpen] = useState(false)
     const [tempKey, setTempKey] = useState(key)

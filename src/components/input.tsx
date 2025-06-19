@@ -5,7 +5,7 @@ import { ChevronDownIcon, LoaderCircleIcon, SendHorizontalIcon } from 'lucide-re
 import { motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 
-import { ApiKeysDialog } from '@/components/api-keys-dialog'
+import { InputApiKeys } from '@/components/input/api-keys'
 import { InputModelsSelect } from '@/components/input/models'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -209,7 +209,7 @@ export function Input() {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1">
                                 <InputModelsSelect />
-                                <ApiKeysDialog />
+                                <InputApiKeys />
                             </div>
                             <div className="flex items-center gap-2">
                                 {(status === 'submitted' || status === 'streaming') && <LoaderCircleIcon className="size-4 animate-spin opacity-50" />}
