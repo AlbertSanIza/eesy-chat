@@ -28,8 +28,8 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     const { status } = useAiChat({ id: thread._id })
     const { threadId } = useParams({ strict: false })
     const [isEditing, setIsEditing] = useState(false)
-    const deleteThread = useMutation(api.remove.thread)
-    const renameThread = useAction(api.update.threadName)
+    const removeThread = useMutation(api.remove.thread)
+    const updateThreadName = useAction(api.update.threadName)
     const [inputValue, setInputValue] = useState(thread.name)
     const toggleThreadPin = useMutation(api.update.threadPinToggle)
     const toggleSharedThread = useMutation(api.update.threadSharedToggle)
@@ -53,7 +53,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
         const trimmedValue = value.trim()
         if (trimmedValue && trimmedValue !== thread.name) {
             setOptimisticName(trimmedValue)
-            renameThread({ id: thread._id, name: trimmedValue })
+            updateThreadName({ id: thread._id, name: trimmedValue })
         } else {
             setInputValue(thread.name)
         }
@@ -61,7 +61,7 @@ export function AppSidebarMenuItem({ thread }: { thread: Doc<'threads'> }) {
     }
 
     const handleOnDelete = () => {
-        deleteThread({ id: thread._id })
+        removeThread({ id: thread._id })
         if (threadId === thread._id) {
             navigate({ to: '/' })
         }

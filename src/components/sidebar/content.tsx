@@ -41,7 +41,6 @@ export function AppSidebarContent() {
         })
         return groups
     }, [threadSearch, threads])
-
     const groupOrder = ['Pinned', 'Today', 'Yesterday']
     const sortedGroups = Object.keys(groupedThreads).sort((a, b) => {
         const aIndex = groupOrder.indexOf(a)
