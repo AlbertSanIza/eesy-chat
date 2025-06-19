@@ -83,14 +83,13 @@ export const messageBody = query({
 
 export const models = query({
     args: {},
-    handler: async (ctx) => {
-        return await ctx.db
+    handler: async (ctx) =>
+        await ctx.db
             .query('models')
             .withIndex('by_provider_and_label')
             .filter((q) => q.eq(q.field('enabled'), true))
             .order('asc')
             .collect()
-    }
 })
 
 export const model = internalQuery({
