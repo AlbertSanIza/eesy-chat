@@ -261,7 +261,7 @@ export const imageMessageInternal = internalMutation({
             .query('models')
             .withIndex('by_provider_and_label')
             .filter((q) => q.eq(q.field('provider'), 'OpenAI'))
-            .filter((q) => q.eq(q.field('label'), 'GPT ImageGen'))
+            .filter((q) => q.eq(q.field('label'), 'DALL·E 3'))
             .first()
         if (!model) {
             throw new Error('Model Not Found')
@@ -288,7 +288,7 @@ export const voiceMessageInternal = internalMutation({
             .query('models')
             .withIndex('by_provider_and_label')
             .filter((q) => q.eq(q.field('provider'), 'ElevenLabs'))
-            .filter((q) => q.eq(q.field('label'), 'ElevenLabs VoiceGen'))
+            .filter((q) => q.eq(q.field('label'), 'Multilingual v2'))
             .first()
         if (!model) {
             throw new Error('Model Not Found')

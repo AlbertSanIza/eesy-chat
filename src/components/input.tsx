@@ -22,6 +22,8 @@ export function Input() {
     const { isSignedIn } = useUser()
     const send = useAction(api.create.message)
     const { threadId } = useParams({ strict: false })
+    const threads = useStore((state) => state.threads)
+    const { key, models, model, setModel } = useStore()
     const createThread = useMutation(api.create.thread)
     const sendImage = useAction(api.create.imageMessage)
     const sendVoice = useAction(api.create.voiceMessage)
@@ -31,40 +33,36 @@ export function Input() {
     const createVoiceThread = useMutation(api.create.voiceThread)
     const [showSignInDialog, setShowSignInDialog] = useState(false)
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
-    const { threads, key, models, model, setModel } = useStore()
 
     const currentThread = threads.find((thread) => thread._id === threadId)
     const isImageThread = currentThread?.type === 'image'
     const isVoiceThread = currentThread?.type === 'sound'
     const availableModels = models.filter((model) => {
-        // Image generation model - only available when creating new thread or in image thread
-        if (model.label === 'GPT ImageGen') {
+        if (model.model === 'dall-e-3') {
             return (!threadId || isImageThread) && key.openAi
         }
-        // Voice generation model - only available when creating new thread or in voice thread
-        if (model.label === 'ElevenLabs VoiceGen') {
+        if (model.label === 'eleven_monolingual_v2') {
             return (!threadId || isVoiceThread) && key.elevenLabs
         }
-        // For regular text models, check if we have the required API key
         return key.openRouter || !model.withKey
     })
-    const isImageGenModel = model?.label === 'GPT ImageGen'
-    const isVoiceGenModel = model?.label === 'ElevenLabs VoiceGen'
+    const isImageGenModel = model?.model === 'dall-e-3'
+    const isVoiceGenModel = model?.model === 'eleven_monolingual_v2'
 
     useEffect(() => {
         if (models.length > 0 && threadId) {
             if (isImageThread && key.openAi) {
-                const imageGenModel = models.find((model) => model.label === 'GPT ImageGen')
+                const imageGenModel = models.find((model) => model.model === 'dall-e-3')
                 if (imageGenModel) {
                     setModel(imageGenModel)
                 }
             } else if (isVoiceThread && key.elevenLabs) {
-                const voiceGenModel = models.find((model) => model.label === 'ElevenLabs VoiceGen')
+                const voiceGenModel = models.find((model) => model.model === 'eleven_monolingual_v2')
                 if (voiceGenModel) {
                     setModel(voiceGenModel)
                 }
             } else if (!isImageThread && !isVoiceThread) {
-                if (model?.label === 'GPT ImageGen' || model?.label === 'ElevenLabs VoiceGen') {
+                if (model?.model === 'dall-e-3' || model?.model === 'eleven_monolingual_v2') {
                     const gpt41Model = models.find((model) => model.model === 'openai/gpt-4.1-nano')
                     if (gpt41Model) {
                         setModel(gpt41Model)
@@ -72,7 +70,7 @@ export function Input() {
                 }
             }
         }
-    }, [key.elevenLabs, isImageThread, isVoiceThread, models, key.openAi, model?.label, setModel, threadId])
+    }, [key.elevenLabs, isImageThread, isVoiceThread, models, key.openAi, model?.model, setModel, threadId])
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
