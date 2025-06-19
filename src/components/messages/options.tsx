@@ -12,14 +12,14 @@ import { cn } from '@/lib/utils'
 export function MessageOptions({
     threadId,
     messageId,
-    modelProviderAndLabel,
+    provider,
     showBranchOff = true,
     className,
     onCopy
 }: {
     threadId?: Id<'threads'>
     messageId?: Id<'messages'>
-    modelProviderAndLabel?: string
+    provider?: string
     showBranchOff?: boolean
     className?: string
     onCopy?: () => void
@@ -64,7 +64,7 @@ export function MessageOptions({
                     <TooltipContent side="bottom">Branch Off</TooltipContent>
                 </Tooltip>
             )}
-            {modelProviderAndLabel && <span className="text-sm">{modelProviderAndLabel}</span>}
+            {provider && <span className="text-sm">{provider}</span>}
         </div>
     )
 }
