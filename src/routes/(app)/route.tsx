@@ -1,7 +1,8 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
-import { Authenticated } from 'convex/react'
+import { Authenticated, Unauthenticated } from 'convex/react'
 
 import { Cache } from '@/components/cache'
+import { UndoCache } from '@/components/cache/undo'
 import { Input } from '@/components/input'
 import { AppSidebar } from '@/components/sidebar'
 import { AppSidebarTrigger } from '@/components/sidebar/trigger'
@@ -23,6 +24,9 @@ function RouteComponent() {
             <Authenticated>
                 <Cache />
             </Authenticated>
+            <Unauthenticated>
+                <UndoCache />
+            </Unauthenticated>
         </SidebarProvider>
     )
 }
