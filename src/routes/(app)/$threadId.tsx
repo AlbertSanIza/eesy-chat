@@ -6,8 +6,8 @@ import { Fragment, useEffect } from 'react'
 
 import { AssistantMessage } from '@/components/messages/assistant'
 import { ImageMessage } from '@/components/messages/image'
+import { SoundMessage } from '@/components/messages/sound'
 import { UserMessage } from '@/components/messages/user'
-import { VoiceMessage } from '@/components/messages/voice-message'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
 import type { Doc, Id } from '@/convex/_generated/dataModel'
@@ -72,7 +72,7 @@ function ServerMessage({ promptMessage }: { promptMessage: Doc<'messages'> }) {
 
     if (promptMessage.type === 'sound') {
         return messageBody ? (
-            <VoiceMessage
+            <SoundMessage
                 message={messageBody}
                 threadId={promptMessage?.threadId}
                 content={messageBody.experimental_attachments?.[0]?.url || ''}

@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import type { Id } from '@/convex/_generated/dataModel'
 
-export function VoiceMessage({
+export function SoundMessage({
     threadId,
     modelProviderAndLabel,
     message,
