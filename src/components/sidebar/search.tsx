@@ -6,11 +6,13 @@ import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { useStore } from '@/lib/zustand/store'
 import { Link } from '@tanstack/react-router'
 
 export function AppSidebarSearch() {
-    const [isOpen, setIsOpen] = useState(false)
     const [query, setQuery] = useState('')
+    const [isOpen, setIsOpen] = useState(false)
+    const user = useStore((state) => state.user)
     const results = useQuery(api.get.searchChunks, query.trim() === '' ? 'skip' : { query: query.trim() })
 
     const handleOpenChange = (open: boolean) => {
@@ -40,9 +42,9 @@ export function AppSidebarSearch() {
     }, [results])
 
     return (
-        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
+        <Dialog open={isOpen && user.isSignedIn} onOpenChange={handleOpenChange}>
+            <DialogTrigger disabled={!user.isSignedIn} asChild>
+                <Button variant="outline" size="sm" disabled={!user.isSignedIn}>
                     Search All <SearchIcon />
                 </Button>
             </DialogTrigger>
