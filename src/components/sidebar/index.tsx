@@ -21,7 +21,7 @@ export function AppSidebar() {
 
     return (
         <Sidebar variant="floating">
-            <SidebarHeader>
+            <SidebarHeader className="border-b-0 pb-0">
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <h1 className="my-1.5 border-transparent text-center text-xl font-light">eesy.chat</h1>
