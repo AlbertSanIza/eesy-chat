@@ -42,8 +42,8 @@ export function AppSidebarSearch() {
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="icon" className="relative">
-                    <SearchIcon />
+                <Button variant="outline" size="sm">
+                    Search All <SearchIcon />
                 </Button>
             </DialogTrigger>
             <DialogContent>

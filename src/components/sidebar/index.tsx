@@ -1,7 +1,7 @@
 import { SignInButton, UserButton, useUser } from '@clerk/clerk-react'
 import { Link } from '@tanstack/react-router'
 import { Unauthenticated } from 'convex/react'
-import { SearchIcon } from 'lucide-react'
+// import { SearchIcon } from 'lucide-react'
 
 import { AppSidebarContent } from '@/components/sidebar/content'
 import { AppSidebarSearch } from '@/components/sidebar/search'
@@ -16,8 +16,8 @@ import { useStore } from '@/lib/zustand/store'
 export function AppSidebar() {
     const { isLoaded, isSignedIn } = useUser()
     const user = useStore((state) => state.user)
-    const threadSearch = useStore((state) => state.threadSearch)
-    const setThreadSearch = useStore((state) => state.setThreadSearch)
+    // const threadSearch = useStore((state) => state.threadSearch)
+    // const setThreadSearch = useStore((state) => state.setThreadSearch)
 
     return (
         <Sidebar variant="floating">
@@ -31,7 +31,7 @@ export function AppSidebar() {
                 <Button className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary" asChild>
                     <Link to="/">New Chat</Link>
                 </Button>
-                <div className="mx-2 mt-3 flex items-center gap-1 border-b border-sidebar-border pb-1">
+                {/* <div className="mx-2 mt-3 flex items-center gap-1 border-b border-sidebar-border pb-1">
                     <SearchIcon className="size-3! min-w-4 text-sidebar-foreground" />
                     <input
                         placeholder="Search your threads..."
@@ -39,8 +39,8 @@ export function AppSidebar() {
                         value={threadSearch}
                         onChange={(event) => setThreadSearch(event.target.value)}
                     />
-                    <AppSidebarSearch />
-                </div>
+                </div> */}
+                <AppSidebarSearch />
             </SidebarHeader>
             <AppSidebarContent />
             <SidebarFooter className="relative">
