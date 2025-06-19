@@ -75,14 +75,20 @@ export function SoundMessage({
         return `${minutes}:${seconds.toString().padStart(2, '0')}`
     }
 
-    const downloadAudio = () => {
-        if (message.experimental_attachments?.[0]?.url) {
-            const a = document.createElement('a')
-            a.href = message.experimental_attachments?.[0]?.url
-            a.download = `voice-${message.id}.mp3`
-            document.body.appendChild(a)
-            a.click()
-            document.body.removeChild(a)
+    const downloadAudio = async () => {
+        try {
+            const response = await fetch(message.experimental_attachments![0]!.url)
+            const blob = await response.blob()
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = `audio-${message.id}.${blob.type.split('/')[1] || 'mp3'}`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            URL.revokeObjectURL(url)
+        } catch (error) {
+            console.error('Failed to download audio:', error)
         }
     }
 
