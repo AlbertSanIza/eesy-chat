@@ -9,16 +9,16 @@ export const useStore = create<{
     user: { isSignedIn: boolean; fullName?: string; imageUrl?: string }
     threads: FunctionReturnType<typeof api.get.threads>
     models: FunctionReturnType<typeof api.get.models>
+    model?: Doc<'models'>
     threadSearch: string
-    selectedModel?: Doc<'models'>
     openRouterApiKey: string | null
     openAiApiKey: string | null
     elevenLabsApiKey: string | null
     setUser: ({ isSignedIn, fullName, imageUrl }: { isSignedIn: boolean; fullName?: string; imageUrl?: string }) => void
     setThreads: (threads: FunctionReturnType<typeof api.get.threads>) => void
     setModels: (models: FunctionReturnType<typeof api.get.models>) => void
+    setModel: (modelId: Doc<'models'>) => void
     setThreadSearch: (search: string) => void
-    setSelectedModel: (modelId: Doc<'models'>) => void
     setOpenRouterApiKey: (apiKey: string) => void
     setOpenAiApiKey: (apiKey: string) => void
     setElevenLabsApiKey: (apiKey: string) => void
@@ -28,8 +28,8 @@ export const useStore = create<{
             user: { isSignedIn: false },
             threads: [],
             models: [],
+            model: undefined,
             threadSearch: '',
-            selectedModel: undefined,
             openRouterApiKey: null,
             openAiApiKey: null,
             elevenLabsApiKey: null,
@@ -45,8 +45,8 @@ export const useStore = create<{
             setThreadSearch: (search: string) => {
                 set({ threadSearch: search })
             },
-            setSelectedModel: (model: Doc<'models'>) => {
-                set({ selectedModel: model })
+            setModel: (model: Doc<'models'>) => {
+                set({ model })
             },
             setOpenRouterApiKey: (apiKey: string) => {
                 set({ openRouterApiKey: apiKey })
