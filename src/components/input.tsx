@@ -39,18 +39,18 @@ export function Input() {
 
     const currentThread = threads.find((thread) => thread._id === threadId)
     const isImageThread = currentThread?.type === 'image'
-    const isVoiceThread = currentThread?.type === 'sound'
+    const isSoundThread = currentThread?.type === 'sound'
     const availableModels = models.filter((model) => {
         if (model.model === 'dall-e-3') {
             return (!threadId || isImageThread) && key.openAi
         }
         if (model.label === 'eleven_monolingual_v2') {
-            return (!threadId || isVoiceThread) && key.elevenLabs
+            return (!threadId || isSoundThread) && key.elevenLabs
         }
         return key.openRouter || !model.withKey
     })
     const isImageGenModel = model?.model === 'dall-e-3'
-    const isVoiceGenModel = model?.model === 'eleven_monolingual_v2'
+    const isSoundGenModel = model?.model === 'eleven_monolingual_v2'
 
     useEffect(() => {
         if (models.length > 0 && threadId) {
@@ -59,12 +59,12 @@ export function Input() {
                 if (imageGenModel) {
                     setModel(imageGenModel)
                 }
-            } else if (isVoiceThread && key.elevenLabs) {
-                const voiceGenModel = models.find((model) => model.model === 'eleven_monolingual_v2')
-                if (voiceGenModel) {
-                    setModel(voiceGenModel)
+            } else if (isSoundThread && key.elevenLabs) {
+                const soundGenModel = models.find((model) => model.model === 'eleven_monolingual_v2')
+                if (soundGenModel) {
+                    setModel(soundGenModel)
                 }
-            } else if (!isImageThread && !isVoiceThread) {
+            } else if (!isImageThread && !isSoundThread) {
                 if (model?.model === 'dall-e-3' || model?.model === 'eleven_monolingual_v2') {
                     const gpt41Model = models.find((model) => model.model === 'openai/gpt-4.1-nano')
                     if (gpt41Model) {
@@ -73,7 +73,7 @@ export function Input() {
                 }
             }
         }
-    }, [key.elevenLabs, isImageThread, isVoiceThread, models, key.openAi, model?.model, setModel, threadId])
+    }, [key.elevenLabs, isImageThread, isSoundThread, models, key.openAi, model?.model, setModel, threadId])
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
@@ -109,7 +109,7 @@ export function Input() {
         if (isImageThread && !key.openAi) {
             return
         }
-        if (isVoiceThread && !key.elevenLabs) {
+        if (isSoundThread && !key.elevenLabs) {
             return
         }
         if (threadId) {
@@ -119,7 +119,7 @@ export function Input() {
                     threadId: threadId as Id<'threads'>,
                     prompt: newInput.trim()
                 })
-            } else if (isVoiceThread && key.elevenLabs) {
+            } else if (isSoundThread && key.elevenLabs) {
                 sendVoice({
                     apiKey: key.elevenLabs || undefined,
                     threadId: threadId as Id<'threads'>,
@@ -139,7 +139,7 @@ export function Input() {
         let newThreadId
         if (isImageGenModel && key.openAi) {
             newThreadId = await createImageThread({ apiKey: key.openAi, prompt: input.trim() })
-        } else if (isVoiceGenModel && key.elevenLabs) {
+        } else if (isSoundGenModel && key.elevenLabs) {
             newThreadId = await createVoiceThread({ apiKey: key.elevenLabs, prompt: input.trim() })
         } else {
             newThreadId = await createThread({ apiKey: key.openRouter || undefined, modelId: model._id, prompt: input.trim() })
@@ -195,7 +195,7 @@ export function Input() {
                             onKeyDown={async (event) => {
                                 if (event.key === 'Enter' && !event.shiftKey) {
                                     event.preventDefault()
-                                    if (status === 'ready' && !(isImageThread && !key.openAi) && !(isVoiceThread && !key.elevenLabs)) {
+                                    if (status === 'ready' && !(isImageThread && !key.openAi) && !(isSoundThread && !key.elevenLabs)) {
                                         handleOnSubmit(input)
                                     }
                                 }
@@ -218,7 +218,9 @@ export function Input() {
                                     size="icon"
                                     type="submit"
                                     className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary"
-                                    disabled={status !== 'ready' || availableModels.length === 0 || (isImageThread && !key.openAi)}
+                                    disabled={
+                                        status !== 'ready' || availableModels.length === 0 || (isImageThread && !key.openAi) || (isSoundThread && !key.openAi)
+                                    }
                                 >
                                     <SendHorizontalIcon />
                                 </Button>
