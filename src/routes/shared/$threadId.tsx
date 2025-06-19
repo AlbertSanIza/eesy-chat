@@ -30,7 +30,7 @@ function RouteComponent() {
             <div className="sticky top-6 z-50 w-fit rounded-lg border bg-sidebar/60 px-4 py-3 text-2xl font-semibold tracking-tight backdrop-blur-sm">
                 {sharedThread.name}
             </div>
-            <Messages data={sharedThread.messages} />
+            <Messages data={sharedThread.messages} showOptions />
         </div>
     ) : (
         <div className="fixed inset-0 flex flex-col items-center justify-center gap-2">
