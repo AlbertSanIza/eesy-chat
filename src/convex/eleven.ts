@@ -21,7 +21,7 @@ export const generateVoiceInternal = internalAction({
             chunks.push(chunk)
         }
         const audioBuffer = Buffer.concat(chunks)
-        const storageId = await ctx.storage.store(new Blob([audioBuffer], { type: 'audio/mpeg' }))
+        const storageId = await ctx.storage.store(new Blob([audioBuffer], { type: 'audio/mp3' }))
         await ctx.runMutation(internal.update.messageStorageId, { messageId, storageId })
         await ctx.runMutation(internal.update.messageStatus, { messageId, status: 'done' })
     }
