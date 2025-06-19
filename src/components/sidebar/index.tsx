@@ -14,7 +14,9 @@ import { useStore } from '@/lib/zustand/store'
 
 export function AppSidebar() {
     const { isLoaded, isSignedIn } = useUser()
-    const { user, threadSearch, setThreadSearch } = useStore()
+    const user = useStore((state) => state.user)
+    const threadSearch = useStore((state) => state.threadSearch)
+    const setThreadSearch = useStore((state) => state.setThreadSearch)
 
     return (
         <Sidebar variant="floating">
