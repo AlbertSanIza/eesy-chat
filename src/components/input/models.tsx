@@ -3,7 +3,7 @@ import { ChevronDownIcon } from 'lucide-react'
 
 import { useStore } from '@/lib/zustand/store'
 
-export function InputModels() {
+export function InputModelsSelect() {
     const model = useStore((state) => state.model)
     const models = useStore((state) => state.models)
     const { threadId } = useParams({ strict: false })

@@ -6,6 +6,7 @@ import { motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 
 import { ApiKeysDialog } from '@/components/api-keys-dialog'
+import { InputModelsSelect } from '@/components/input/models'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useSidebar } from '@/components/ui/sidebar'
@@ -207,30 +208,7 @@ export function Input() {
                         />
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1">
-                                <div className="grid grid-cols-1 text-sm">
-                                    <select
-                                        className="col-start-1 row-start-1 h-9 cursor-pointer appearance-none rounded-md border bg-background pr-7 pl-2 shadow-xs outline-none hover:bg-accent hover:text-accent-foreground"
-                                        disabled={isImageThread || isVoiceThread}
-                                        value={model?._id}
-                                        onChange={(event) => {
-                                            const modelId = event.target.value
-                                            const model = models.find((m) => m._id === modelId)
-                                            if (model) {
-                                                setModel(model)
-                                            }
-                                        }}
-                                    >
-                                        {availableModels.map((model) => (
-                                            <option key={model._id} value={model._id}>
-                                                {model.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <ChevronDownIcon
-                                        aria-hidden="true"
-                                        className="pointer-events-none col-start-1 row-start-1 mr-2 self-center justify-self-end sm:size-4"
-                                    />
-                                </div>
+                                <InputModelsSelect />
                                 <ApiKeysDialog />
                             </div>
                             <div className="flex items-center gap-2">
