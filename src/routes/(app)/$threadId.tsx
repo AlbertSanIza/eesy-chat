@@ -22,7 +22,7 @@ export const Route = createFileRoute('/(app)/$threadId')({
 function RouteComponent() {
     const { threadId } = useParams({ from: '/(app)/$threadId' })
     const messages = useQuery(api.get.messages, { threadId: threadId as Id<'threads'> })
-    const thread = useStore(({ threads }) => threads.find((thread) => thread._id === threadId))
+    const thread = useStore((state) => state.threads.find((thread) => thread._id === threadId))
     useDocumentTitle(thread?.name)
 
     useEffect(() => {

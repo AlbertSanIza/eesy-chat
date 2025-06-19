@@ -9,7 +9,7 @@ import { chatQueryOptions } from '@/lib/utils'
 import { useStore } from '@/lib/zustand/store'
 
 export function MessagesCache() {
-    const { threads } = useStore()
+    const threads = useStore((state) => state.threads)
 
     return threads.slice(0, 20).map((thread) => (
         <Fragment key={thread._id}>
