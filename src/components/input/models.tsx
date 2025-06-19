@@ -14,10 +14,10 @@ export function InputModelsSelect() {
         if (!thread || thread.type === 'text') {
             return true
         }
-        if (thread.type === 'image' && model.model === 'DALL·E 3') {
+        if (thread.type === 'image' && model.model === 'dall-e-3') {
             return true
         }
-        if (thread.type === 'sound' && model.model === 'dall-e-3') {
+        if (thread.type === 'sound' && model.model === 'eleven_monolingual_v2') {
             return true
         }
         return false
