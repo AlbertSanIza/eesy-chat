@@ -13,8 +13,8 @@ import { cn } from '@/lib/utils'
 import { useStore } from '@/lib/zustand/store'
 
 export function AppSidebar() {
-    const { user, threadSearch, setThreadSearch } = useStore()
     const { isLoaded, isSignedIn } = useUser()
+    const { user, threadSearch, setThreadSearch } = useStore()
 
     return (
         <Sidebar variant="floating">
