@@ -77,6 +77,9 @@ export function Input() {
         if (isSoundThread && !key.elevenLabs) {
             return
         }
+        if (newInput.trim() === '') {
+            return
+        }
         if (threadId) {
             if (isImageThread && key.openAi) {
                 sendImage({
