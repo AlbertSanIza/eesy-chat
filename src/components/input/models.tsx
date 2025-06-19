@@ -11,7 +11,7 @@ export function InputModelsSelect() {
     const thread = useStore((state) => state.threads.find((thread) => thread._id === threadId))
 
     const availableModels = models.filter((model) => {
-        if (!thread || thread.type === 'text') {
+        if (!thread || (thread.type === 'text' && model.model !== 'dall-e-3' && model.model !== 'eleven_monolingual_v2')) {
             return true
         }
         if (thread.type === 'image' && model.model === 'dall-e-3') {
