@@ -8,10 +8,23 @@ export function InputModelsSelect() {
     const models = useStore((state) => state.models)
     const { threadId } = useParams({ strict: false })
     const setModel = useStore((state) => state.setModel)
+    const thread = useStore((state) => state.threads.find((thread) => thread._id === threadId))
+
+    const availableModels = models.filter((model) => {
+        if (!thread || thread.type === 'text') {
+            return true
+        }
+        if (thread.type === 'image' && model.model === 'DALL·E 3') {
+            return true
+        }
+        if (thread.type === 'sound' && model.model === 'dall-e-3') {
+            return true
+        }
+        return false
+    })
 
     return (
         <div className="grid grid-cols-1 text-sm">
-            {threadId}
             <select
                 className="col-start-1 row-start-1 h-9 cursor-pointer appearance-none rounded-md border bg-background pr-7 pl-2 shadow-xs outline-none hover:bg-accent hover:text-accent-foreground"
                 value={model?._id}
@@ -23,9 +36,9 @@ export function InputModelsSelect() {
                     }
                 }}
             >
-                {models.map((model) => (
+                {availableModels.map((model) => (
                     <option key={model._id} value={model._id}>
-                        {model.label}
+                        {model.provider}: {model.label}
                     </option>
                 ))}
             </select>
