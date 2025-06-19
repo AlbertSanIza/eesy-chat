@@ -40,7 +40,7 @@ export function AppSidebar() {
             </SidebarHeader>
             <AppSidebarContent />
             <SidebarFooter className="relative">
-                <div className={cn('clerk-user-button transition-opacity', (!isLoaded || !isSignedIn) && 'opacity-0')}>
+                <div className={cn('clerk-user-button transition-opacity', (!isLoaded || !isSignedIn) && 'hidden')}>
                     <UserButton showName />
                 </div>
                 <div
@@ -49,7 +49,7 @@ export function AppSidebar() {
                         isLoaded || isSignedIn ? 'opacity-0' : 'opacity-100'
                     )}
                 >
-                    {user.fullName && user.imageUrl ? (
+                    {user.isSignedIn ? (
                         <>
                             <Avatar className="size-7">
                                 <AvatarImage src={user.imageUrl} />
