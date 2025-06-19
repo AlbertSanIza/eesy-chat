@@ -135,7 +135,7 @@ export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): 
             id: messageId,
             role: 'assistant',
             content: 'Generated Sound',
-            experimental_attachments: [{ contentType: 'audio/mpeg', url: message.storageId ? (await ctx.storage.getUrl(message.storageId)) || '' : '' }]
+            experimental_attachments: [{ contentType: 'audio/mp3', url: message.storageId ? (await ctx.storage.getUrl(message.storageId)) || '' : '' }]
         }
     }
     const chunks = await ctx.db
