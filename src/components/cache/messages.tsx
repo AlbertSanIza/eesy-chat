@@ -35,7 +35,7 @@ function UserMessageCache({ id }: { id: Id<'threads'> }) {
 
 function AssistantMessageCache({ message }: { message: Doc<'messages'> }) {
     useQuery(api.get.messageBody, { messageId: message._id })
-    useTSQuery({ ...chatQueryOptions(message), enabled: message.status === 'streaming' })
+    useTSQuery({ ...chatQueryOptions(message._id), enabled: message.status === 'streaming' && message.type === 'text' })
 
     return null
 }
