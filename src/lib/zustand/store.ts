@@ -6,7 +6,7 @@ import type { api } from '@/convex/_generated/api'
 import type { Doc } from '@/convex/_generated/dataModel'
 
 export const useStore = create<{
-    user: { fullName?: string; imageUrl?: string }
+    user: { isSignedIn: boolean; fullName?: string; imageUrl?: string }
     threads: FunctionReturnType<typeof api.get.threads>
     models: FunctionReturnType<typeof api.get.models>
     threadSearch: string
@@ -14,7 +14,7 @@ export const useStore = create<{
     openRouterApiKey: string | null
     openAiApiKey: string | null
     elevenLabsApiKey: string | null
-    setUser: ({ fullName, imageUrl }: { fullName?: string; imageUrl?: string }) => void
+    setUser: ({ isSignedIn, fullName, imageUrl }: { isSignedIn: boolean; fullName?: string; imageUrl?: string }) => void
     setThreads: (threads: FunctionReturnType<typeof api.get.threads>) => void
     setModels: (models: FunctionReturnType<typeof api.get.models>) => void
     setThreadSearch: (search: string) => void
@@ -25,7 +25,7 @@ export const useStore = create<{
 }>()(
     persist(
         (set) => ({
-            user: {},
+            user: { isSignedIn: false },
             threads: [],
             models: [],
             threadSearch: '',
@@ -33,8 +33,8 @@ export const useStore = create<{
             openRouterApiKey: null,
             openAiApiKey: null,
             elevenLabsApiKey: null,
-            setUser: ({ fullName, imageUrl }) => {
-                set({ user: { fullName, imageUrl } })
+            setUser: ({ isSignedIn, fullName, imageUrl }) => {
+                set({ user: { isSignedIn, fullName, imageUrl } })
             },
             setThreads: (threads: FunctionReturnType<typeof api.get.threads>) => {
                 set({ threads })

@@ -4,12 +4,12 @@ import { useEffect } from 'react'
 import { useStore } from '@/lib/zustand/store'
 
 export function useUserCache() {
-    const { user, isLoaded } = useUser()
+    const { isLoaded, isSignedIn, user } = useUser()
     const { setUser } = useStore()
 
     useEffect(() => {
         if (isLoaded) {
-            setUser({ fullName: user?.fullName || undefined, imageUrl: user?.imageUrl })
+            setUser({ isSignedIn, fullName: user?.fullName || undefined, imageUrl: user?.imageUrl })
         }
-    }, [isLoaded, setUser, user])
+    }, [isLoaded, isSignedIn, setUser, user?.fullName, user?.imageUrl])
 }
