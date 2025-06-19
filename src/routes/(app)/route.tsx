@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Authenticated } from 'convex/react'
 
 import { Cache } from '@/components/cache'
 import { Input } from '@/components/input'
@@ -19,7 +20,9 @@ function RouteComponent() {
             <ThemeToggle />
             <Outlet />
             <Input />
-            <Cache />
+            <Authenticated>
+                <Cache />
+            </Authenticated>
         </SidebarProvider>
     )
 }
