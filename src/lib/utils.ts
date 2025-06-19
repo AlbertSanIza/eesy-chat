@@ -1,7 +1,8 @@
-import type { Doc } from '@/convex/_generated/dataModel'
 import { queryOptions, experimental_streamedQuery as streamedQuery } from '@tanstack/react-query'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+
+import type { Id } from '@/convex/_generated/dataModel'
 
 if (!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) {
     throw new Error('Missing Publishable Key')
@@ -33,13 +34,13 @@ export function getConvexSiteUrl() {
     return convexSiteUrl
 }
 
-export const chatQueryOptions = (message: Doc<'messages'>) =>
+export const chatQueryOptions = (messageId: Id<'messages'>) =>
     queryOptions({
-        queryKey: ['chat', message.threadId.toString(), message._id.toString()],
+        queryKey: ['chat', messageId.toString()],
         queryFn: streamedQuery({
             refetchMode: 'replace',
             queryFn: async function* () {
-                const response = await fetch(`${VITE_RAILWAY_API_URL}/connect/${message._id}`)
+                const response = await fetch(`${VITE_RAILWAY_API_URL}/connect/${messageId}`)
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`)
                 }
