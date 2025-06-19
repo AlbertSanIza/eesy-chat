@@ -10,18 +10,18 @@ export const useStore = create<{
     threads: FunctionReturnType<typeof api.get.threads>
     models: FunctionReturnType<typeof api.get.models>
     model?: Doc<'models'>
+    key: {
+        openRouter?: string
+        openAi?: string
+        elevenLabs?: string
+    }
     threadSearch: string
-    openRouterApiKey: string | null
-    openAiApiKey: string | null
-    elevenLabsApiKey: string | null
     setUser: ({ isSignedIn, fullName, imageUrl }: { isSignedIn: boolean; fullName?: string; imageUrl?: string }) => void
     setThreads: (threads: FunctionReturnType<typeof api.get.threads>) => void
     setModels: (models: FunctionReturnType<typeof api.get.models>) => void
     setModel: (modelId: Doc<'models'>) => void
+    setKey: (key: { openRouter?: string; openAi?: string; elevenLabs?: string }) => void
     setThreadSearch: (search: string) => void
-    setOpenRouterApiKey: (apiKey: string) => void
-    setOpenAiApiKey: (apiKey: string) => void
-    setElevenLabsApiKey: (apiKey: string) => void
 }>()(
     persist(
         (set) => ({
@@ -29,10 +29,8 @@ export const useStore = create<{
             threads: [],
             models: [],
             model: undefined,
+            key: {},
             threadSearch: '',
-            openRouterApiKey: null,
-            openAiApiKey: null,
-            elevenLabsApiKey: null,
             setUser: ({ isSignedIn, fullName, imageUrl }) => {
                 set({ user: { isSignedIn, fullName, imageUrl } })
             },
@@ -42,20 +40,14 @@ export const useStore = create<{
             setModels: (models: FunctionReturnType<typeof api.get.models>) => {
                 set({ models })
             },
-            setThreadSearch: (search: string) => {
-                set({ threadSearch: search })
-            },
             setModel: (model: Doc<'models'>) => {
                 set({ model })
             },
-            setOpenRouterApiKey: (apiKey: string) => {
-                set({ openRouterApiKey: apiKey })
+            setKey: (key: { openRouter?: string; openAi?: string; elevenLabs?: string }) => {
+                set((state) => ({ key: { ...state.key, ...key } }))
             },
-            setOpenAiApiKey: (apiKey: string) => {
-                set({ openAiApiKey: apiKey })
-            },
-            setElevenLabsApiKey: (apiKey: string) => {
-                set({ elevenLabsApiKey: apiKey })
+            setThreadSearch: (search: string) => {
+                set({ threadSearch: search })
             }
         }),
         { name: 'eesy-chat-store' }
