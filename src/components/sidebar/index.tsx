@@ -4,6 +4,7 @@ import { Unauthenticated } from 'convex/react'
 import { SearchIcon } from 'lucide-react'
 
 import { AppSidebarContent } from '@/components/sidebar/content'
+import { AppSidebarSearch } from '@/components/sidebar/search'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
@@ -38,6 +39,7 @@ export function AppSidebar() {
                         value={threadSearch}
                         onChange={(event) => setThreadSearch(event.target.value)}
                     />
+                    <AppSidebarSearch />
                 </div>
             </SidebarHeader>
             <AppSidebarContent />

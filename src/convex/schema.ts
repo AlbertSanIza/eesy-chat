@@ -25,7 +25,9 @@ export default defineSchema({
     chunks: defineTable({
         messageId: v.id('messages'),
         text: v.string()
-    }).index('by_message', ['messageId']),
+    })
+        .index('by_message', ['messageId'])
+        .searchIndex('search_text', { searchField: 'text', filterFields: ['messageId'] }),
     models: defineTable({
         service: v.union(v.literal('openRouter'), v.literal('openAi'), v.literal('elevenLabs')),
         model: v.string(),

@@ -148,3 +148,41 @@ export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): 
         content: chunks.map((chunk) => chunk.text).join('')
     }
 }
+
+export const searchChunks = query({
+    args: { query: v.string() },
+    handler: async (ctx, { query: searchQuery }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (!identity) {
+            throw new Error('Not Authenticated')
+        }
+        const threads = await ctx.db
+            .query('threads')
+            .withIndex('by_user_and_update_time', (q) => q.eq('userId', identity.subject))
+            .collect()
+        const threadIdToTitle = Object.fromEntries(threads.map((t) => [t._id, t.name]))
+        const threadIds = threads.map((t) => t._id)
+        if (!threadIds.length) {
+            return []
+        }
+        const messages = await ctx.db
+            .query('messages')
+            .filter((q) => q.or(...threadIds.map((id) => q.eq(q.field('threadId'), id))))
+            .collect()
+        const messageIdToThreadId = Object.fromEntries(messages.map((m) => [m._id, m.threadId]))
+        const messageIds = Object.keys(messageIdToThreadId)
+        if (!messageIds.length) {
+            return []
+        }
+        const results = await ctx.db
+            .query('chunks')
+            .withSearchIndex('search_text', (q) => q.search('text', searchQuery))
+            .filter((q) => q.or(...messageIds.map((id) => q.eq(q.field('messageId'), id))))
+            .take(20)
+        return results.map((chunk) => ({
+            ...chunk,
+            threadId: messageIdToThreadId[chunk.messageId],
+            threadTitle: threadIdToTitle[messageIdToThreadId[chunk.messageId]]
+        }))
+    }
+})
