@@ -21,7 +21,7 @@ export function AppSidebar() {
 
     return (
         <Sidebar variant="floating">
-            <SidebarHeader className="pb-0">
+            <SidebarHeader>
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <h1 className="my-1.5 border-transparent text-center text-xl font-light">eesy.chat</h1>
@@ -40,7 +40,9 @@ export function AppSidebar() {
                         onChange={(event) => setThreadSearch(event.target.value)}
                     />
                 </div> */}
-                <AppSidebarSearch />
+                <div className="mt-1 border-b pb-2">
+                    <AppSidebarSearch />
+                </div>
             </SidebarHeader>
             <AppSidebarContent />
             <SidebarFooter className="relative">

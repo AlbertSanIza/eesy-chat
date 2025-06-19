@@ -44,7 +44,7 @@ export function AppSidebarSearch() {
     return (
         <Dialog open={isOpen && user.isSignedIn} onOpenChange={handleOpenChange}>
             <DialogTrigger disabled={!user.isSignedIn} asChild>
-                <Button variant="outline" size="sm" disabled={!user.isSignedIn}>
+                <Button variant="outline" size="sm" className="w-full" disabled={!user.isSignedIn}>
                     Search All <SearchIcon />
                 </Button>
             </DialogTrigger>
