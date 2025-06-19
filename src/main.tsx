@@ -1,6 +1,6 @@
 import { ClerkProvider, useAuth } from '@clerk/clerk-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+// import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { ConvexReactClient } from 'convex/react'
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
@@ -27,7 +27,7 @@ createRoot(document.getElementById('root')!).render(
             <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
                 <QueryClientProvider client={queryClient}>
                     <RouterProvider router={router} />
-                    <ReactQueryDevtools initialIsOpen={false} />
+                    {/* <ReactQueryDevtools initialIsOpen={false} /> */}
                 </QueryClientProvider>
             </ConvexProviderWithClerk>
         </ClerkProvider>
