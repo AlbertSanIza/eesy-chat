@@ -122,7 +122,6 @@ export function Input() {
         <div className="fixed bottom-0 left-0 flex w-full">
             <div className={cn('hidden h-full transition-[width,height] duration-75 ease-linear md:block', open ? 'w-(--sidebar-width)' : 'w-0')} />
             <div className="flex-1 px-4 sm:px-8">
-                hello {model?.model}
                 <form
                     onSubmit={(event) => {
                         event.preventDefault()
