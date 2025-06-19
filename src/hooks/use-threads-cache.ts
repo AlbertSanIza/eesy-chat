@@ -6,7 +6,7 @@ import { useStore } from '@/lib/zustand/store'
 
 export function useThreadsCache() {
     const threads = useQuery(api.get.threads)
-    const { setThreads } = useStore()
+    const setThreads = useStore((state) => state.setThreads)
 
     useEffect(() => {
         if (threads) {
