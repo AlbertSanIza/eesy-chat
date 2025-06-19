@@ -31,7 +31,7 @@ export function Input() {
     const createVoiceThread = useMutation(api.create.voiceThread)
     const [showSignInDialog, setShowSignInDialog] = useState(false)
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
-    const { threads, openRouterApiKey, openAiApiKey, elevenLabsApiKey, models, model, setModel } = useStore()
+    const { threads, key, models, model, setModel } = useStore()
 
     const currentThread = threads.find((thread) => thread._id === threadId)
     const isImageThread = currentThread?.type === 'image'
@@ -39,26 +39,26 @@ export function Input() {
     const availableModels = models.filter((model) => {
         // Image generation model - only available when creating new thread or in image thread
         if (model.label === 'GPT ImageGen') {
-            return (!threadId || isImageThread) && openAiApiKey
+            return (!threadId || isImageThread) && key.openAi
         }
         // Voice generation model - only available when creating new thread or in voice thread
         if (model.label === 'ElevenLabs VoiceGen') {
-            return (!threadId || isVoiceThread) && elevenLabsApiKey
+            return (!threadId || isVoiceThread) && key.elevenLabs
         }
         // For regular text models, check if we have the required API key
-        return openRouterApiKey || !model.withKey
+        return key.openRouter || !model.withKey
     })
     const isImageGenModel = model?.label === 'GPT ImageGen'
     const isVoiceGenModel = model?.label === 'ElevenLabs VoiceGen'
 
     useEffect(() => {
         if (models.length > 0 && threadId) {
-            if (isImageThread && openAiApiKey) {
+            if (isImageThread && key.openAi) {
                 const imageGenModel = models.find((model) => model.label === 'GPT ImageGen')
                 if (imageGenModel) {
                     setModel(imageGenModel)
                 }
-            } else if (isVoiceThread && elevenLabsApiKey) {
+            } else if (isVoiceThread && key.elevenLabs) {
                 const voiceGenModel = models.find((model) => model.label === 'ElevenLabs VoiceGen')
                 if (voiceGenModel) {
                     setModel(voiceGenModel)
@@ -72,7 +72,7 @@ export function Input() {
                 }
             }
         }
-    }, [elevenLabsApiKey, isImageThread, isVoiceThread, models, openAiApiKey, model?.label, setModel, threadId])
+    }, [key.elevenLabs, isImageThread, isVoiceThread, models, key.openAi, model?.label, setModel, threadId])
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
@@ -105,28 +105,28 @@ export function Input() {
         if (!model) {
             return
         }
-        if (isImageThread && !openAiApiKey) {
+        if (isImageThread && !key.openAi) {
             return
         }
-        if (isVoiceThread && !elevenLabsApiKey) {
+        if (isVoiceThread && !key.elevenLabs) {
             return
         }
         if (threadId) {
-            if (isImageThread && openAiApiKey) {
+            if (isImageThread && key.openAi) {
                 sendImage({
-                    apiKey: openAiApiKey || undefined,
+                    apiKey: key.openAi || undefined,
                     threadId: threadId as Id<'threads'>,
                     prompt: newInput.trim()
                 })
-            } else if (isVoiceThread && elevenLabsApiKey) {
+            } else if (isVoiceThread && key.elevenLabs) {
                 sendVoice({
-                    apiKey: elevenLabsApiKey || undefined,
+                    apiKey: key.elevenLabs || undefined,
                     threadId: threadId as Id<'threads'>,
                     prompt: newInput.trim()
                 })
             } else {
                 send({
-                    apiKey: openRouterApiKey || undefined,
+                    apiKey: key.openRouter || undefined,
                     threadId: threadId as Id<'threads'>,
                     prompt: newInput.trim(),
                     modelId: model._id
@@ -136,12 +136,12 @@ export function Input() {
             return
         }
         let newThreadId
-        if (isImageGenModel && openAiApiKey) {
-            newThreadId = await createImageThread({ apiKey: openAiApiKey, prompt: input.trim() })
-        } else if (isVoiceGenModel && elevenLabsApiKey) {
-            newThreadId = await createVoiceThread({ apiKey: elevenLabsApiKey, prompt: input.trim() })
+        if (isImageGenModel && key.openAi) {
+            newThreadId = await createImageThread({ apiKey: key.openAi, prompt: input.trim() })
+        } else if (isVoiceGenModel && key.elevenLabs) {
+            newThreadId = await createVoiceThread({ apiKey: key.elevenLabs, prompt: input.trim() })
         } else {
-            newThreadId = await createThread({ apiKey: openRouterApiKey || undefined, modelId: model._id, prompt: input.trim() })
+            newThreadId = await createThread({ apiKey: key.openRouter || undefined, modelId: model._id, prompt: input.trim() })
         }
 
         if (newThreadId) {
@@ -194,7 +194,7 @@ export function Input() {
                             onKeyDown={async (event) => {
                                 if (event.key === 'Enter' && !event.shiftKey) {
                                     event.preventDefault()
-                                    if (status === 'ready' && !(isImageThread && !openAiApiKey) && !(isVoiceThread && !elevenLabsApiKey)) {
+                                    if (status === 'ready' && !(isImageThread && !key.openAi) && !(isVoiceThread && !key.elevenLabs)) {
                                         handleOnSubmit(input)
                                     }
                                 }
@@ -217,7 +217,7 @@ export function Input() {
                                     size="icon"
                                     type="submit"
                                     className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary"
-                                    disabled={status !== 'ready' || availableModels.length === 0 || (isImageThread && !openAiApiKey)}
+                                    disabled={status !== 'ready' || availableModels.length === 0 || (isImageThread && !key.openAi)}
                                 >
                                     <SendHorizontalIcon />
                                 </Button>
