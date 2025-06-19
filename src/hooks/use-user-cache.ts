@@ -4,8 +4,8 @@ import { useEffect } from 'react'
 import { useStore } from '@/lib/zustand/store'
 
 export function useUserCache() {
-    const { isLoaded, isSignedIn, user } = useUser()
     const { setUser } = useStore()
+    const { isLoaded, isSignedIn, user } = useUser()
 
     useEffect(() => {
         if (isLoaded) {
