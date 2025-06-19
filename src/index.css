@@ -157,7 +157,7 @@
     @apply mb-4 ml-8 list-outside list-disc marker:text-[#C4739D] dark:marker:text-[#DC749E];
 }
 .markdown ol {
-    @apply mb-4 list-outside list-decimal;
+    @apply mb-4 ml-8 list-outside list-decimal marker:text-[#C4739D] dark:marker:text-[#DC749E];
 }
 .markdown li {
     @apply mb-2;
