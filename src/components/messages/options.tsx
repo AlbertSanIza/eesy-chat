@@ -13,18 +13,14 @@ export function MessageOptions({
     threadId,
     messageId,
     modelProviderAndLabel,
-    showCopy = true,
     showBranchOff = true,
-    showModel = true,
     className,
     onCopy
 }: {
-    threadId: Id<'threads'>
-    messageId: Id<'messages'>
-    modelProviderAndLabel: string
-    showCopy?: boolean
+    threadId?: Id<'threads'>
+    messageId?: Id<'messages'>
+    modelProviderAndLabel?: string
     showBranchOff?: boolean
-    showModel?: boolean
     className?: string
     onCopy?: () => void
 }) {
@@ -34,7 +30,7 @@ export function MessageOptions({
 
     return (
         <div className={cn('flex items-center gap-1 opacity-0 transition-opacity', className)}>
-            {showCopy && (
+            {onCopy && (
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button
@@ -42,7 +38,7 @@ export function MessageOptions({
                             variant="ghost"
                             className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]"
                             onClick={() => {
-                                onCopy?.()
+                                onCopy()
                                 setCopied(true)
                                 setTimeout(() => setCopied(false), 1000)
                             }}
@@ -53,7 +49,7 @@ export function MessageOptions({
                     <TooltipContent side="bottom">Copy Message</TooltipContent>
                 </Tooltip>
             )}
-            {showBranchOff && (
+            {showBranchOff && threadId && messageId && (
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button
@@ -68,7 +64,7 @@ export function MessageOptions({
                     <TooltipContent side="bottom">Branch Off</TooltipContent>
                 </Tooltip>
             )}
-            {showModel && <span className="text-sm">{modelProviderAndLabel}</span>}
+            {modelProviderAndLabel && <span className="text-sm">{modelProviderAndLabel}</span>}
         </div>
     )
 }
