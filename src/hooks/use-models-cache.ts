@@ -6,17 +6,19 @@ import { useStore } from '@/lib/zustand/store'
 
 export function useModelsCache() {
     const models = useQuery(api.get.models)
-    const { selectedModel, setModels, setSelectedModel } = useStore()
+    const model = useStore((state) => state.model)
+    const setModel = useStore((state) => state.setModel)
+    const setModels = useStore((state) => state.setModels)
 
     useEffect(() => {
         if (models) {
             setModels(models)
-            if (!selectedModel || !models.find((m) => m.model === selectedModel.model)) {
+            if (!model || !models.find((m) => m.model === model.model)) {
                 const defaultModel = models.find((m) => m.model === 'openai/gpt-4.1-nano')
                 if (defaultModel) {
-                    setSelectedModel(defaultModel)
+                    setModel(defaultModel)
                 }
             }
         }
-    }, [models, selectedModel, setModels, setSelectedModel])
+    }, [models, model, setModels, setModel])
 }

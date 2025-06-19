@@ -30,7 +30,7 @@ export function Input() {
     const createVoiceThread = useMutation(api.create.voiceThread)
     const [showSignInDialog, setShowSignInDialog] = useState(false)
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
-    const { threads, openRouterApiKey, openAiApiKey, elevenLabsApiKey, models, selectedModel, setSelectedModel } = useStore()
+    const { threads, openRouterApiKey, openAiApiKey, elevenLabsApiKey, models, model, setModel } = useStore()
 
     const currentThread = threads.find((thread) => thread._id === threadId)
     const isImageThread = currentThread?.type === 'image'
@@ -47,31 +47,31 @@ export function Input() {
         // For regular text models, check if we have the required API key
         return openRouterApiKey || !model.withKey
     })
-    const isImageGenModel = selectedModel?.label === 'GPT ImageGen'
-    const isVoiceGenModel = selectedModel?.label === 'ElevenLabs VoiceGen'
+    const isImageGenModel = model?.label === 'GPT ImageGen'
+    const isVoiceGenModel = model?.label === 'ElevenLabs VoiceGen'
 
     useEffect(() => {
         if (models.length > 0 && threadId) {
             if (isImageThread && openAiApiKey) {
                 const imageGenModel = models.find((model) => model.label === 'GPT ImageGen')
                 if (imageGenModel) {
-                    setSelectedModel(imageGenModel)
+                    setModel(imageGenModel)
                 }
             } else if (isVoiceThread && elevenLabsApiKey) {
                 const voiceGenModel = models.find((model) => model.label === 'ElevenLabs VoiceGen')
                 if (voiceGenModel) {
-                    setSelectedModel(voiceGenModel)
+                    setModel(voiceGenModel)
                 }
             } else if (!isImageThread && !isVoiceThread) {
-                if (selectedModel?.label === 'GPT ImageGen' || selectedModel?.label === 'ElevenLabs VoiceGen') {
+                if (model?.label === 'GPT ImageGen' || model?.label === 'ElevenLabs VoiceGen') {
                     const gpt41Model = models.find((model) => model.model === 'openai/gpt-4.1-nano')
                     if (gpt41Model) {
-                        setSelectedModel(gpt41Model)
+                        setModel(gpt41Model)
                     }
                 }
             }
         }
-    }, [elevenLabsApiKey, isImageThread, isVoiceThread, models, openAiApiKey, selectedModel?.label, setSelectedModel, threadId])
+    }, [elevenLabsApiKey, isImageThread, isVoiceThread, models, openAiApiKey, model?.label, setModel, threadId])
 
     useEffect(() => {
         if (textAreaRef.current && document.activeElement !== textAreaRef.current) {
@@ -101,7 +101,7 @@ export function Input() {
 
     const handleOnSubmit = async (newInput: string) => {
         textAreaRef.current?.style.setProperty('height', 'auto')
-        if (!selectedModel) {
+        if (!model) {
             return
         }
         if (isImageThread && !openAiApiKey) {
@@ -128,7 +128,7 @@ export function Input() {
                     apiKey: openRouterApiKey || undefined,
                     threadId: threadId as Id<'threads'>,
                     prompt: newInput.trim(),
-                    modelId: selectedModel._id
+                    modelId: model._id
                 })
             }
             handleInputChange({ id: threadId, value: '' })
@@ -140,7 +140,7 @@ export function Input() {
         } else if (isVoiceGenModel && elevenLabsApiKey) {
             newThreadId = await createVoiceThread({ apiKey: elevenLabsApiKey, prompt: input.trim() })
         } else {
-            newThreadId = await createThread({ apiKey: openRouterApiKey || undefined, modelId: selectedModel._id, prompt: input.trim() })
+            newThreadId = await createThread({ apiKey: openRouterApiKey || undefined, modelId: model._id, prompt: input.trim() })
         }
 
         if (newThreadId) {
@@ -211,12 +211,12 @@ export function Input() {
                                     <select
                                         className="col-start-1 row-start-1 h-9 cursor-pointer appearance-none rounded-md border bg-background pr-7 pl-2 shadow-xs outline-none hover:bg-accent hover:text-accent-foreground"
                                         disabled={isImageThread || isVoiceThread}
-                                        value={selectedModel?._id}
+                                        value={model?._id}
                                         onChange={(event) => {
                                             const modelId = event.target.value
                                             const model = models.find((m) => m._id === modelId)
                                             if (model) {
-                                                setSelectedModel(model)
+                                                setModel(model)
                                             }
                                         }}
                                     >
