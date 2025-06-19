@@ -24,13 +24,19 @@ export function AppSidebarSearch() {
         if (!results) {
             return {}
         }
-        return results.reduce((acc: Record<string, { threadTitle: string; chunks: { threadId: string; text: string }[] }>, chunk: any) => {
-            if (!acc[chunk.threadId]) {
-                acc[chunk.threadId] = { threadTitle: chunk.threadTitle, chunks: [] }
-            }
-            acc[chunk.threadId].chunks.push({ threadId: chunk.threadId, text: chunk.text })
-            return acc
-        }, {})
+        return results.reduce(
+            (
+                acc: Record<string, { threadTitle: string; chunks: { threadId: string; text: string }[] }>,
+                chunk: { threadId: string; threadTitle: string; text: string }
+            ) => {
+                if (!acc[chunk.threadId]) {
+                    acc[chunk.threadId] = { threadTitle: chunk.threadTitle, chunks: [] }
+                }
+                acc[chunk.threadId].chunks.push({ threadId: chunk.threadId, text: chunk.text })
+                return acc
+            },
+            {}
+        )
     }, [results])
 
     return (
