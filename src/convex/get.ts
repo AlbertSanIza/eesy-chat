@@ -72,10 +72,10 @@ export const message = internalQuery({
 
 export const messageBody = query({
     args: { messageId: v.id('messages') },
-    handler: async (ctx, { messageId }): Promise<Message | null> => {
+    handler: async (ctx, { messageId }): Promise<Message> => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
-            return null
+            return { id: messageId, role: 'assistant', content: '' }
         }
         return await getMessageBody(ctx, messageId)
     }
