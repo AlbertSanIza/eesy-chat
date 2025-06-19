@@ -11,7 +11,7 @@ export const threads = query({
     handler: async (ctx) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
-            return []
+            throw new Error('Not Authenticated')
         }
         return await ctx.db
             .query('threads')
