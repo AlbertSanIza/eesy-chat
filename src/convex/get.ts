@@ -130,14 +130,16 @@ export async function getMessageBody(ctx: QueryCtx, messageId: Id<'messages'>): 
         return {
             id: messageId,
             role: 'assistant',
-            content: message.storageId ? (await ctx.storage.getUrl(message.storageId)) || 'Image generation in progress...' : 'Image generation in progress...'
+            content: 'Generated Image',
+            experimental_attachments: [{ contentType: 'image/png', url: message.storageId ? (await ctx.storage.getUrl(message.storageId)) || '' : '' }]
         }
     }
     if (message.type === 'sound') {
         return {
             id: messageId,
             role: 'assistant',
-            content: message.storageId ? (await ctx.storage.getUrl(message.storageId)) || 'Audio generation in progress...' : 'Audio generation in progress...'
+            content: 'Generated Sound',
+            experimental_attachments: [{ contentType: 'audio/mpeg', url: message.storageId ? (await ctx.storage.getUrl(message.storageId)) || '' : '' }]
         }
     }
     const chunks = await ctx.db
