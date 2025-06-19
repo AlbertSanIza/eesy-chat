@@ -40,7 +40,7 @@ function RouteComponent() {
             <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 sm:px-14">
                 {messages?.map((message) => (
                     <Fragment key={message._id}>
-                        <UserMessage message={{ id: message._id, content: message.prompt, role: 'user' }} showExtras />
+                        <UserMessage message={{ id: message._id, content: message.prompt, role: 'user' }} showOptions />
                         <div className="group/assistant-message">
                             <ServerMessage promptMessage={message} />
                         </div>
