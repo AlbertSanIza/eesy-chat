@@ -68,7 +68,7 @@ function ServerMessage({ promptMessage }: { promptMessage: Doc<'messages'> }) {
 
     if (promptMessage.type === 'sound') {
         return messageBody ? (
-            <SoundMessage message={messageBody} threadId={promptMessage?.threadId} provider={`${promptMessage.provider}: ${promptMessage.label}`} />
+            <SoundMessage message={messageBody} threadId={promptMessage?.threadId} provider={`${promptMessage.provider}: ${promptMessage.label}`} showOptions />
         ) : (
             <Skeleton className="mb-1.5 h-9 w-full rounded-lg border bg-sidebar" />
         )
