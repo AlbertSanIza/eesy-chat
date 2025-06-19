@@ -28,11 +28,7 @@ export const sharedThread = query({
         if (!thread || !thread.shared) {
             return { name: null, messages: [] }
         }
-        let messages = await ctx.runQuery(internal.get.messagesHistory, { threadId })
-        if (thread.type === 'image' || thread.type === 'sound') {
-            messages = messages.map((message) => ({ ...message, experimental_attachments: [{ contentType: thread.type, url: message.content }] }))
-        }
-        return { name: thread.name, messages }
+        return { name: thread.name, messages: await ctx.runQuery(internal.get.messagesHistory, { threadId }) }
     }
 })
 
