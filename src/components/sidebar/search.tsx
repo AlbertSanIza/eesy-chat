@@ -1,6 +1,6 @@
 import { api } from '@/convex/_generated/api'
 import { useQuery } from 'convex/react'
-import { SearchIcon } from 'lucide-react'
+import { Loader2Icon, SearchIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -54,10 +54,18 @@ export function AppSidebarSearch() {
                     <DialogDescription />
                 </DialogHeader>
                 <div className="grid gap-2">
-                    <Input type="text" placeholder="Search your messages..." value={query} onChange={(event) => setQuery(event.target.value)} />
+                    <div className="flex items-center gap-3">
+                        <Input
+                            type="text"
+                            className="flex-1"
+                            placeholder="Search your messages..."
+                            value={query}
+                            onChange={(event) => setQuery(event.target.value)}
+                        />
+                        {results === undefined && query.trim() !== '' ? <Loader2Icon className="size-5 animate-spin" /> : <SearchIcon className="size-5" />}
+                    </div>
                     <div className="flex max-h-[60vh] flex-col gap-1 overflow-auto">
-                        {results === undefined && query.trim() !== '' && <div className="text-muted-foreground">Searching...</div>}
-                        {results && Object.keys(groupedResults).length === 0 && <div className="text-muted-foreground">No results found.</div>}
+                        {results && Object.keys(groupedResults).length === 0 && <div className="mt-3 text-center text-muted-foreground">No results found.</div>}
                         {results &&
                             Object.entries(groupedResults).map(([threadId, { threadTitle, chunks }]) => (
                                 <div key={threadId} className="mb-4">
