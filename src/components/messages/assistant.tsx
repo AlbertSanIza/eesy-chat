@@ -5,15 +5,15 @@ import { MemoizedMarkdown } from '@/components/memoized-markdown'
 import { ImageMessage } from '@/components/messages/image-dialog'
 import { MessageOptions } from '@/components/messages/options'
 import { VoiceMessage } from '@/components/messages/voice-message'
-import type { Doc } from '@/convex/_generated/dataModel'
+import type { Doc, Id } from '@/convex/_generated/dataModel'
 
 export function AssistantMessage({ promptMessage, message, showExtras }: { promptMessage?: Doc<'messages'>; message: Message; showExtras?: boolean }) {
-    if (promptMessage?.type === 'image') {
-        return <ImageMessage message={promptMessage} content={message.content} />
+    if (promptMessage?.type === 'image' || message.experimental_attachments?.[0]?.contentType === 'image/png') {
+        return <ImageMessage threadId={promptMessage?.threadId} modelProviderAndLabel={''} message={message} />
     }
 
-    if (promptMessage?.type === 'sound') {
-        return <VoiceMessage message={promptMessage} content={message.content} />
+    if (promptMessage?.type === 'sound' || message.experimental_attachments?.[0]?.contentType === 'audio/mp3') {
+        return <VoiceMessage threadId={promptMessage?.threadId} modelProviderAndLabel={''} message={message} content={message.content} />
     }
 
     return (
@@ -25,7 +25,9 @@ export function AssistantMessage({ promptMessage, message, showExtras }: { promp
             {showExtras && promptMessage && (
                 <MessageOptions
                     className="group-hover/text-message:opacity-100"
-                    message={promptMessage}
+                    modelProviderAndLabel={''}
+                    threadId={promptMessage.threadId}
+                    messageId={message.id as Id<'messages'>}
                     onCopy={() => navigator.clipboard.writeText(message.content)}
                 />
             )}

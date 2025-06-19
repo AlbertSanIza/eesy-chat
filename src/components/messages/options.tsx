@@ -6,23 +6,27 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { api } from '@/convex/_generated/api'
-import type { Doc } from '@/convex/_generated/dataModel'
+import type { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 
 export function MessageOptions({
-    message,
+    threadId,
+    messageId,
+    modelProviderAndLabel,
     showCopy = true,
     showBranchOff = true,
     showModel = true,
     className,
     onCopy
 }: {
-    message: Doc<'messages'>
+    threadId: Id<'threads'>
+    messageId: Id<'messages'>
+    modelProviderAndLabel: string
     showCopy?: boolean
     showBranchOff?: boolean
     showModel?: boolean
     className?: string
-    onCopy: () => void
+    onCopy?: () => void
 }) {
     const navigate = useNavigate()
     const [copied, setCopied] = useState(false)
@@ -38,7 +42,7 @@ export function MessageOptions({
                             variant="ghost"
                             className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]"
                             onClick={() => {
-                                onCopy()
+                                onCopy?.()
                                 setCopied(true)
                                 setTimeout(() => setCopied(false), 1000)
                             }}
@@ -56,7 +60,7 @@ export function MessageOptions({
                             size="icon"
                             variant="ghost"
                             className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]"
-                            onClick={async () => await navigate({ to: `/${await branchOff({ threadId: message.threadId, messageId: message._id })}` })}
+                            onClick={async () => await navigate({ to: `/${await branchOff({ threadId, messageId })}` })}
                         >
                             <GitForkIcon />
                         </Button>
@@ -64,7 +68,7 @@ export function MessageOptions({
                     <TooltipContent side="bottom">Branch Off</TooltipContent>
                 </Tooltip>
             )}
-            {showModel && <span className="text-sm">{`${message.provider}: ${message.label}`}</span>}
+            {showModel && <span className="text-sm">{modelProviderAndLabel}</span>}
         </div>
     )
 }

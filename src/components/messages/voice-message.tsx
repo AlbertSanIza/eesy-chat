@@ -1,14 +1,24 @@
+import type { Message } from '@ai-sdk/react'
 import { DownloadIcon, PauseIcon, PlayIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 import { MessageOptions } from '@/components/messages/options'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import type { Doc } from '@/convex/_generated/dataModel'
+import type { Id } from '@/convex/_generated/dataModel'
 
-export function VoiceMessage({ message, content }: { message: Doc<'messages'>; content: string }) {
+export function VoiceMessage({
+    threadId,
+    modelProviderAndLabel,
+    message,
+    content
+}: {
+    threadId?: Id<'threads'>
+    modelProviderAndLabel: string
+    message: Message
+    content: string
+}) {
     const audioRef = useRef<HTMLAudioElement>(null)
     const [isPlaying, setIsPlaying] = useState(false)
     const [duration, setDuration] = useState(0)
@@ -69,15 +79,11 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
         if (content) {
             const a = document.createElement('a')
             a.href = content
-            a.download = `voice-${message._id}.mp3`
+            a.download = `voice-${message.id}.mp3`
             document.body.appendChild(a)
             a.click()
             document.body.removeChild(a)
         }
-    }
-
-    if (message.status === 'pending' || message.status === 'streaming') {
-        return <Skeleton className="mb-1.5 h-9 w-full rounded-lg border bg-sidebar" />
     }
 
     return (
@@ -100,16 +106,25 @@ export function VoiceMessage({ message, content }: { message: Doc<'messages'>; c
                         </div>
                     </div>
                 </div>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button size="icon" variant="ghost" className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]" onClick={downloadAudio}>
-                            <DownloadIcon />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">Download</TooltipContent>
-                </Tooltip>
+                {threadId && (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button size="icon" variant="ghost" className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]" onClick={downloadAudio}>
+                                <DownloadIcon />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">Download</TooltipContent>
+                    </Tooltip>
+                )}
             </div>
-            <MessageOptions message={message} onCopy={() => {}} className="group-hover/sound-message:opacity-100" />
+            {threadId && (
+                <MessageOptions
+                    threadId={threadId}
+                    messageId={message.id as Id<'messages'>}
+                    modelProviderAndLabel={modelProviderAndLabel}
+                    className="group-hover/sound-message:opacity-100"
+                />
+            )}
         </div>
     )
 }

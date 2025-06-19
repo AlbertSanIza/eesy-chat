@@ -1,21 +1,21 @@
+import type { Message } from '@ai-sdk/react'
 import { DownloadIcon } from 'lucide-react'
 
 import { MessageOptions } from '@/components/messages/options'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import type { Doc } from '@/convex/_generated/dataModel'
+import type { Id } from '@/convex/_generated/dataModel'
 
-export function ImageMessage({ message, content }: { message: Doc<'messages'>; content: string }) {
+export function ImageMessage({ threadId, modelProviderAndLabel, message }: { threadId?: Id<'threads'>; modelProviderAndLabel: string; message: Message }) {
     const handleDownload = async () => {
         try {
-            const response = await fetch(content)
+            const response = await fetch(message.experimental_attachments![0]!.url)
             const blob = await response.blob()
             const url = URL.createObjectURL(blob)
             const link = document.createElement('a')
             link.href = url
-            link.download = `image-${message._id}.${blob.type.split('/')[1] || 'png'}`
+            link.download = `image-${message.id}.${blob.type.split('/')[1] || 'png'}`
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
@@ -27,17 +27,13 @@ export function ImageMessage({ message, content }: { message: Doc<'messages'>; c
 
     const handleCopy = async () => {
         try {
-            const response = await fetch(content)
+            const response = await fetch(message.experimental_attachments![0]!.url)
             const blob = await response.blob()
             await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
         } catch (error) {
             console.error('Failed to copy image:', error)
-            navigator.clipboard.writeText(content)
+            navigator.clipboard.writeText(message.experimental_attachments![0]!.url)
         }
-    }
-
-    if (message.status === 'pending' || message.status === 'streaming') {
-        return <Skeleton className="size-60 rounded-lg border bg-sidebar" />
     }
 
     return (
@@ -47,24 +43,38 @@ export function ImageMessage({ message, content }: { message: Doc<'messages'>; c
                     <DialogTrigger asChild>
                         <img
                             className="mb-1.5 size-60 cursor-pointer rounded-lg border transition-opacity hover:opacity-80"
-                            src={content}
-                            alt={message.prompt}
+                            src={message.experimental_attachments?.[0]?.url}
+                            alt={message.content}
                         />
                     </DialogTrigger>
                     <DialogContent className="border-0 bg-transparent p-0 backdrop-blur">
-                        <img className="rounded-lg object-contain" src={content} alt={message.prompt} />
+                        <DialogHeader className="hidden">
+                            <DialogTitle />
+                            <DialogDescription />
+                        </DialogHeader>
+                        <img className="rounded-lg object-contain" src={message.experimental_attachments?.[0]?.url} alt={message.content} />
                     </DialogContent>
                 </Dialog>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button size="icon" variant="ghost" className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]" onClick={handleDownload}>
-                            <DownloadIcon />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">Download</TooltipContent>
-                </Tooltip>
+                {threadId && (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button size="icon" variant="ghost" className="size-8 hover:bg-sidebar dark:hover:bg-[#2C2632]" onClick={handleDownload}>
+                                <DownloadIcon />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">Download</TooltipContent>
+                    </Tooltip>
+                )}
             </div>
-            <MessageOptions message={message} onCopy={handleCopy} className="group-hover/image-message:opacity-100" />
+            {threadId && (
+                <MessageOptions
+                    className="group-hover/image-message:opacity-100"
+                    threadId={threadId}
+                    onCopy={handleCopy}
+                    messageId={message.id as Id<'messages'>}
+                    modelProviderAndLabel={modelProviderAndLabel}
+                />
+            )}
         </div>
     )
 }

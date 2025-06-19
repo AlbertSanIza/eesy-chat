@@ -1,10 +1,14 @@
+import type { Message } from '@ai-sdk/react'
 import { useQuery as useTSQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
 import { Fragment, useEffect } from 'react'
 
 import { AssistantMessage } from '@/components/messages/assistant'
+import { ImageMessage } from '@/components/messages/image-dialog'
 import { UserMessage } from '@/components/messages/user'
+import { VoiceMessage } from '@/components/messages/voice-message'
+import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
 import type { Doc, Id } from '@/convex/_generated/dataModel'
 import { useDocumentTitle } from '@/hooks/use-document-title'
@@ -37,7 +41,9 @@ function RouteComponent() {
                 {messages?.map((message) => (
                     <Fragment key={message._id}>
                         <UserMessage message={{ id: message._id, content: message.prompt, role: 'user' }} showExtras />
-                        <div className="group/assistant-message">{message.status !== 'pending' && <ServerMessage message={message} />}</div>
+                        <div className="group/assistant-message">
+                            <ServerMessage promptMessage={message} />
+                        </div>
                     </Fragment>
                 ))}
             </div>
@@ -45,21 +51,40 @@ function RouteComponent() {
     )
 }
 
-function ServerMessage({ message }: { message: Doc<'messages'> }) {
-    const messageBody = useQuery(api.get.messageBody, message.status === 'done' ? { messageId: message._id } : 'skip')
-    const { data, isLoading, isFetching } = useTSQuery({ ...chatQueryOptions(message), enabled: message.status === 'streaming' })
+function ServerMessage({ promptMessage }: { promptMessage: Doc<'messages'> }) {
+    const messageBody = useQuery(api.get.messageBody, promptMessage.status === 'done' ? { messageId: promptMessage._id } : 'skip')
+    const { data, isLoading, isFetching } = useTSQuery({
+        ...chatQueryOptions(promptMessage._id),
+        enabled: promptMessage.status === 'streaming' && promptMessage.type === 'text'
+    })
 
-    const loading = message.status === 'streaming' && (isLoading || isFetching)
+    if (promptMessage.type === 'image') {
+        return messageBody ? (
+            <ImageMessage
+                message={messageBody}
+                threadId={promptMessage?.threadId}
+                modelProviderAndLabel={`${promptMessage.provider}: ${promptMessage.label}`}
+            />
+        ) : (
+            <Skeleton className="size-60 rounded-lg border bg-sidebar" />
+        )
+    }
 
-    return (
-        <AssistantMessage
-            promptMessage={message}
-            message={
-                messageBody && !loading
-                    ? { id: message._id, role: 'assistant', content: messageBody?.content || '' }
-                    : { id: message._id, role: 'assistant', content: (data ?? []).join('') }
-            }
-            showExtras={!loading}
-        />
-    )
+    if (promptMessage.type === 'sound') {
+        return messageBody ? (
+            <VoiceMessage
+                message={messageBody}
+                threadId={promptMessage?.threadId}
+                content={messageBody.experimental_attachments?.[0]?.url || ''}
+                modelProviderAndLabel={`${promptMessage.provider}: ${promptMessage.label}`}
+            />
+        ) : (
+            <Skeleton className="mb-1.5 h-9 w-full rounded-lg border bg-sidebar" />
+        )
+    }
+
+    const message: Message =
+        isLoading || isFetching || !messageBody ? { id: promptMessage._id, role: 'assistant', content: (data ?? []).join('') } : messageBody
+
+    return <AssistantMessage message={message} promptMessage={promptMessage} showExtras />
 }
