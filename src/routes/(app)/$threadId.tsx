@@ -5,7 +5,7 @@ import { useQuery } from 'convex/react'
 import { Fragment, useEffect } from 'react'
 
 import { AssistantMessage } from '@/components/messages/assistant'
-import { ImageMessage } from '@/components/messages/image-dialog'
+import { ImageMessage } from '@/components/messages/image'
 import { UserMessage } from '@/components/messages/user'
 import { VoiceMessage } from '@/components/messages/voice-message'
 import { Skeleton } from '@/components/ui/skeleton'

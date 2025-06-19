@@ -2,7 +2,7 @@ import type { Message } from '@ai-sdk/react'
 import { Loader2Icon } from 'lucide-react'
 
 import { MemoizedMarkdown } from '@/components/memoized-markdown'
-import { ImageMessage } from '@/components/messages/image-dialog'
+import { ImageMessage } from '@/components/messages/image'
 import { MessageOptions } from '@/components/messages/options'
 import { VoiceMessage } from '@/components/messages/voice-message'
 import type { Doc, Id } from '@/convex/_generated/dataModel'
