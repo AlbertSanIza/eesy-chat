@@ -17,8 +17,15 @@ export const generateVoiceInternal = internalAction({
             outputFormat: 'mp3_44100_128'
         })
         const chunks: Uint8Array[] = []
-        for await (const chunk of audioStream) {
-            chunks.push(chunk)
+        const reader = audioStream.getReader()
+        try {
+            while (true) {
+                const { done, value } = await reader.read()
+                if (done) break
+                chunks.push(value)
+            }
+        } finally {
+            reader.releaseLock()
         }
         const audioBuffer = Buffer.concat(chunks)
         const storageId = await ctx.storage.store(new Blob([audioBuffer], { type: 'audio/mp3' }))
