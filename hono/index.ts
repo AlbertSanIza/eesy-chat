@@ -25,13 +25,11 @@ if (!process.env.DOMAIN_URL) {
 const app = new Hono()
 const httpClient = new ConvexHttpClient(process.env.VITE_CONVEX_URL)
 
-// Configure CORS to allow requests from your frontend
 app.use(
     '*',
     cors({
         origin: (origin) => {
-            // Allow requests from localhost development servers
-            if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('https://localhost:') || origin.includes(process.env.DOMAIN_URL!)) {
+            if (!origin || origin.startsWith('http://localhost:') || origin.includes(process.env.DOMAIN_URL!)) {
                 return origin || '*'
             }
             return null
