@@ -1,14 +1,17 @@
-import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Link } from '@tanstack/react-router'
+import { useQuery } from 'convex/react'
+import { useEffect, useMemo, useState } from 'react'
 
-import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from '@/components/ui/command'
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { api } from '@/convex/_generated/api'
 
 export function SearchCommandDialog() {
     const [open, setOpen] = useState(false)
+    const [query, setQuery] = useState('')
+    const results = useQuery(api.get.searchChunks, query.trim() === '' ? 'skip' : { query: query.trim() })
 
     useEffect(() => {
         const down = (e: KeyboardEvent) => {
-            console.log('Key down:', e.key, e.metaKey, e.ctrlKey)
             if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
                 e.preventDefault()
                 setOpen((open) => !open)
@@ -21,7 +24,7 @@ export function SearchCommandDialog() {
 
     return (
         <CommandDialog open={open} onOpenChange={setOpen}>
-            <CommandInput placeholder="Type a command or search..." />
+            <CommandInput placeholder="Search your messages..." value={query} onValueChange={setQuery} />
             <CommandList>
                 <CommandEmpty>No results found.</CommandEmpty>
                 <CommandGroup heading="Suggestions">
