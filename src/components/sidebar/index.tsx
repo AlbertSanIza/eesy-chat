@@ -1,21 +1,22 @@
 import { SignInButton, UserButton, useUser } from '@clerk/clerk-react'
 import { Link } from '@tanstack/react-router'
 import { Unauthenticated } from 'convex/react'
-// import { SearchIcon } from 'lucide-react'
+import { SearchIcon } from 'lucide-react'
 
 import { AppSidebarContent } from '@/components/sidebar/content'
-import { AppSidebarSearch } from '@/components/sidebar/search'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenuButton } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import { useGlobal } from '@/lib/zustand/global'
 import { useStore } from '@/lib/zustand/store'
 
 export function AppSidebar() {
     const { isLoaded, isSignedIn } = useUser()
     const user = useStore((state) => state.user)
+    const setSearchDialogOpen = useGlobal((state) => state.setSearchDialogOpen)
     // const threadSearch = useStore((state) => state.threadSearch)
     // const setThreadSearch = useStore((state) => state.setThreadSearch)
 
@@ -41,7 +42,9 @@ export function AppSidebar() {
                     />
                 </div> */}
                 <div className="mt-1 border-b pb-2">
-                    <AppSidebarSearch />
+                    <Button variant="outline" size="sm" className="w-full" disabled={!user.isSignedIn} onClick={() => setSearchDialogOpen(true)}>
+                        Search <SearchIcon />
+                    </Button>
                 </div>
             </SidebarHeader>
             <AppSidebarContent />

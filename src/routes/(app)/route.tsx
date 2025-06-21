@@ -4,7 +4,7 @@ import { Authenticated, Unauthenticated } from 'convex/react'
 import { Cache } from '@/components/cache'
 import { UndoCache } from '@/components/cache/undo'
 import { Input } from '@/components/input'
-import { SearchCommandDialog } from '@/components/search'
+import { SearchDialog } from '@/components/search'
 import { AppSidebar } from '@/components/sidebar'
 import { AppSidebarTrigger } from '@/components/sidebar/trigger'
 import { ThemeToggle } from '@/components/theme/toggle'
@@ -23,7 +23,7 @@ function RouteComponent() {
             <Outlet />
             <Input />
             <Authenticated>
-                <SearchCommandDialog />
+                <SearchDialog />
                 <Cache />
             </Authenticated>
             <Unauthenticated>
