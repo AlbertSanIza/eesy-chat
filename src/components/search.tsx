@@ -11,9 +11,9 @@ export function SearchCommandDialog() {
     const results = useQuery(api.get.searchChunks, query.trim() === '' ? 'skip' : { query: query.trim() })
 
     useEffect(() => {
-        const down = (e: KeyboardEvent) => {
-            if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
-                e.preventDefault()
+        const down = (event: KeyboardEvent) => {
+            if (event.key === 'j' && (event.metaKey || event.ctrlKey)) {
+                event.preventDefault()
                 setOpen((open) => !open)
             }
         }
