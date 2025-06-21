@@ -1,6 +1,6 @@
 import { internalMutation } from './_generated/server'
 
-const models = [
+const modelsData = [
     { enabled: true, label: 'GPT-4.1 Nano', model: 'openai/gpt-4.1-nano', provider: 'OpenAI', service: 'openRouter', withKey: false } as const,
     { enabled: true, label: 'Claude 3 Haiku', model: 'anthropic/claude-3.5-haiku', provider: 'Anthropic', service: 'openRouter', withKey: true } as const,
     { enabled: true, label: 'DALL·E 3', model: 'dall-e-3', provider: 'OpenAI', service: 'openAi', withKey: true } as const,
@@ -9,10 +9,10 @@ const models = [
     { enabled: false, label: 'Gemini 2.5 Pro', model: 'google/gemini-2.5-pro', provider: 'Google', service: 'openRouter', withKey: true } as const
 ]
 
-export const init = internalMutation({
+export const models = internalMutation({
     args: {},
     handler: async ({ db }) => {
-        for (const model of models) {
+        for (const model of modelsData) {
             await db.insert('models', model)
         }
     }
