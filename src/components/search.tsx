@@ -6,6 +6,7 @@ import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, C
 import { api } from '@/convex/_generated/api'
 
 export function SearchCommandDialog() {
+    const [query, setQuery] = useState('')
     const [open, setOpen] = useState(false)
     const [query, setQuery] = useState('')
     const results = useQuery(api.get.searchChunks, query.trim() === '' ? 'skip' : { query: query.trim() })
