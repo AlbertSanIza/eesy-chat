@@ -4,11 +4,11 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { api } from '@/convex/_generated/api'
+import { SmileIcon } from 'lucide-react'
 
 export function SearchCommandDialog() {
     const [query, setQuery] = useState('')
     const [open, setOpen] = useState(false)
-    const [query, setQuery] = useState('')
     const results = useQuery(api.get.searchChunks, query.trim() === '' ? 'skip' : { query: query.trim() })
 
     useEffect(() => {
@@ -18,48 +18,50 @@ export function SearchCommandDialog() {
                 setOpen((open) => !open)
             }
         }
-
         document.addEventListener('keydown', down)
         return () => document.removeEventListener('keydown', down)
     }, [])
+
+    const groupedResults = useMemo(() => {
+        if (!results) {
+            return {}
+        }
+        return results.reduce(
+            (
+                acc: Record<string, { threadTitle: string; chunks: { threadId: string; text: string }[] }>,
+                chunk: { threadId: string; threadTitle: string; text: string }
+            ) => {
+                if (!acc[chunk.threadId]) {
+                    acc[chunk.threadId] = { threadTitle: chunk.threadTitle, chunks: [] }
+                }
+                acc[chunk.threadId].chunks.push({ threadId: chunk.threadId, text: chunk.text })
+                return acc
+            },
+            {}
+        )
+    }, [results])
+
+    const handleSelect = () => {
+        setOpen(false)
+    }
 
     return (
         <CommandDialog open={open} onOpenChange={setOpen}>
             <CommandInput placeholder="Search your messages..." value={query} onValueChange={setQuery} />
             <CommandList>
                 <CommandEmpty>No results found.</CommandEmpty>
-                <CommandGroup heading="Suggestions">
-                    <CommandItem>
-                        <Calendar />
-                        <span>Calendar</span>
-                    </CommandItem>
-                    <CommandItem>
-                        <Smile />
-                        <span>Search Emoji</span>
-                    </CommandItem>
-                    <CommandItem>
-                        <Calculator />
-                        <span>Calculator</span>
-                    </CommandItem>
-                </CommandGroup>
-                <CommandSeparator />
-                <CommandGroup heading="Settings">
-                    <CommandItem>
-                        <User />
-                        <span>Profile</span>
-                        <CommandShortcut>⌘P</CommandShortcut>
-                    </CommandItem>
-                    <CommandItem>
-                        <CreditCard />
-                        <span>Billing</span>
-                        <CommandShortcut>⌘B</CommandShortcut>
-                    </CommandItem>
-                    <CommandItem>
-                        <Settings />
-                        <span>Settings</span>
-                        <CommandShortcut>⌘S</CommandShortcut>
-                    </CommandItem>
-                </CommandGroup>
+                {Object.entries(groupedResults).map(([threadId, { threadTitle, chunks }]) => (
+                    <CommandGroup key={threadId} heading={threadTitle}>
+                        {chunks.map((chunk, index) => (
+                            <Link key={index} to="/$threadId" params={{ threadId: chunk.threadId }}>
+                                <CommandItem onSelect={handleSelect}>
+                                    <SmileIcon />
+                                    <span>Search Emoji</span>
+                                </CommandItem>
+                            </Link>
+                        ))}
+                    </CommandGroup>
+                ))}
             </CommandList>
         </CommandDialog>
     )
