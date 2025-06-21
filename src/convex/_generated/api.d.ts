@@ -16,6 +16,7 @@ import type {
 import type * as create from "../create.js";
 import type * as eleven from "../eleven.js";
 import type * as get from "../get.js";
+import type * as init from "../init.js";
 import type * as remove from "../remove.js";
 import type * as streaming from "../streaming.js";
 import type * as update from "../update.js";
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   create: typeof create;
   eleven: typeof eleven;
   get: typeof get;
+  init: typeof init;
   remove: typeof remove;
   streaming: typeof streaming;
   update: typeof update;
