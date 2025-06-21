@@ -5,8 +5,7 @@ const modelsData = [
     { enabled: true, label: 'Claude 3 Haiku', model: 'anthropic/claude-3.5-haiku', provider: 'Anthropic', service: 'openRouter', withKey: true } as const,
     { enabled: true, label: 'DALL·E 3', model: 'dall-e-3', provider: 'OpenAI', service: 'openAi', withKey: true } as const,
     { enabled: true, label: 'Claude Sonnet 4', model: 'anthropic/claude-sonnet-4', provider: 'Anthropic', service: 'openRouter', withKey: true } as const,
-    { enabled: true, label: 'Multilingual v2', model: 'eleven_monolingual_v2', provider: 'ElevenLabs', service: 'elevenLabs', withKey: true } as const,
-    { enabled: false, label: 'Gemini 2.5 Pro', model: 'google/gemini-2.5-pro', provider: 'Google', service: 'openRouter', withKey: true } as const
+    { enabled: true, label: 'Multilingual v2', model: 'eleven_monolingual_v2', provider: 'ElevenLabs', service: 'elevenLabs', withKey: true } as const
 ]
 
 export const models = internalMutation({
