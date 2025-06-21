@@ -8,7 +8,7 @@ const modelsData = [
     { enabled: true, label: 'Multilingual v2', model: 'eleven_monolingual_v2', provider: 'ElevenLabs', service: 'elevenLabs', withKey: true } as const
 ]
 
-export const models = internalMutation({
+export default internalMutation({
     args: {},
     handler: async ({ db }) => {
         for (const model of modelsData) {
