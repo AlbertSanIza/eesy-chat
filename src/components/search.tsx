@@ -56,7 +56,7 @@ export function SearchCommandDialog() {
                             <Link key={index} to="/$threadId" params={{ threadId: chunk.threadId }}>
                                 <CommandItem onSelect={handleSelect}>
                                     <SmileIcon />
-                                    <span>Search Emoji</span>
+                                    <span>{chunk.text}</span>
                                 </CommandItem>
                             </Link>
                         ))}
