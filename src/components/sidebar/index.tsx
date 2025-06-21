@@ -29,7 +29,7 @@ export function AppSidebar() {
                     <TooltipContent side="right">THIS IS NOT THE REAL T3.CHAT BUT JUST A TRIBUTE TO IT</TooltipContent>
                 </Tooltip>
                 <Button className="bg-linear-to-t from-primary via-sidebar-accent/10 to-primary" asChild>
-                    <Link to="/">New Chat (DEV)</Link>
+                    <Link to="/">New Chat</Link>
                 </Button>
                 {/* <div className="mx-2 mt-3 flex items-center gap-1 border-b border-sidebar-border pb-1">
                     <SearchIcon className="size-3! min-w-4 text-sidebar-foreground" />
