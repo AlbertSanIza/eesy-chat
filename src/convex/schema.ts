@@ -43,6 +43,6 @@ export default defineSchema({
     apiKeys: defineTable({
         userId: v.string(),
         service: SCHEMA_SERVICE,
-        encryptedKey: v.string()
+        key: v.string()
     }).index('by_user_and_service', ['userId', 'service'])
 })
