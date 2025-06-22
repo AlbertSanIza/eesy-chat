@@ -4,7 +4,7 @@ import { v } from 'convex/values'
 export default defineSchema({
     threads: defineTable({
         userId: v.string(),
-        type: v.optional(v.union(v.literal('text'), v.literal('image'), v.literal('sound'))),
+        type: v.union(v.literal('text'), v.literal('image'), v.literal('sound')),
         name: v.string(),
         pinned: v.boolean(),
         shared: v.boolean(),
