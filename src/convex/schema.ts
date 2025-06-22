@@ -1,10 +1,10 @@
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 
-const TYPE = v.union(v.literal('text'), v.literal('image'), v.literal('sound'))
-const STATUS = v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error'))
-const SERVICE = v.union(v.literal('openRouter'), v.literal('openAi'), v.literal('elevenLabs'))
-const PROVIDER = v.union(v.literal('Google'), v.literal('Anthropic'), v.literal('OpenAI'), v.literal('ElevenLabs'))
+export const TYPE = v.union(v.literal('text'), v.literal('image'), v.literal('sound'))
+export const STATUS = v.union(v.literal('pending'), v.literal('streaming'), v.literal('done'), v.literal('error'))
+export const SERVICE = v.union(v.literal('openRouter'), v.literal('openAi'), v.literal('elevenLabs'))
+export const PROVIDER = v.union(v.literal('Google'), v.literal('Anthropic'), v.literal('OpenAI'), v.literal('ElevenLabs'))
 
 export default defineSchema({
     threads: defineTable({
