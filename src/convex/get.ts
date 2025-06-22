@@ -87,7 +87,7 @@ export const models = query({
     handler: async (ctx) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
-            throw new Error('Not Authenticated')
+            return []
         }
         const allModels = await ctx.db
             .query('models')
@@ -95,17 +95,12 @@ export const models = query({
             .filter((q) => q.eq(q.field('enabled'), true))
             .order('asc')
             .collect()
-        const userApiKeys = await ctx.db
+        const apiKeys = await ctx.db
             .query('apiKeys')
             .withIndex('by_user_and_service', (q) => q.eq('userId', identity.subject))
             .collect()
-        const availableServices = new Set(userApiKeys.map((key) => key.service))
-        return allModels.filter((model) => {
-            if (!model.withKey) {
-                return true
-            }
-            return availableServices.has(model.service)
-        })
+        const availableServices = new Set(apiKeys.map((key) => key.service))
+        return allModels.filter((model) => availableServices.has(model.service))
     }
 })
 
