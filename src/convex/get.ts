@@ -5,6 +5,7 @@ import { internal } from './_generated/api'
 import type { Id } from './_generated/dataModel'
 import type { QueryCtx } from './_generated/server'
 import { internalQuery, query } from './_generated/server'
+import { SERVICE } from './schema'
 
 export const threads = query({
     args: {},
@@ -184,5 +185,38 @@ export const searchChunks = query({
             threadId: messageIdToThreadId[chunk.messageId],
             threadTitle: threadIdToTitle[messageIdToThreadId[chunk.messageId]]
         }))
+    }
+})
+
+export const apiKeys = query({
+    args: {},
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return { openRouter: false, openAi: false, elevenLabs: false }
+        }
+        const keys = await ctx.db
+            .query('apiKeys')
+            .withIndex('by_user_and_service', (q) => q.eq('userId', identity.subject))
+            .collect()
+        return {
+            openRouter: keys.some((k) => k.service === 'openRouter'),
+            openAi: keys.some((k) => k.service === 'openAi'),
+            elevenLabs: keys.some((k) => k.service === 'elevenLabs')
+        }
+    }
+})
+
+export const apiKey = internalQuery({
+    args: { userId: v.string(), service: SERVICE },
+    handler: async (ctx, { userId, service }) => {
+        const keyRecord = await ctx.db
+            .query('apiKeys')
+            .withIndex('by_user_and_service', (q) => q.eq('userId', userId).eq('service', service))
+            .unique()
+        if (!keyRecord) {
+            return null
+        }
+        return Buffer.from(keyRecord.encryptedKey, 'base64').toString()
     }
 })
