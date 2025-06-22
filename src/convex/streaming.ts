@@ -1,16 +1,21 @@
 import type { Message } from 'ai'
 import { v } from 'convex/values'
 
+import { internal } from './_generated/api'
 import { internalAction, mutation, query } from './_generated/server'
 import { getMessageBody } from './get'
 
 export const run = internalAction({
-    args: { apiKey: v.string(), messageId: v.id('messages') },
-    handler: async (_, { apiKey, messageId }) => {
+    args: { userId: v.string(), messageId: v.id('messages') },
+    handler: async (ctx, { userId, messageId }) => {
+        const apiKey = await ctx.runQuery(internal.get.apiKey, { userId, service: 'openRouter' })
+        if (!apiKey) {
+            throw new Error('No OpenRouter API key found for user')
+        }
         await fetch(`${process.env.VITE_RAILWAY_API_URL}/start`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ apiKey, messageId })
+            body: JSON.stringify({ apiKey: apiKey, messageId })
         })
     }
 })
