@@ -42,8 +42,8 @@ import { action, internalAction, internalMutation, mutation } from './_generated
 // })
 
 export const thread = mutation({
-    args: { modelId: v.id('models'), apiKey: v.optional(v.string()), prompt: v.string() },
-    handler: async (ctx, { modelId, apiKey, prompt }) => {
+    args: { modelId: v.id('models'), prompt: v.string() },
+    handler: async (ctx, { modelId, prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
@@ -57,15 +57,15 @@ export const thread = mutation({
             branched: false,
             updateTime: Date.now()
         })
-        await ctx.scheduler.runAfter(0, internal.create.threadInternal, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', threadId, prompt })
-        await ctx.scheduler.runAfter(0, internal.create.messageInternal, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', modelId, threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.create.threadInternal, { userId: identity.subject, threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, modelId, threadId, prompt })
         return threadId
     }
 })
 
 export const imageThread = mutation({
-    args: { apiKey: v.optional(v.string()), prompt: v.string() },
-    handler: async (ctx, { apiKey, prompt }) => {
+    args: { prompt: v.string() },
+    handler: async (ctx, { prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
@@ -80,14 +80,14 @@ export const imageThread = mutation({
             updateTime: Date.now()
         })
         await ctx.scheduler.runAfter(0, internal.create.imageThreadTitleInternal, { threadId, prompt })
-        await ctx.scheduler.runAfter(0, internal.create.imageMessageInternal, { apiKey: apiKey || process.env.OPENAI_API_KEY || '', threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.create.imageMessageInternal, { userId: identity.subject, threadId, prompt })
         return threadId
     }
 })
 
 export const voiceThread = mutation({
-    args: { apiKey: v.optional(v.string()), prompt: v.string() },
-    handler: async (ctx, { apiKey, prompt }) => {
+    args: { prompt: v.string() },
+    handler: async (ctx, { prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
@@ -102,7 +102,7 @@ export const voiceThread = mutation({
             updateTime: Date.now()
         })
         await ctx.scheduler.runAfter(0, internal.create.voiceThreadTitleInternal, { threadId, prompt })
-        await ctx.scheduler.runAfter(0, internal.create.voiceMessageInternal, { apiKey: apiKey || process.env.ELEVENLABS_API_KEY || '', threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.create.voiceMessageInternal, { userId: identity.subject, threadId, prompt })
         return threadId
     }
 })
