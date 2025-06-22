@@ -221,13 +221,10 @@ export const apiKeys = query({
 export const apiKey = internalQuery({
     args: { userId: v.string(), service: SCHEMA_SERVICE },
     handler: async (ctx, { userId, service }) => {
-        const keyRecord = await ctx.db
+        const row = await ctx.db
             .query('apiKeys')
             .withIndex('by_user_and_service', (q) => q.eq('userId', userId).eq('service', service))
             .unique()
-        if (!keyRecord) {
-            return null
-        }
-        return Buffer.from(keyRecord.encryptedKey, 'base64').toString()
+        return row?.key || null
     }
 })
