@@ -38,8 +38,7 @@ export default defineSchema({
         model: v.string(),
         provider: SCHEMA_PROVIDER,
         label: v.string(),
-        enabled: v.boolean(),
-        withKey: v.boolean()
+        enabled: v.boolean()
     }).index('by_provider_and_label', ['provider', 'label']),
     apiKeys: defineTable({
         userId: v.string(),
