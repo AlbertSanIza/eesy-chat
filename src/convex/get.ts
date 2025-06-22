@@ -5,7 +5,7 @@ import { internal } from './_generated/api'
 import type { Id } from './_generated/dataModel'
 import type { QueryCtx } from './_generated/server'
 import { internalQuery, query } from './_generated/server'
-import { SERVICE } from './schema'
+import { SCHEMA_SERVICE } from './schema'
 
 export const threads = query({
     args: {},
@@ -208,7 +208,7 @@ export const apiKeys = query({
 })
 
 export const apiKey = internalQuery({
-    args: { userId: v.string(), service: SERVICE },
+    args: { userId: v.string(), service: SCHEMA_SERVICE },
     handler: async (ctx, { userId, service }) => {
         const keyRecord = await ctx.db
             .query('apiKeys')
