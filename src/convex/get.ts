@@ -84,13 +84,29 @@ export const messageBody = query({
 
 export const models = query({
     args: {},
-    handler: async (ctx) =>
-        await ctx.db
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            throw new Error('Not Authenticated')
+        }
+        const allModels = await ctx.db
             .query('models')
             .withIndex('by_provider_and_label')
             .filter((q) => q.eq(q.field('enabled'), true))
             .order('asc')
             .collect()
+        const userApiKeys = await ctx.db
+            .query('apiKeys')
+            .withIndex('by_user_and_service', (q) => q.eq('userId', identity.subject))
+            .collect()
+        const availableServices = new Set(userApiKeys.map((key) => key.service))
+        return allModels.filter((model) => {
+            if (!model.withKey) {
+                return true
+            }
+            return availableServices.has(model.service)
+        })
+    }
 })
 
 export const model = internalQuery({
