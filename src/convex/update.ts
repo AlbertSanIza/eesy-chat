@@ -2,6 +2,7 @@ import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
 import { action, internalMutation, mutation } from './_generated/server'
+import { SCHEMA_SERVICE } from './schema'
 
 export const threadName = action({
     args: { id: v.id('threads'), name: v.string() },
@@ -62,4 +63,23 @@ export const messageStatus = internalMutation({
 export const messageStorageId = internalMutation({
     args: { messageId: v.id('messages'), storageId: v.id('_storage') },
     handler: async (ctx, { messageId, storageId }) => await ctx.db.patch(messageId, { storageId })
+})
+
+export const apiKey = mutation({
+    args: { service: SCHEMA_SERVICE, key: v.string() },
+    handler: async (ctx, { service, key }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            throw new Error('User must be authenticated')
+        }
+        const existingKey = await ctx.db
+            .query('apiKeys')
+            .withIndex('by_user_and_service', (q) => q.eq('userId', identity.subject).eq('service', service))
+            .unique()
+        if (existingKey) {
+            await ctx.db.patch(existingKey._id, { key })
+        } else {
+            await ctx.db.insert('apiKeys', { userId: identity.subject, service, key })
+        }
+    }
 })
