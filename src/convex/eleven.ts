@@ -7,10 +7,14 @@ import { internal } from './_generated/api'
 import { internalAction } from './_generated/server'
 
 export const generateVoiceInternal = internalAction({
-    args: { apiKey: v.string(), messageId: v.id('messages'), prompt: v.string() },
-    handler: async (ctx, { apiKey, messageId, prompt }) => {
+    args: { userId: v.string(), messageId: v.id('messages'), prompt: v.string() },
+    handler: async (ctx, { userId, messageId, prompt }) => {
+        const apiKey = await ctx.runQuery(internal.get.apiKey, { userId, service: 'elevenLabs' })
+        if (!apiKey) {
+            throw new Error('No ElevenLabs API key found for user')
+        }
+        const elevenLabs = new ElevenLabsClient({ apiKey: apiKey })
         await ctx.runMutation(internal.update.messageStatus, { messageId, status: 'streaming' })
-        const elevenLabs = new ElevenLabsClient({ apiKey })
         const audioStream = await elevenLabs.textToSpeech.convert('JBFqnCBsd6RMkjVDRZzb', {
             text: prompt,
             modelId: 'eleven_multilingual_v2',
