@@ -96,10 +96,10 @@ export function Input() {
             return
         }
         let newThreadId
-        if (isImageGenModel && key.openAi) {
             newThreadId = await createImageThread({ apiKey: key.openAi, prompt: input.trim() })
         } else if (isSoundGenModel && key.elevenLabs) {
             newThreadId = await createVoiceThread({ apiKey: key.elevenLabs, prompt: input.trim() })
+        if (isImageGenModel) {
         } else {
             newThreadId = await createThread({ modelId: model._id, prompt: input.trim() })
         }
