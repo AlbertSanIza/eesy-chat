@@ -367,10 +367,10 @@ export const chunk = internalMutation({
 })
 
 export const generateImageInternal = internalAction({
-    args: { apiKey: v.string(), messageId: v.id('messages'), prompt: v.string() },
-    handler: async (ctx, { apiKey, messageId, prompt }) => {
+    args: { userId: v.string(), messageId: v.id('messages'), prompt: v.string() },
+    handler: async (ctx, { userId, messageId, prompt }) => {
         await ctx.runMutation(internal.update.messageStatus, { messageId, status: 'streaming' })
-        const openai = createOpenAI({ apiKey })
+        const openai = createOpenAI({ apiKey: await ctx.runQuery(internal.get.apiKey, { userId, service: 'openAi' }) })
         const { image } = await generateImage({ model: openai.image('dall-e-3'), prompt, size: '1024x1024' })
         const storageId = await ctx.storage.store(new Blob([image.uint8Array], { type: image.mimeType }))
         await ctx.runMutation(internal.update.messageStorageId, { messageId, storageId })
