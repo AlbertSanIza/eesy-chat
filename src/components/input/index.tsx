@@ -101,7 +101,7 @@ export function Input() {
         } else if (isSoundGenModel && key.elevenLabs) {
             newThreadId = await createVoiceThread({ apiKey: key.elevenLabs, prompt: input.trim() })
         } else {
-            newThreadId = await createThread({ apiKey: key.openRouter || undefined, modelId: model._id, prompt: input.trim() })
+            newThreadId = await createThread({ modelId: model._id, prompt: input.trim() })
         }
 
         if (newThreadId) {
