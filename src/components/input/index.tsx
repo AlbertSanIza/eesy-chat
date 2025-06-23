@@ -71,12 +71,6 @@ export function Input() {
         if (!model) {
             return
         }
-        if (isImageThread && !key.openAi) {
-            return
-        }
-        if (isSoundThread && !key.elevenLabs) {
-            return
-        }
         if (newInput.trim() === '') {
             return
         }
