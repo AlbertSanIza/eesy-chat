@@ -231,44 +231,44 @@ export const threadBranchChunksInternal = internalMutation({
 })
 
 export const message = action({
-    args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), modelId: v.id('models'), prompt: v.string() },
-    handler: async (ctx, { apiKey, threadId, modelId, prompt }) => {
+    args: { threadId: v.id('threads'), modelId: v.id('models'), prompt: v.string() },
+    handler: async (ctx, { threadId, modelId, prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
         }
-        await ctx.runMutation(internal.create.messageInternal, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', modelId, threadId, prompt })
+        await ctx.runMutation(internal.create.messageInternal, { userId: identity.subject, modelId, threadId, prompt })
         await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
     }
 })
 
 export const imageMessage = action({
-    args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { apiKey, threadId, prompt }) => {
+    args: { threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { threadId, prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
         }
-        await ctx.runMutation(internal.create.imageMessageInternal, { threadId, prompt, apiKey: apiKey || process.env.OPENAI_API_KEY || '' })
+        await ctx.runMutation(internal.create.imageMessageInternal, { userId: identity.subject, threadId, prompt })
         await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
     }
 })
 
 export const voiceMessage = action({
-    args: { apiKey: v.optional(v.string()), threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { apiKey, threadId, prompt }) => {
+    args: { threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { threadId, prompt }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
             return null
         }
-        await ctx.runMutation(internal.create.voiceMessageInternal, { threadId, prompt, apiKey: apiKey || process.env.ELEVENLABS_API_KEY || '' })
+        await ctx.runMutation(internal.create.voiceMessageInternal, { userId: identity.subject, threadId, prompt })
         await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
     }
 })
 
 export const messageInternal = internalMutation({
-    args: { apiKey: v.string(), modelId: v.id('models'), threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { apiKey, modelId, threadId, prompt }) => {
+    args: { userId: v.string(), modelId: v.id('models'), threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { userId, modelId, threadId, prompt }) => {
         const model = (await ctx.runQuery(internal.get.model, { modelId })) as {
             service: 'openRouter' | 'openAi'
             model: string
@@ -288,14 +288,14 @@ export const messageInternal = internalMutation({
             label: model.label,
             prompt
         })
-        await ctx.scheduler.runAfter(0, internal.streaming.run, { apiKey: apiKey || process.env.OPENROUTER_API_KEY || '', messageId })
+        await ctx.scheduler.runAfter(0, internal.streaming.run, { userId, messageId })
         return messageId
     }
 })
 
 export const imageMessageInternal = internalMutation({
-    args: { apiKey: v.string(), threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { apiKey, threadId, prompt }) => {
+    args: { userId: v.string(), threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { userId, threadId, prompt }) => {
         const model = await ctx.db
             .query('models')
             .withIndex('by_provider_and_label')
@@ -315,14 +315,14 @@ export const imageMessageInternal = internalMutation({
             label: model.label,
             prompt
         })
-        await ctx.scheduler.runAfter(0, internal.create.generateImageInternal, { apiKey, messageId, prompt })
+        await ctx.scheduler.runAfter(0, internal.create.generateImageInternal, { userId, messageId, prompt })
         return messageId
     }
 })
 
 export const voiceMessageInternal = internalMutation({
-    args: { apiKey: v.string(), threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { apiKey, threadId, prompt }) => {
+    args: { userId: v.string(), threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { userId, threadId, prompt }) => {
         const model = await ctx.db
             .query('models')
             .withIndex('by_provider_and_label')
@@ -342,7 +342,7 @@ export const voiceMessageInternal = internalMutation({
             label: model.label,
             prompt
         })
-        await ctx.scheduler.runAfter(0, internal.eleven.generateVoiceInternal, { apiKey, messageId, prompt })
+        await ctx.scheduler.runAfter(0, internal.eleven.generateVoiceInternal, { userId, messageId, prompt })
         return messageId
     }
 })
