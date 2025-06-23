@@ -77,7 +77,6 @@ export function Input() {
         if (threadId) {
             if (isImageThread) {
                 sendImage({
-                    apiKey: key.openAi || undefined,
                     threadId: threadId as Id<'threads'>,
                     prompt: newInput.trim()
                 })
