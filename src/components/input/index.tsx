@@ -80,7 +80,7 @@ export function Input() {
                     threadId: threadId as Id<'threads'>,
                     prompt: newInput.trim()
                 })
-            } else if (isSoundThread && key.elevenLabs) {
+            } else if (isSoundThread) {
                 sendVoice({
                     apiKey: key.elevenLabs || undefined,
                     threadId: threadId as Id<'threads'>,
