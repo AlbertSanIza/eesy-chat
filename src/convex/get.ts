@@ -225,6 +225,9 @@ export const apiKey = internalQuery({
             .query('apiKeys')
             .withIndex('by_user_and_service', (q) => q.eq('userId', userId).eq('service', service))
             .unique()
-        return row?.key || null
+        if (!row) {
+            throw new Error('API Key Not Found')
+        }
+        return row.key
     }
 })
