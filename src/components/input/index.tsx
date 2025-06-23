@@ -87,7 +87,6 @@ export function Input() {
                 })
             } else {
                 send({
-                    apiKey: key.openRouter || undefined,
                     threadId: threadId as Id<'threads'>,
                     prompt: newInput.trim(),
                     modelId: model._id
