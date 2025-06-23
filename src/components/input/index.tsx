@@ -82,7 +82,6 @@ export function Input() {
                 })
             } else if (isSoundThread) {
                 sendVoice({
-                    apiKey: key.elevenLabs || undefined,
                     threadId: threadId as Id<'threads'>,
                     prompt: newInput.trim()
                 })
