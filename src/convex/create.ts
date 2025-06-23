@@ -108,8 +108,12 @@ export const voiceThread = mutation({
 })
 
 export const threadInternal = internalAction({
-    args: { apiKey: v.string(), threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { apiKey, threadId, prompt }) => {
+    args: { userId: v.string(), threadId: v.id('threads'), prompt: v.string() },
+    handler: async (ctx, { userId, threadId, prompt }) => {
+        const apiKey = await ctx.runQuery(internal.get.apiKey, { userId, service: 'openRouter' })
+        if (!apiKey) {
+            throw new Error('OpenRouter API key not found')
+        }
         const openrouter = createOpenRouter({ apiKey: apiKey || process.env.OPENROUTER_API_KEY })
         const response = await generateText({
             model: openrouter.chat('openai/gpt-4.1-nano'),
