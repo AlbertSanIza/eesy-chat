@@ -140,10 +140,10 @@ export const messageInternal = internalMutation({
                 await ctx.scheduler.runAfter(0, internal.streaming.run, { userId, messageId })
                 break
             case 'image':
-                await ctx.scheduler.runAfter(0, internal.create.generateImageInternal, { userId, messageId, prompt })
+                await ctx.scheduler.runAfter(0, internal.create.imageInternal, { userId, messageId, prompt })
                 break
             case 'sound':
-                await ctx.scheduler.runAfter(0, internal.eleven.generateVoiceInternal, { userId, messageId, prompt })
+                await ctx.scheduler.runAfter(0, internal.eleven.createVoiceInternal, { userId, messageId, prompt })
                 break
         }
     }
@@ -168,7 +168,7 @@ export const chunk = internalMutation({
     }
 })
 
-export const generateImageInternal = internalAction({
+export const imageInternal = internalAction({
     args: { userId: v.string(), messageId: v.id('messages'), prompt: v.string() },
     handler: async (ctx, { userId, messageId, prompt }) => {
         await ctx.runMutation(internal.update.messageStatus, { messageId, status: 'streaming' })

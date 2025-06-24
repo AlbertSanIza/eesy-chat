@@ -6,7 +6,7 @@ import { v } from 'convex/values'
 import { internal } from './_generated/api'
 import { internalAction } from './_generated/server'
 
-export const generateVoiceInternal = internalAction({
+export const createVoiceInternal = internalAction({
     args: { userId: v.string(), messageId: v.id('messages'), prompt: v.string() },
     handler: async (ctx, { userId, messageId, prompt }) => {
         const apiKey = await ctx.runQuery(internal.get.apiKey, { userId, service: 'elevenLabs' })
