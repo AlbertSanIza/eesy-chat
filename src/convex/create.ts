@@ -17,20 +17,23 @@ export const experimentalMessage = mutation({
         if (identity === null) {
             throw new Error('Not Authenticated')
         }
-        if (!threadId) {
-            const newThreadId = await ctx.db.insert('threads', {
-                userId: identity.subject,
-                type: type,
-                name: 'New Thread',
-                pinned: false,
-                shared: false,
-                branched: false,
-                updateTime: Date.now()
-            })
-            await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId: newThreadId, type, prompt })
-            await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, modelId, threadId: newThreadId, prompt })
-            return newThreadId
+        if (threadId) {
+            await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, modelId, threadId, prompt })
+            await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
+            return
         }
+        const newThreadId = await ctx.db.insert('threads', {
+            userId: identity.subject,
+            type: type,
+            name: 'New Thread',
+            pinned: false,
+            shared: false,
+            branched: false,
+            updateTime: Date.now()
+        })
+        await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId: newThreadId, type, prompt })
+        await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, modelId, threadId: newThreadId, prompt })
+        return newThreadId
     }
 })
 
