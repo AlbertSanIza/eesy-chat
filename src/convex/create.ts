@@ -1,45 +1,38 @@
 import { createOpenAI } from '@ai-sdk/openai'
-import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-import { experimental_generateImage as generateImage, generateText } from 'ai'
+import { experimental_generateImage as generateImage } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
 import { action, internalAction, internalMutation, mutation } from './_generated/server'
 
-// export const experimentalMessage = mutation({
-//     args: {
-//         threadId: v.optional(v.id('threads')),
-//         modelId: v.id('models'),
-//         type: v.union(v.literal('text'), v.literal('image'), v.literal('sound')),
-//         prompt: v.string()
-//     },
-//     handler: async (ctx, { threadId, modelId, type, prompt }) => {
-//         const identity = await ctx.auth.getUserIdentity()
-//         if (identity === null) {
-//             return null
-//         }
-//         let finalThreadId = threadId
-//         if (!finalThreadId) {
-//             finalThreadId = await ctx.db.insert('threads', {
-//                 userId: identity.subject,
-//                 type: 'text',
-//                 name: 'New Thread',
-//                 pinned: false,
-//                 shared: false,
-//                 branched: false,
-//                 updateTime: Date.now()
-//             })
-//             await ctx.scheduler.runAfter(0, internal.create.threadInternal, { apiKey: process.env.OPENROUTER_API_KEY || '', threadId: finalThreadId, prompt })
-//         }
-//         await ctx.scheduler.runAfter(0, internal.create.messageInternal, {
-//             apiKey: process.env.OPENROUTER_API_KEY || '',
-//             modelId,
-//             threadId: finalThreadId,
-//             prompt
-//         })
-//         return finalThreadId
-//     }
-// })
+export const experimentalMessage = mutation({
+    args: {
+        threadId: v.optional(v.id('threads')),
+        modelId: v.id('models'),
+        type: v.union(v.literal('text'), v.literal('image'), v.literal('sound')),
+        prompt: v.string()
+    },
+    handler: async (ctx, { threadId, modelId, type, prompt }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            throw new Error('Not Authenticated')
+        }
+        if (!threadId) {
+            const newThreadId = await ctx.db.insert('threads', {
+                userId: identity.subject,
+                type: type,
+                name: 'New Thread',
+                pinned: false,
+                shared: false,
+                branched: false,
+                updateTime: Date.now()
+            })
+            await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId: newThreadId, type, prompt })
+            await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, modelId, threadId: newThreadId, prompt })
+            return newThreadId
+        }
+    }
+})
 
 export const thread = mutation({
     args: { modelId: v.id('models'), prompt: v.string() },
