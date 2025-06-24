@@ -5,40 +5,24 @@ import { useEffect } from 'react'
 import { useStore } from '@/lib/zustand/store'
 
 export function InputModelsSelect() {
-    const key = useStore((state) => state.key)
     const model = useStore((state) => state.model)
     const models = useStore((state) => state.models)
     const { threadId } = useParams({ strict: false })
     const setModel = useStore((state) => state.setModel)
     const thread = useStore((state) => state.threads.find((thread) => thread._id === threadId))
 
-    const availableModels = models
-        .filter((model) => {
-            if (!thread || (thread.type === 'text' && model.model !== 'dall-e-3' && model.model !== 'eleven_monolingual_v2')) {
-                return true
-            }
-            if (thread.type === 'image' && model.model === 'dall-e-3') {
-                return true
-            }
-            if (thread.type === 'sound' && model.model === 'eleven_monolingual_v2') {
-                return true
-            }
-            return false
-        })
-        .filter((model) => {
-            if (model.withKey) {
-                if (model.service === 'openRouter' && !key.openRouter) {
-                    return false
-                }
-                if (model.service === 'openAi' && !key.openAi) {
-                    return false
-                }
-                if (model.service === 'elevenLabs' && !key.elevenLabs) {
-                    return false
-                }
-            }
+    const availableModels = models.filter((model) => {
+        if (!thread || (thread.type === 'text' && model.model !== 'dall-e-3' && model.model !== 'eleven_monolingual_v2')) {
             return true
-        })
+        }
+        if (thread.type === 'image' && model.model === 'dall-e-3') {
+            return true
+        }
+        if (thread.type === 'sound' && model.model === 'eleven_monolingual_v2') {
+            return true
+        }
+        return false
+    })
 
     useEffect(() => {
         if (!availableModels.some((m) => m._id === model?._id)) {

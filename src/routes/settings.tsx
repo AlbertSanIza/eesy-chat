@@ -23,8 +23,8 @@ function RouteComponent() {
 
     // API Keys management
     const storedApiKeys = useQuery(api.get.apiKeys)
-    const setApiKey = useMutation(api.apiKeys.setApiKey)
-    const removeApiKey = useMutation(api.apiKeys.removeApiKey)
+    const setApiKey = useMutation(api.update.apiKey)
+    const removeApiKey = useMutation(api.remove.apiKey)
 
     const [apiKeysOpen, setApiKeysOpen] = useState(false)
     const [deleteThreadsOpen, setDeleteThreadsOpen] = useState(false)
@@ -50,17 +50,17 @@ function RouteComponent() {
         try {
             // Save OpenRouter key
             if (tempApiKeys.openRouter.trim()) {
-                await setApiKey({ service: 'openRouter', apiKey: tempApiKeys.openRouter })
+                await setApiKey({ service: 'openRouter', key: tempApiKeys.openRouter })
             }
 
             // Save OpenAI key
             if (tempApiKeys.openAi.trim()) {
-                await setApiKey({ service: 'openAi', apiKey: tempApiKeys.openAi })
+                await setApiKey({ service: 'openAi', key: tempApiKeys.openAi })
             }
 
             // Save ElevenLabs key
             if (tempApiKeys.elevenLabs.trim()) {
-                await setApiKey({ service: 'elevenLabs', apiKey: tempApiKeys.elevenLabs })
+                await setApiKey({ service: 'elevenLabs', key: tempApiKeys.elevenLabs })
             }
 
             setApiKeysOpen(false)
