@@ -11,7 +11,7 @@ export const threadBranch = mutation({
     handler: async (ctx, { threadId, messageId }) => {
         const identity = await ctx.auth.getUserIdentity()
         if (identity === null) {
-            return []
+            throw new Error('Not Authenticated')
         }
         const thread = await ctx.db.get(threadId)
         if (!thread || (!thread.shared && thread.userId !== identity.subject)) {
