@@ -6,86 +6,6 @@ import { internal } from './_generated/api'
 import { internalAction, internalMutation, mutation } from './_generated/server'
 import { SCHEMA_TYPE } from './schema'
 
-export const threadBranch = mutation({
-    args: { threadId: v.id('threads'), messageId: v.id('messages') },
-    handler: async (ctx, { threadId, messageId }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            throw new Error('Not Authenticated')
-        }
-        const thread = await ctx.db.get(threadId)
-        if (!thread || (!thread.shared && thread.userId !== identity.subject)) {
-            return null
-        }
-        const message = await ctx.db.get(messageId)
-        if (!message || message.threadId !== threadId) {
-            return null
-        }
-        const newThreadId = await ctx.db.insert('threads', {
-            userId: identity.subject,
-            type: thread.type || 'text',
-            name: thread.name,
-            pinned: false,
-            shared: false,
-            branched: true,
-            updateTime: Date.now()
-        })
-        await ctx.scheduler.runAfter(0, internal.create.threadBranchMessagesInternal, { threadId, newThreadId, messageId })
-        return newThreadId
-    }
-})
-
-export const threadBranchMessagesInternal = internalMutation({
-    args: { threadId: v.id('threads'), newThreadId: v.id('threads'), messageId: v.id('messages') },
-    handler: async (ctx, { threadId, newThreadId, messageId }) => {
-        const messages = await ctx.db
-            .query('messages')
-            .withIndex('by_thread', (q) => q.eq('threadId', threadId))
-            .collect()
-        const targetMessageIndex = messages.findIndex((message) => message._id === messageId)
-        const messagesToCopy = targetMessageIndex === -1 ? messages : messages.slice(0, targetMessageIndex + 1)
-        for (const message of messagesToCopy) {
-            const newMessageId = await ctx.db.insert('messages', {
-                threadId: newThreadId,
-                type: message.type,
-                status: message.status,
-                service: message.service,
-                model: message.model,
-                provider: message.provider,
-                label: message.label,
-                prompt: message.prompt
-            })
-            if (message.storageId) {
-                await ctx.scheduler.runAfter(0, internal.create.threadBranchStorageInternal, { newMessageId, storageId: message.storageId })
-            }
-            await ctx.scheduler.runAfter(0, internal.create.threadBranchChunksInternal, { messageId: message._id, newMessageId })
-        }
-    }
-})
-
-export const threadBranchStorageInternal = internalAction({
-    args: { newMessageId: v.id('messages'), storageId: v.id('_storage') },
-    handler: async (ctx, { newMessageId, storageId }) => {
-        const storageBlob = await ctx.storage.get(storageId)
-        if (storageBlob) {
-            await ctx.runMutation(internal.update.messageStorageId, { messageId: newMessageId, storageId: await ctx.storage.store(storageBlob) })
-        }
-    }
-})
-
-export const threadBranchChunksInternal = internalMutation({
-    args: { messageId: v.id('messages'), newMessageId: v.id('messages') },
-    handler: async (ctx, { messageId, newMessageId }) => {
-        const chunks = await ctx.db
-            .query('chunks')
-            .withIndex('by_message', (q) => q.eq('messageId', messageId))
-            .collect()
-        for (const chunk of chunks) {
-            await ctx.db.insert('chunks', { messageId: newMessageId, text: chunk.text })
-        }
-    }
-})
-
 export const message = mutation({
     args: {
         threadId: v.optional(v.id('threads')),
@@ -177,5 +97,85 @@ export const imageInternal = internalAction({
         const storageId = await ctx.storage.store(new Blob([image.uint8Array], { type: image.mimeType }))
         await ctx.runMutation(internal.update.messageStorageId, { messageId, storageId })
         await ctx.runMutation(internal.update.messageStatus, { messageId, status: 'done' })
+    }
+})
+
+export const threadBranch = mutation({
+    args: { threadId: v.id('threads'), messageId: v.id('messages') },
+    handler: async (ctx, { threadId, messageId }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            throw new Error('Not Authenticated')
+        }
+        const thread = await ctx.db.get(threadId)
+        if (!thread || (!thread.shared && thread.userId !== identity.subject)) {
+            return null
+        }
+        const message = await ctx.db.get(messageId)
+        if (!message || message.threadId !== threadId) {
+            return null
+        }
+        const newThreadId = await ctx.db.insert('threads', {
+            userId: identity.subject,
+            type: thread.type || 'text',
+            name: thread.name,
+            pinned: false,
+            shared: false,
+            branched: true,
+            updateTime: Date.now()
+        })
+        await ctx.scheduler.runAfter(0, internal.create.threadBranchMessagesInternal, { threadId, newThreadId, messageId })
+        return newThreadId
+    }
+})
+
+export const threadBranchMessagesInternal = internalMutation({
+    args: { threadId: v.id('threads'), newThreadId: v.id('threads'), messageId: v.id('messages') },
+    handler: async (ctx, { threadId, newThreadId, messageId }) => {
+        const messages = await ctx.db
+            .query('messages')
+            .withIndex('by_thread', (q) => q.eq('threadId', threadId))
+            .collect()
+        const targetMessageIndex = messages.findIndex((message) => message._id === messageId)
+        const messagesToCopy = targetMessageIndex === -1 ? messages : messages.slice(0, targetMessageIndex + 1)
+        for (const message of messagesToCopy) {
+            const newMessageId = await ctx.db.insert('messages', {
+                threadId: newThreadId,
+                type: message.type,
+                status: message.status,
+                service: message.service,
+                model: message.model,
+                provider: message.provider,
+                label: message.label,
+                prompt: message.prompt
+            })
+            if (message.storageId) {
+                await ctx.scheduler.runAfter(0, internal.create.threadBranchStorageInternal, { newMessageId, storageId: message.storageId })
+            }
+            await ctx.scheduler.runAfter(0, internal.create.threadBranchChunksInternal, { messageId: message._id, newMessageId })
+        }
+    }
+})
+
+export const threadBranchStorageInternal = internalAction({
+    args: { newMessageId: v.id('messages'), storageId: v.id('_storage') },
+    handler: async (ctx, { newMessageId, storageId }) => {
+        const storageBlob = await ctx.storage.get(storageId)
+        if (storageBlob) {
+            await ctx.runMutation(internal.update.messageStorageId, { messageId: newMessageId, storageId: await ctx.storage.store(storageBlob) })
+        }
+    }
+})
+
+export const threadBranchChunksInternal = internalMutation({
+    args: { messageId: v.id('messages'), newMessageId: v.id('messages') },
+    handler: async (ctx, { messageId, newMessageId }) => {
+        const chunks = await ctx.db
+            .query('chunks')
+            .withIndex('by_message', (q) => q.eq('messageId', messageId))
+            .collect()
+        for (const chunk of chunks) {
+            await ctx.db.insert('chunks', { messageId: newMessageId, text: chunk.text })
+        }
     }
 })
