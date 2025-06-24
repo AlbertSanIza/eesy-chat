@@ -21,19 +21,9 @@ export const threadNameWithAi = internalAction({
     args: { userId: v.string(), threadId: v.id('threads'), type: SCHEMA_TYPE, prompt: v.string() },
     handler: async (ctx, { userId, threadId, type, prompt }) => {
         const openrouter = createOpenRouter({ apiKey: await ctx.runQuery(internal.get.apiKey, { userId, service: 'openRouter' }) })
-        const systemPrompt =
-            'You are a helpful assistant that generates a small title for a chat thread based on the provided user message. The title should be concise, descriptive and small.'
-        switch (type) {
-            case 'text':
-                break
-            case 'image':
-                break
-            case 'sound':
-                break
-        }
         const response = await generateText({
             model: openrouter.chat('openai/gpt-4.1-nano'),
-            system: systemPrompt,
+            system: `You are a helpful assistant that generates a small title for a ${type} thread based on the provided user prompt. The title should be concise, descriptive and small.`,
             messages: [{ role: 'user', content: prompt.trim() }]
         })
         await ctx.scheduler.runAfter(0, internal.update.threadNameInternal, { id: threadId, name: response.text.trim() })
