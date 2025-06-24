@@ -36,50 +36,6 @@ export const experimentalMessage = mutation({
     }
 })
 
-export const imageThread = mutation({
-    args: { prompt: v.string() },
-    handler: async (ctx, { prompt }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return null
-        }
-        const threadId = await ctx.db.insert('threads', {
-            userId: identity.subject,
-            type: 'image',
-            name: 'New Thread',
-            pinned: false,
-            shared: false,
-            branched: false,
-            updateTime: Date.now()
-        })
-        await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId, type: 'image', prompt })
-        await ctx.scheduler.runAfter(0, internal.create.imageMessageInternal, { userId: identity.subject, threadId, prompt })
-        return threadId
-    }
-})
-
-export const voiceThread = mutation({
-    args: { prompt: v.string() },
-    handler: async (ctx, { prompt }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return null
-        }
-        const threadId = await ctx.db.insert('threads', {
-            userId: identity.subject,
-            type: 'sound',
-            name: 'New Thread',
-            pinned: false,
-            shared: false,
-            branched: false,
-            updateTime: Date.now()
-        })
-        await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId, type: 'sound', prompt })
-        await ctx.scheduler.runAfter(0, internal.create.voiceMessageInternal, { userId: identity.subject, threadId, prompt })
-        return threadId
-    }
-})
-
 export const threadBranch = mutation({
     args: { threadId: v.id('threads'), messageId: v.id('messages') },
     handler: async (ctx, { threadId, messageId }) => {
@@ -197,7 +153,7 @@ export const voiceMessage = action({
 })
 
 export const messageInternal = internalMutation({
-    args: { userId: v.string(), modelId: v.id('models'), threadId: v.id('threads'), prompt: v.string() },
+    args: { userId: v.string(), threadId: v.id('threads'), modelId: v.id('models'), prompt: v.string() },
     handler: async (ctx, { userId, modelId, threadId, prompt }) => {
         const model = (await ctx.runQuery(internal.get.model, { modelId })) as {
             service: 'openRouter' | 'openAi'
