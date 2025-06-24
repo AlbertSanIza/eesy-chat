@@ -37,28 +37,6 @@ export const experimentalMessage = mutation({
     }
 })
 
-export const thread = mutation({
-    args: { modelId: v.id('models'), prompt: v.string() },
-    handler: async (ctx, { modelId, prompt }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return null
-        }
-        const threadId = await ctx.db.insert('threads', {
-            userId: identity.subject,
-            type: 'text',
-            name: 'New Thread',
-            pinned: false,
-            shared: false,
-            branched: false,
-            updateTime: Date.now()
-        })
-        await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId, type: 'text', prompt })
-        await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, modelId, threadId, prompt })
-        return threadId
-    }
-})
-
 export const imageThread = mutation({
     args: { prompt: v.string() },
     handler: async (ctx, { prompt }) => {
