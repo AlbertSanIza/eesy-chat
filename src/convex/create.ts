@@ -3,7 +3,7 @@ import { experimental_generateImage as generateImage } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { action, internalAction, internalMutation, mutation } from './_generated/server'
+import { internalAction, internalMutation, mutation } from './_generated/server'
 
 export const experimentalMessage = mutation({
     args: {
@@ -113,42 +113,6 @@ export const threadBranchChunksInternal = internalMutation({
         for (const chunk of chunks) {
             await ctx.db.insert('chunks', { messageId: newMessageId, text: chunk.text })
         }
-    }
-})
-
-export const message = action({
-    args: { threadId: v.id('threads'), modelId: v.id('models'), prompt: v.string() },
-    handler: async (ctx, { threadId, modelId, prompt }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return null
-        }
-        await ctx.runMutation(internal.create.messageInternal, { userId: identity.subject, modelId, threadId, prompt })
-        await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
-    }
-})
-
-export const imageMessage = action({
-    args: { threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { threadId, prompt }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return null
-        }
-        await ctx.runMutation(internal.create.imageMessageInternal, { userId: identity.subject, threadId, prompt })
-        await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
-    }
-})
-
-export const voiceMessage = action({
-    args: { threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { threadId, prompt }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            return null
-        }
-        await ctx.runMutation(internal.create.voiceMessageInternal, { userId: identity.subject, threadId, prompt })
-        await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
     }
 })
 
