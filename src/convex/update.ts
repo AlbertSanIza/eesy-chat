@@ -1,8 +1,10 @@
+import { createOpenRouter } from '@openrouter/ai-sdk-provider'
+import { generateText } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
-import { action, internalMutation, mutation } from './_generated/server'
-import { SCHEMA_SERVICE } from './schema'
+import { action, internalAction, internalMutation, mutation } from './_generated/server'
+import { SCHEMA_SERVICE, SCHEMA_TYPE } from './schema'
 
 export const threadName = action({
     args: { id: v.id('threads'), name: v.string() },
@@ -12,6 +14,29 @@ export const threadName = action({
             return
         }
         await ctx.scheduler.runAfter(0, internal.update.threadNameInternal, { id, name })
+    }
+})
+
+export const threadNameWithAi = internalAction({
+    args: { userId: v.string(), threadId: v.id('threads'), type: SCHEMA_TYPE, prompt: v.string() },
+    handler: async (ctx, { userId, threadId, type, prompt }) => {
+        const openrouter = createOpenRouter({ apiKey: await ctx.runQuery(internal.get.apiKey, { userId, service: 'openRouter' }) })
+        const systemPrompt =
+            'You are a helpful assistant that generates a small title for a chat thread based on the provided user message. The title should be concise, descriptive and small.'
+        switch (type) {
+            case 'text':
+                break
+            case 'image':
+                break
+            case 'sound':
+                break
+        }
+        const response = await generateText({
+            model: openrouter.chat('openai/gpt-4.1-nano'),
+            system: systemPrompt,
+            messages: [{ role: 'user', content: prompt.trim() }]
+        })
+        await ctx.scheduler.runAfter(0, internal.update.threadNameInternal, { id: threadId, name: response.text.trim() })
     }
 })
 

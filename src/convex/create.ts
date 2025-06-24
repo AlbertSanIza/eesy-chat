@@ -107,23 +107,6 @@ export const voiceThread = mutation({
     }
 })
 
-export const threadInternal = internalAction({
-    args: { userId: v.string(), threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { userId, threadId, prompt }) => {
-        const apiKey = await ctx.runQuery(internal.get.apiKey, { userId, service: 'openRouter' })
-        if (!apiKey) {
-            throw new Error('OpenRouter API key not found')
-        }
-        const openrouter = createOpenRouter({ apiKey: apiKey || process.env.OPENROUTER_API_KEY })
-        const response = await generateText({
-            model: openrouter.chat('openai/gpt-4.1-nano'),
-            system: 'You are a helpful assistant that generates a small title for a chat thread based on the provided user message. The title should be concise, descriptive and small.',
-            messages: [{ role: 'user', content: prompt.trim() }]
-        })
-        await ctx.scheduler.runAfter(0, internal.update.threadNameInternal, { id: threadId, name: response.text.trim() })
-    }
-})
-
 export const imageThreadTitleInternal = internalAction({
     args: { threadId: v.id('threads'), prompt: v.string() },
     handler: async (ctx, { threadId, prompt }) => {
