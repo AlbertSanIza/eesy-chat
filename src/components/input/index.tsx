@@ -1,6 +1,6 @@
 import { SignInButton, useUser } from '@clerk/clerk-react'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { useAction, useMutation } from 'convex/react'
+import { useMutation } from 'convex/react'
 import { ChevronDownIcon, LoaderCircleIcon, SendHorizontalIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
@@ -21,17 +21,12 @@ export function Input() {
     const navigate = useNavigate()
     const { isSignedIn } = useUser()
     const key = useStore((state) => state.key)
-    const send = useAction(api.create.message)
     const model = useStore((state) => state.model)
-    const { threadId } = useParams({ strict: false })
-    const createThread = useMutation(api.create.thread)
-    const sendImage = useAction(api.create.imageMessage)
-    const sendVoice = useAction(api.create.voiceMessage)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [canScrollDown, setCanScrollDown] = useState(false)
-    const createImageThread = useMutation(api.create.imageThread)
-    const createVoiceThread = useMutation(api.create.voiceThread)
     const [showSignInDialog, setShowSignInDialog] = useState(false)
+    const createExperimentalMessage = useMutation(api.create.experimentalMessage)
+    const { threadId } = useParams({ strict: false }) as { threadId?: Id<'threads'> }
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
     const thread = useStore((state) => state.threads.find((thread) => thread._id === threadId))
 
@@ -68,48 +63,21 @@ export function Input() {
 
     const handleOnSubmit = async (newInput: string) => {
         textAreaRef.current?.style.setProperty('height', 'auto')
-        if (!model) {
+        if (!isSignedIn) {
+            setShowSignInDialog(true)
             return
         }
-        if (newInput.trim() === '') {
+        if (!model || newInput.trim() === '') {
             return
         }
-        if (threadId) {
-            if (isImageThread) {
-                sendImage({
-                    threadId: threadId as Id<'threads'>,
-                    prompt: newInput.trim()
-                })
-            } else if (isSoundThread) {
-                sendVoice({
-                    threadId: threadId as Id<'threads'>,
-                    prompt: newInput.trim()
-                })
-            } else {
-                send({
-                    threadId: threadId as Id<'threads'>,
-                    prompt: newInput.trim(),
-                    modelId: model._id
-                })
-            }
-            handleInputChange({ id: threadId, value: '' })
-            return
-        }
-        let newThreadId
-        if (isImageGenModel) {
-            newThreadId = await createImageThread({ prompt: input.trim() })
-        } else if (isSoundGenModel) {
-            newThreadId = await createVoiceThread({ prompt: input.trim() })
-        } else {
-            newThreadId = await createThread({ modelId: model._id, prompt: input.trim() })
-        }
-
-        if (newThreadId) {
+        const type = isImageGenModel ? 'image' : isSoundGenModel ? 'sound' : 'text'
+        const newThreadId = await createExperimentalMessage({ threadId, modelId: model._id, type, prompt: newInput.trim() })
+        if (!threadId) {
             await navigate({ to: `/${newThreadId}` })
             handleInputChange({ id: 'home', value: '' })
-        } else if (!isSignedIn) {
-            setShowSignInDialog(true)
+            return
         }
+        handleInputChange({ id: threadId, value: '' })
     }
 
     return (
