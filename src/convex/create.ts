@@ -57,7 +57,7 @@ export const thread = mutation({
             branched: false,
             updateTime: Date.now()
         })
-        await ctx.scheduler.runAfter(0, internal.create.threadInternal, { userId: identity.subject, threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId, type: 'text', prompt })
         await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, modelId, threadId, prompt })
         return threadId
     }
@@ -79,7 +79,7 @@ export const imageThread = mutation({
             branched: false,
             updateTime: Date.now()
         })
-        await ctx.scheduler.runAfter(0, internal.create.imageThreadTitleInternal, { threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId, type: 'image', prompt })
         await ctx.scheduler.runAfter(0, internal.create.imageMessageInternal, { userId: identity.subject, threadId, prompt })
         return threadId
     }
@@ -101,35 +101,9 @@ export const voiceThread = mutation({
             branched: false,
             updateTime: Date.now()
         })
-        await ctx.scheduler.runAfter(0, internal.create.voiceThreadTitleInternal, { threadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId, type: 'sound', prompt })
         await ctx.scheduler.runAfter(0, internal.create.voiceMessageInternal, { userId: identity.subject, threadId, prompt })
         return threadId
-    }
-})
-
-export const imageThreadTitleInternal = internalAction({
-    args: { threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { threadId, prompt }) => {
-        const openrouter = createOpenRouter({ apiKey: process.env.OPENROUTER_API_KEY })
-        const response = await generateText({
-            model: openrouter.chat('openai/gpt-4.1-nano'),
-            system: "You are a helpful assistant that generates a small title for an image generation thread based on the provided user prompt. The title should be concise, descriptive and indicate it's for image generation.",
-            messages: [{ role: 'user', content: prompt.trim() }]
-        })
-        await ctx.scheduler.runAfter(0, internal.update.threadNameInternal, { id: threadId, name: response.text.trim() })
-    }
-})
-
-export const voiceThreadTitleInternal = internalAction({
-    args: { threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { threadId, prompt }) => {
-        const openrouter = createOpenRouter({ apiKey: process.env.OPENROUTER_API_KEY })
-        const response = await generateText({
-            model: openrouter.chat('openai/gpt-4.1-nano'),
-            system: "You are a helpful assistant that generates a small title for a voice generation thread based on the provided user prompt. The title should be concise, descriptive and indicate it's for voice generation.",
-            messages: [{ role: 'user', content: prompt.trim() }]
-        })
-        await ctx.scheduler.runAfter(0, internal.update.threadNameInternal, { id: threadId, name: response.text.trim() })
     }
 })
 
