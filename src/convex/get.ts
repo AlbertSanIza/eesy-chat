@@ -104,26 +104,6 @@ export const models = query({
     }
 })
 
-export const model = internalQuery({
-    args: { modelId: v.id('models') },
-    handler: async (ctx, { modelId }) => {
-        const model = await ctx.db.get(modelId)
-        if (!model) {
-            return {
-                _id: 'kh7cy4mfjaqrdvz6byjf4fhy897hw5mj',
-                enabled: true,
-                label: 'GPT-4.1 Nano',
-                model: 'openai/gpt-4.1-nano',
-                provider: 'OpenAI',
-                service: 'openRouter',
-                withKey: false,
-                _creationTime: Date.now()
-            }
-        }
-        return model
-    }
-})
-
 export const storageUrl = query({
     args: { storageId: v.id('_storage') },
     handler: async (ctx, { storageId }) => await ctx.storage.getUrl(storageId)
