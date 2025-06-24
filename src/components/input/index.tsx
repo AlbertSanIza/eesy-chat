@@ -122,7 +122,7 @@ export function Input() {
                             onKeyDown={async (event) => {
                                 if (event.key === 'Enter' && !event.shiftKey) {
                                     event.preventDefault()
-                                    if (status === 'ready' && !(isImageThread && !key.openAi) && !(isSoundThread && !key.elevenLabs)) {
+                                    if (status === 'ready') {
                                         handleOnSubmit(input)
                                     }
                                 }
