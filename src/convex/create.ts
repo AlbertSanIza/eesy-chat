@@ -1,5 +1,3 @@
-import { createOpenAI } from '@ai-sdk/openai'
-import { experimental_generateImage as generateImage } from 'ai'
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
@@ -60,10 +58,10 @@ export const messageInternal = internalMutation({
                 await ctx.scheduler.runAfter(0, internal.streaming.run, { userId, messageId })
                 break
             case 'image':
-                await ctx.scheduler.runAfter(0, internal.create.imageInternal, { userId, messageId, prompt })
+                await ctx.scheduler.runAfter(0, internal.createNode.imageInternal, { userId, threadId, messageId, prompt })
                 break
             case 'sound':
-                await ctx.scheduler.runAfter(0, internal.eleven.createVoiceInternal, { userId, messageId, prompt })
+                await ctx.scheduler.runAfter(0, internal.createNode.soundInternal, { userId, messageId, prompt })
                 break
         }
     }
@@ -85,18 +83,6 @@ export const chunk = internalMutation({
         if (final) {
             await ctx.db.patch(messageId, { status: 'done' })
         }
-    }
-})
-
-export const imageInternal = internalAction({
-    args: { userId: v.string(), messageId: v.id('messages'), prompt: v.string() },
-    handler: async (ctx, { userId, messageId, prompt }) => {
-        await ctx.runMutation(internal.update.messageStatus, { messageId, status: 'streaming' })
-        const openai = createOpenAI({ apiKey: await ctx.runQuery(internal.get.apiKey, { userId, service: 'openAi' }) })
-        const { image } = await generateImage({ model: openai.image('dall-e-3'), prompt, size: '1024x1024' })
-        const storageId = await ctx.storage.store(new Blob([image.uint8Array], { type: image.mimeType }))
-        await ctx.runMutation(internal.update.messageStorageId, { messageId, storageId })
-        await ctx.runMutation(internal.update.messageStatus, { messageId, status: 'done' })
     }
 })
 

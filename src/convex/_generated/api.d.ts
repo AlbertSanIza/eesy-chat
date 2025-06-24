@@ -14,7 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as create from "../create.js";
-import type * as eleven from "../eleven.js";
+import type * as createNode from "../createNode.js";
 import type * as get from "../get.js";
 import type * as init from "../init.js";
 import type * as remove from "../remove.js";
@@ -31,7 +31,7 @@ import type * as update from "../update.js";
  */
 declare const fullApi: ApiFromModules<{
   create: typeof create;
-  eleven: typeof eleven;
+  createNode: typeof createNode;
   get: typeof get;
   init: typeof init;
   remove: typeof remove;
