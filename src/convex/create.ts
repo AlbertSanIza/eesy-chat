@@ -19,7 +19,6 @@ export const experimentalMessage = mutation({
         }
         if (threadId) {
             await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, modelId, threadId, prompt })
-            await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
             return
         }
         const newThreadId = await ctx.db.insert('threads', {
@@ -219,6 +218,7 @@ export const messageInternal = internalMutation({
             label: model.label,
             prompt
         })
+        await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
         await ctx.scheduler.runAfter(0, internal.streaming.run, { userId, messageId })
         return messageId
     }
