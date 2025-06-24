@@ -4,6 +4,7 @@ import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
 import { internalAction, internalMutation, mutation } from './_generated/server'
+import { SCHEMA_TYPE } from './schema'
 
 export const experimentalMessage = mutation({
     args: {
@@ -18,7 +19,7 @@ export const experimentalMessage = mutation({
             throw new Error('Not Authenticated')
         }
         if (threadId) {
-            await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, modelId, threadId, prompt })
+            await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, threadId, modelId, type, prompt })
             return
         }
         const newThreadId = await ctx.db.insert('threads', {
@@ -31,7 +32,7 @@ export const experimentalMessage = mutation({
             updateTime: Date.now()
         })
         await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId: newThreadId, type, prompt })
-        await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, modelId, threadId: newThreadId, prompt })
+        await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, threadId: newThreadId, modelId, type, prompt })
         return newThreadId
     }
 })
@@ -117,48 +118,16 @@ export const threadBranchChunksInternal = internalMutation({
 })
 
 export const messageInternal = internalMutation({
-    args: { userId: v.string(), threadId: v.id('threads'), modelId: v.id('models'), prompt: v.string() },
-    handler: async (ctx, { userId, modelId, threadId, prompt }) => {
-        const model = (await ctx.runQuery(internal.get.model, { modelId })) as {
-            service: 'openRouter' | 'openAi'
-            model: string
-            provider: string
-            label: string
-        }
+    args: { userId: v.string(), threadId: v.id('threads'), modelId: v.id('models'), type: SCHEMA_TYPE, prompt: v.string() },
+    handler: async (ctx, { userId, threadId, modelId, type, prompt }) => {
+        const model = await ctx.db.get(modelId)
         if (!model) {
             throw new Error('Model Not Found')
         }
-        const messageId = await ctx.db.insert('messages', {
-            threadId,
-            type: 'text',
-            status: 'pending',
-            service: model.service,
-            model: model.model,
-            provider: model.provider,
-            label: model.label,
-            prompt
-        })
         await ctx.scheduler.runAfter(0, internal.update.threadTime, { threadId })
-        await ctx.scheduler.runAfter(0, internal.streaming.run, { userId, messageId })
-        return messageId
-    }
-})
-
-export const imageMessageInternal = internalMutation({
-    args: { userId: v.string(), threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { userId, threadId, prompt }) => {
-        const model = await ctx.db
-            .query('models')
-            .withIndex('by_provider_and_label')
-            .filter((q) => q.eq(q.field('provider'), 'OpenAI'))
-            .filter((q) => q.eq(q.field('label'), 'DALL·E 3'))
-            .first()
-        if (!model) {
-            throw new Error('Model Not Found')
-        }
         const messageId = await ctx.db.insert('messages', {
             threadId,
-            type: 'image',
+            type,
             status: 'pending',
             service: model.service,
             model: model.model,
@@ -166,35 +135,17 @@ export const imageMessageInternal = internalMutation({
             label: model.label,
             prompt
         })
-        await ctx.scheduler.runAfter(0, internal.create.generateImageInternal, { userId, messageId, prompt })
-        return messageId
-    }
-})
-
-export const voiceMessageInternal = internalMutation({
-    args: { userId: v.string(), threadId: v.id('threads'), prompt: v.string() },
-    handler: async (ctx, { userId, threadId, prompt }) => {
-        const model = await ctx.db
-            .query('models')
-            .withIndex('by_provider_and_label')
-            .filter((q) => q.eq(q.field('provider'), 'ElevenLabs'))
-            .filter((q) => q.eq(q.field('label'), 'Multilingual v2'))
-            .first()
-        if (!model) {
-            throw new Error('Model Not Found')
+        switch (type) {
+            case 'text':
+                await ctx.scheduler.runAfter(0, internal.streaming.run, { userId, messageId })
+                break
+            case 'image':
+                await ctx.scheduler.runAfter(0, internal.create.generateImageInternal, { userId, messageId, prompt })
+                break
+            case 'sound':
+                await ctx.scheduler.runAfter(0, internal.eleven.generateVoiceInternal, { userId, messageId, prompt })
+                break
         }
-        const messageId = await ctx.db.insert('messages', {
-            threadId,
-            type: 'sound',
-            status: 'pending',
-            service: model.service,
-            model: model.model,
-            provider: model.provider,
-            label: model.label,
-            prompt
-        })
-        await ctx.scheduler.runAfter(0, internal.eleven.generateVoiceInternal, { userId, messageId, prompt })
-        return messageId
     }
 })
 
