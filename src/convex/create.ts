@@ -6,37 +6,6 @@ import { internal } from './_generated/api'
 import { internalAction, internalMutation, mutation } from './_generated/server'
 import { SCHEMA_TYPE } from './schema'
 
-export const experimentalMessage = mutation({
-    args: {
-        threadId: v.optional(v.id('threads')),
-        modelId: v.id('models'),
-        type: v.union(v.literal('text'), v.literal('image'), v.literal('sound')),
-        prompt: v.string()
-    },
-    handler: async (ctx, { threadId, modelId, type, prompt }) => {
-        const identity = await ctx.auth.getUserIdentity()
-        if (identity === null) {
-            throw new Error('Not Authenticated')
-        }
-        if (threadId) {
-            await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, threadId, modelId, type, prompt })
-            return
-        }
-        const newThreadId = await ctx.db.insert('threads', {
-            userId: identity.subject,
-            type: type,
-            name: 'New Thread',
-            pinned: false,
-            shared: false,
-            branched: false,
-            updateTime: Date.now()
-        })
-        await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId: newThreadId, type, prompt })
-        await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, threadId: newThreadId, modelId, type, prompt })
-        return newThreadId
-    }
-})
-
 export const threadBranch = mutation({
     args: { threadId: v.id('threads'), messageId: v.id('messages') },
     handler: async (ctx, { threadId, messageId }) => {
@@ -114,6 +83,37 @@ export const threadBranchChunksInternal = internalMutation({
         for (const chunk of chunks) {
             await ctx.db.insert('chunks', { messageId: newMessageId, text: chunk.text })
         }
+    }
+})
+
+export const message = mutation({
+    args: {
+        threadId: v.optional(v.id('threads')),
+        modelId: v.id('models'),
+        type: v.union(v.literal('text'), v.literal('image'), v.literal('sound')),
+        prompt: v.string()
+    },
+    handler: async (ctx, { threadId, modelId, type, prompt }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            throw new Error('Not Authenticated')
+        }
+        if (threadId) {
+            await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, threadId, modelId, type, prompt })
+            return
+        }
+        const newThreadId = await ctx.db.insert('threads', {
+            userId: identity.subject,
+            type: type,
+            name: 'New Thread',
+            pinned: false,
+            shared: false,
+            branched: false,
+            updateTime: Date.now()
+        })
+        await ctx.scheduler.runAfter(0, internal.update.threadNameWithAi, { userId: identity.subject, threadId: newThreadId, type, prompt })
+        await ctx.scheduler.runAfter(0, internal.create.messageInternal, { userId: identity.subject, threadId: newThreadId, modelId, type, prompt })
+        return newThreadId
     }
 })
 

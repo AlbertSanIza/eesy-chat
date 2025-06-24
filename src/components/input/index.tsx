@@ -23,9 +23,9 @@ export function Input() {
     const key = useStore((state) => state.key)
     const model = useStore((state) => state.model)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
+    const createMessage = useMutation(api.create.message)
     const [canScrollDown, setCanScrollDown] = useState(false)
     const [showSignInDialog, setShowSignInDialog] = useState(false)
-    const createExperimentalMessage = useMutation(api.create.experimentalMessage)
     const { threadId } = useParams({ strict: false }) as { threadId?: Id<'threads'> }
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
     const thread = useStore((state) => state.threads.find((thread) => thread._id === threadId))
@@ -71,7 +71,7 @@ export function Input() {
             return
         }
         const type = isImageGenModel ? 'image' : isSoundGenModel ? 'sound' : 'text'
-        const newThreadId = await createExperimentalMessage({ threadId, modelId: model._id, type, prompt: newInput.trim() })
+        const newThreadId = await createMessage({ threadId, modelId: model._id, type, prompt: newInput.trim() })
         if (!threadId) {
             await navigate({ to: `/${newThreadId}` })
             handleInputChange({ id: 'home', value: '' })
