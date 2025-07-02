@@ -7,60 +7,49 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { api } from '@/convex/_generated/api'
-import { useStore } from '@/lib/zustand/store'
 
 export function InputApiKeys() {
-    const key = useStore((state) => state.key)
     const [isOpen, setIsOpen] = useState(false)
-    const [tempKey, setTempKey] = useState(key)
-    const setKey = useStore((state) => state.setKey)
+    const [tempKey, setTempKey] = useState({ openRouter: '', openAi: '', elevenLabs: '' })
     const storedApiKeys = useQuery(api.get.apiKeys)
     const setApiKey = useMutation(api.update.apiKey)
     const removeApiKey = useMutation(api.remove.apiKey)
 
     const handleOpenChange = (open: boolean) => {
         if (open) {
-            setTempKey(key)
+            setTempKey({
+                openRouter: typeof storedApiKeys?.openRouter === 'string' ? storedApiKeys.openRouter : '',
+                openAi: typeof storedApiKeys?.openAi === 'string' ? storedApiKeys.openAi : '',
+                elevenLabs: typeof storedApiKeys?.elevenLabs === 'string' ? storedApiKeys.elevenLabs : ''
+            })
         }
         setIsOpen(open)
     }
 
     const handleSave = async () => {
         setIsOpen(false)
-
-        // Update server-side keys
         try {
-            // Save OpenRouter key if changed
-            if (tempKey.openRouter !== key.openRouter) {
-                if (tempKey.openRouter.trim()) {
-                    await setApiKey({ service: 'openRouter', key: tempKey.openRouter })
-                } else {
-                    await removeApiKey({ service: 'openRouter' })
-                }
+            // Save OpenRouter key
+            if (tempKey.openRouter.trim()) {
+                await setApiKey({ service: 'openRouter', key: tempKey.openRouter })
+            } else {
+                await removeApiKey({ service: 'openRouter' })
             }
-
-            // Save OpenAI key if changed
-            if (tempKey.openAi !== key.openAi) {
-                if (tempKey.openAi.trim()) {
-                    await setApiKey({ service: 'openAi', key: tempKey.openAi })
-                } else {
-                    await removeApiKey({ service: 'openAi' })
-                }
+            // Save OpenAI key
+            if (tempKey.openAi.trim()) {
+                await setApiKey({ service: 'openAi', key: tempKey.openAi })
+            } else {
+                await removeApiKey({ service: 'openAi' })
             }
-
-            // Save ElevenLabs key if changed
-            if (tempKey.elevenLabs !== key.elevenLabs) {
-                if (tempKey.elevenLabs.trim()) {
-                    await setApiKey({ service: 'elevenLabs', key: tempKey.elevenLabs })
-                } else {
-                    await removeApiKey({ service: 'elevenLabs' })
-                }
+            // Save ElevenLabs key
+            if (tempKey.elevenLabs.trim()) {
+                await setApiKey({ service: 'elevenLabs', key: tempKey.elevenLabs })
+            } else {
+                await removeApiKey({ service: 'elevenLabs' })
             }
         } catch (error) {
             console.error('Failed to save API keys:', error)
         }
-
-        setKey(tempKey)
     }
 
     const hasValidOpenRouterKey = tempKey.openRouter.trim().length === 0 || tempKey.openRouter.startsWith('sk-or-v1-') || false
@@ -68,10 +57,9 @@ export function InputApiKeys() {
     const hasValidElevenLabsKey = tempKey.elevenLabs.trim().length === 0 || (tempKey.elevenLabs.length ?? 0) >= 32
     const allKeysValid = hasValidOpenRouterKey && hasValidOpenAiKey && hasValidElevenLabsKey
 
-    // Use server-side status if available, fallback to local state
-    const hasStoredOpenRouterKey = storedApiKeys?.openRouter ?? !!key.openRouter.trim()
-    const hasStoredOpenAiKey = storedApiKeys?.openAi ?? !!key.openAi.trim()
-    const hasStoredElevenLabsKey = storedApiKeys?.elevenLabs ?? !!key.elevenLabs.trim()
+    const hasStoredOpenRouterKey = !!storedApiKeys?.openRouter
+    const hasStoredOpenAiKey = !!storedApiKeys?.openAi
+    const hasStoredElevenLabsKey = !!storedApiKeys?.elevenLabs
     const hasAllStoredKeys = hasStoredOpenRouterKey && hasStoredOpenAiKey && hasStoredElevenLabsKey
     const hasPartialStoredKeys = (hasStoredOpenRouterKey || hasStoredOpenAiKey || hasStoredElevenLabsKey) && !hasAllStoredKeys
     const hasNoStoredKeys = !hasStoredOpenRouterKey && !hasStoredOpenAiKey && !hasStoredElevenLabsKey
