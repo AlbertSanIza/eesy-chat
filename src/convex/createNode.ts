@@ -5,7 +5,7 @@ import { v } from 'convex/values'
 import OpenAI from 'openai'
 
 import { api, internal } from './_generated/api'
-import { Id } from './_generated/dataModel'
+import type { Id } from './_generated/dataModel'
 import { internalAction } from './_generated/server'
 
 export const imageInternal = internalAction({

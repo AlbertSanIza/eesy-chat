@@ -20,7 +20,6 @@ export function Input() {
     const { open } = useSidebar()
     const navigate = useNavigate()
     const { isSignedIn } = useUser()
-    const key = useStore((state) => state.key)
     const model = useStore((state) => state.model)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const createMessage = useMutation(api.create.message)
@@ -28,10 +27,7 @@ export function Input() {
     const [showSignInDialog, setShowSignInDialog] = useState(false)
     const { threadId } = useParams({ strict: false }) as { threadId?: Id<'threads'> }
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
-    const thread = useStore((state) => state.threads.find((thread) => thread._id === threadId))
 
-    const isImageThread = thread?.type === 'image'
-    const isSoundThread = thread?.type === 'sound'
     const isImageGenModel = model?.model === 'dall-e-3'
     const isSoundGenModel = model?.model === 'eleven_monolingual_v2'
 
