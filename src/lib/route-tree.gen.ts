@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './../routes/__root'
+import { Route as SettingsRouteImport } from './../routes/settings'
 import { Route as SharedRouteRouteImport } from './../routes/shared/route'
 import { Route as appRouteRouteImport } from './../routes/(app)/route'
 import { Route as SharedIndexRouteImport } from './../routes/shared/index'
@@ -16,6 +17,11 @@ import { Route as appIndexRouteImport } from './../routes/(app)/index'
 import { Route as SharedThreadIdRouteImport } from './../routes/shared/$threadId'
 import { Route as appThreadIdRouteImport } from './../routes/(app)/$threadId'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SharedRouteRoute = SharedRouteRouteImport.update({
   id: '/shared',
   path: '/shared',
@@ -49,11 +55,13 @@ const appThreadIdRoute = appThreadIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof appIndexRoute
   '/shared': typeof SharedRouteRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/$threadId': typeof appThreadIdRoute
   '/shared/$threadId': typeof SharedThreadIdRoute
   '/shared/': typeof SharedIndexRoute
 }
 export interface FileRoutesByTo {
+  '/settings': typeof SettingsRoute
   '/$threadId': typeof appThreadIdRoute
   '/shared/$threadId': typeof SharedThreadIdRoute
   '/': typeof appIndexRoute
@@ -63,6 +71,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
   '/shared': typeof SharedRouteRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/(app)/$threadId': typeof appThreadIdRoute
   '/shared/$threadId': typeof SharedThreadIdRoute
   '/(app)/': typeof appIndexRoute
@@ -70,13 +79,20 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/shared' | '/$threadId' | '/shared/$threadId' | '/shared/'
+  fullPaths:
+    | '/'
+    | '/shared'
+    | '/settings'
+    | '/$threadId'
+    | '/shared/$threadId'
+    | '/shared/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/$threadId' | '/shared/$threadId' | '/' | '/shared'
+  to: '/settings' | '/$threadId' | '/shared/$threadId' | '/' | '/shared'
   id:
     | '__root__'
     | '/(app)'
     | '/shared'
+    | '/settings'
     | '/(app)/$threadId'
     | '/shared/$threadId'
     | '/(app)/'
@@ -86,10 +102,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   appRouteRoute: typeof appRouteRouteWithChildren
   SharedRouteRoute: typeof SharedRouteRouteWithChildren
+  SettingsRoute: typeof SettingsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shared': {
       id: '/shared'
       path: '/shared'
@@ -166,6 +190,7 @@ const SharedRouteRouteWithChildren = SharedRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   appRouteRoute: appRouteRouteWithChildren,
   SharedRouteRoute: SharedRouteRouteWithChildren,
+  SettingsRoute: SettingsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

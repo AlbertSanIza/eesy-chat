@@ -1,3 +1,4 @@
+import { useMutation, useQuery } from 'convex/react'
 import { KeyIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
 
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { api } from '@/convex/_generated/api'
 import { useStore } from '@/lib/zustand/store'
 
 export function InputApiKeys() {
@@ -12,6 +14,9 @@ export function InputApiKeys() {
     const [isOpen, setIsOpen] = useState(false)
     const [tempKey, setTempKey] = useState(key)
     const setKey = useStore((state) => state.setKey)
+    const storedApiKeys = useQuery(api.get.apiKeys)
+    const setApiKey = useMutation(api.update.apiKey)
+    const removeApiKey = useMutation(api.remove.apiKey)
 
     const handleOpenChange = (open: boolean) => {
         if (open) {
@@ -20,8 +25,41 @@ export function InputApiKeys() {
         setIsOpen(open)
     }
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setIsOpen(false)
+
+        // Update server-side keys
+        try {
+            // Save OpenRouter key if changed
+            if (tempKey.openRouter !== key.openRouter) {
+                if (tempKey.openRouter.trim()) {
+                    await setApiKey({ service: 'openRouter', key: tempKey.openRouter })
+                } else {
+                    await removeApiKey({ service: 'openRouter' })
+                }
+            }
+
+            // Save OpenAI key if changed
+            if (tempKey.openAi !== key.openAi) {
+                if (tempKey.openAi.trim()) {
+                    await setApiKey({ service: 'openAi', key: tempKey.openAi })
+                } else {
+                    await removeApiKey({ service: 'openAi' })
+                }
+            }
+
+            // Save ElevenLabs key if changed
+            if (tempKey.elevenLabs !== key.elevenLabs) {
+                if (tempKey.elevenLabs.trim()) {
+                    await setApiKey({ service: 'elevenLabs', key: tempKey.elevenLabs })
+                } else {
+                    await removeApiKey({ service: 'elevenLabs' })
+                }
+            }
+        } catch (error) {
+            console.error('Failed to save API keys:', error)
+        }
+
         setKey(tempKey)
     }
 
@@ -30,9 +68,10 @@ export function InputApiKeys() {
     const hasValidElevenLabsKey = tempKey.elevenLabs.trim().length === 0 || (tempKey.elevenLabs.length ?? 0) >= 32
     const allKeysValid = hasValidOpenRouterKey && hasValidOpenAiKey && hasValidElevenLabsKey
 
-    const hasStoredOpenRouterKey = !!key.openRouter.trim()
-    const hasStoredOpenAiKey = !!key.openAi.trim()
-    const hasStoredElevenLabsKey = !!key.elevenLabs.trim()
+    // Use server-side status if available, fallback to local state
+    const hasStoredOpenRouterKey = storedApiKeys?.openRouter ?? !!key.openRouter.trim()
+    const hasStoredOpenAiKey = storedApiKeys?.openAi ?? !!key.openAi.trim()
+    const hasStoredElevenLabsKey = storedApiKeys?.elevenLabs ?? !!key.elevenLabs.trim()
     const hasAllStoredKeys = hasStoredOpenRouterKey && hasStoredOpenAiKey && hasStoredElevenLabsKey
     const hasPartialStoredKeys = (hasStoredOpenRouterKey || hasStoredOpenAiKey || hasStoredElevenLabsKey) && !hasAllStoredKeys
     const hasNoStoredKeys = !hasStoredOpenRouterKey && !hasStoredOpenAiKey && !hasStoredElevenLabsKey
@@ -50,12 +89,12 @@ export function InputApiKeys() {
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>API Keys</DialogTitle>
-                    <DialogDescription>Enter your API keys to unlock AI models. Your keys are only stored locally and never on our servers.</DialogDescription>
+                    <DialogDescription>Enter your API keys to unlock AI models. Your keys are securely stored and encrypted on our servers.</DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
                         <Label htmlFor="openrouter-api-key">OpenRouter API Key</Label>
-                        <div className="flex gap-2">
+                        <div className="flex items-center gap-2">
                             <Input
                                 type="password"
                                 autoComplete="off"
@@ -65,7 +104,12 @@ export function InputApiKeys() {
                                 value={tempKey.openRouter}
                                 onChange={(event) => setTempKey({ ...tempKey, openRouter: event.target.value })}
                             />
-                            {tempKey.openRouter && (
+                            {storedApiKeys?.openRouter || tempKey.openRouter ? (
+                                <span className="text-xs text-green-600">Set</span>
+                            ) : (
+                                <span className="text-xs text-gray-400">Not set</span>
+                            )}
+                            {(tempKey.openRouter || storedApiKeys?.openRouter) && (
                                 <Button variant="destructive" size="icon" onClick={() => setTempKey({ ...tempKey, openRouter: '' })} type="button">
                                     <XIcon className="size-4" />
                                 </Button>
@@ -77,7 +121,7 @@ export function InputApiKeys() {
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="openai-api-key">OpenAI API Key (Image Gen)</Label>
-                        <div className="flex gap-2">
+                        <div className="flex items-center gap-2">
                             <Input
                                 type="password"
                                 autoComplete="off"
@@ -87,7 +131,12 @@ export function InputApiKeys() {
                                 value={tempKey.openAi}
                                 onChange={(event) => setTempKey({ ...tempKey, openAi: event.target.value })}
                             />
-                            {tempKey.openAi && (
+                            {storedApiKeys?.openAi || tempKey.openAi ? (
+                                <span className="text-xs text-green-600">Set</span>
+                            ) : (
+                                <span className="text-xs text-gray-400">Not set</span>
+                            )}
+                            {(tempKey.openAi || storedApiKeys?.openAi) && (
                                 <Button variant="destructive" size="icon" onClick={() => setTempKey({ ...tempKey, openAi: '' })} type="button">
                                     <XIcon className="size-4" />
                                 </Button>
@@ -97,7 +146,7 @@ export function InputApiKeys() {
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="elevenlabs-api-key">ElevenLabs API Key (Voice Gen)</Label>
-                        <div className="flex gap-2">
+                        <div className="flex items-center gap-2">
                             <Input
                                 type="password"
                                 autoComplete="off"
@@ -107,7 +156,12 @@ export function InputApiKeys() {
                                 value={tempKey.elevenLabs}
                                 onChange={(event) => setTempKey({ ...tempKey, elevenLabs: event.target.value })}
                             />
-                            {tempKey.elevenLabs && (
+                            {storedApiKeys?.elevenLabs || tempKey.elevenLabs ? (
+                                <span className="text-xs text-green-600">Set</span>
+                            ) : (
+                                <span className="text-xs text-gray-400">Not set</span>
+                            )}
+                            {(tempKey.elevenLabs || storedApiKeys?.elevenLabs) && (
                                 <Button variant="destructive" size="icon" onClick={() => setTempKey({ ...tempKey, elevenLabs: '' })} type="button">
                                     <XIcon className="size-4" />
                                 </Button>

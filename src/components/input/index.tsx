@@ -1,6 +1,6 @@
 import { SignInButton, useUser } from '@clerk/clerk-react'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { useAction, useMutation } from 'convex/react'
+import { useMutation } from 'convex/react'
 import { ChevronDownIcon, LoaderCircleIcon, SendHorizontalIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
@@ -20,24 +20,15 @@ export function Input() {
     const { open } = useSidebar()
     const navigate = useNavigate()
     const { isSignedIn } = useUser()
-    const key = useStore((state) => state.key)
-    const send = useAction(api.create.message)
     const model = useStore((state) => state.model)
-    const { threadId } = useParams({ strict: false })
-    const createThread = useMutation(api.create.thread)
-    const sendImage = useAction(api.create.imageMessage)
-    const sendVoice = useAction(api.create.voiceMessage)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
+    const createMessage = useMutation(api.create.message)
     const [canScrollDown, setCanScrollDown] = useState(false)
-    const createImageThread = useMutation(api.create.imageThread)
-    const createVoiceThread = useMutation(api.create.voiceThread)
     const [showSignInDialog, setShowSignInDialog] = useState(false)
+    const { threadId } = useParams({ strict: false }) as { threadId?: Id<'threads'> }
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
-    const thread = useStore((state) => state.threads.find((thread) => thread._id === threadId))
 
-    const isImageThread = thread?.type === 'image'
-    const isSoundThread = thread?.type === 'sound'
-    const isImageGenModel = model?.model === 'dall-e-3'
+    const isImageGenModel = model?.model === 'gpt-image-1'
     const isSoundGenModel = model?.model === 'eleven_monolingual_v2'
 
     useEffect(() => {
@@ -68,57 +59,21 @@ export function Input() {
 
     const handleOnSubmit = async (newInput: string) => {
         textAreaRef.current?.style.setProperty('height', 'auto')
-        if (!model) {
+        if (!isSignedIn) {
+            setShowSignInDialog(true)
             return
         }
-        if (isImageThread && !key.openAi) {
+        if (!model || newInput.trim() === '') {
             return
         }
-        if (isSoundThread && !key.elevenLabs) {
-            return
-        }
-        if (newInput.trim() === '') {
-            return
-        }
-        if (threadId) {
-            if (isImageThread && key.openAi) {
-                sendImage({
-                    apiKey: key.openAi || undefined,
-                    threadId: threadId as Id<'threads'>,
-                    prompt: newInput.trim()
-                })
-            } else if (isSoundThread && key.elevenLabs) {
-                sendVoice({
-                    apiKey: key.elevenLabs || undefined,
-                    threadId: threadId as Id<'threads'>,
-                    prompt: newInput.trim()
-                })
-            } else {
-                send({
-                    apiKey: key.openRouter || undefined,
-                    threadId: threadId as Id<'threads'>,
-                    prompt: newInput.trim(),
-                    modelId: model._id
-                })
-            }
-            handleInputChange({ id: threadId, value: '' })
-            return
-        }
-        let newThreadId
-        if (isImageGenModel && key.openAi) {
-            newThreadId = await createImageThread({ apiKey: key.openAi, prompt: input.trim() })
-        } else if (isSoundGenModel && key.elevenLabs) {
-            newThreadId = await createVoiceThread({ apiKey: key.elevenLabs, prompt: input.trim() })
-        } else {
-            newThreadId = await createThread({ apiKey: key.openRouter || undefined, modelId: model._id, prompt: input.trim() })
-        }
-
-        if (newThreadId) {
+        const type = isImageGenModel ? 'image' : isSoundGenModel ? 'sound' : 'text'
+        const newThreadId = await createMessage({ threadId, modelId: model._id, type, prompt: newInput.trim() })
+        if (!threadId) {
             await navigate({ to: `/${newThreadId}` })
             handleInputChange({ id: 'home', value: '' })
-        } else if (!isSignedIn) {
-            setShowSignInDialog(true)
+            return
         }
+        handleInputChange({ id: threadId, value: '' })
     }
 
     return (
@@ -163,7 +118,7 @@ export function Input() {
                             onKeyDown={async (event) => {
                                 if (event.key === 'Enter' && !event.shiftKey) {
                                     event.preventDefault()
-                                    if (status === 'ready' && !(isImageThread && !key.openAi) && !(isSoundThread && !key.elevenLabs)) {
+                                    if (status === 'ready') {
                                         handleOnSubmit(input)
                                     }
                                 }

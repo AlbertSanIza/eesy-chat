@@ -3,6 +3,7 @@ import { config } from 'dotenv'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { HTTPException } from 'hono/http-exception'
+import { logger } from 'hono/logger'
 import { stream } from 'hono/streaming'
 
 import { api } from '../src/convex/_generated/api'
@@ -25,13 +26,12 @@ if (!process.env.DOMAIN_URL) {
 const app = new Hono()
 const httpClient = new ConvexHttpClient(process.env.VITE_CONVEX_URL)
 
-// Configure CORS to allow requests from your frontend
+app.use(logger())
 app.use(
     '*',
     cors({
         origin: (origin) => {
-            // Allow requests from localhost development servers
-            if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('https://localhost:') || origin.includes(process.env.DOMAIN_URL!)) {
+            if (!origin || origin.startsWith('http://localhost:') || origin.includes(process.env.DOMAIN_URL!)) {
                 return origin || '*'
             }
             return null

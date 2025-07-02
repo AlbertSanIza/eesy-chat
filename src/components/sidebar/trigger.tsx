@@ -1,12 +1,14 @@
 import { Link } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
+import { PlusIcon, SearchIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
+import { useGlobal } from '@/lib/zustand/global'
 
 export function AppSidebarTrigger() {
     const { open, isMobile } = useSidebar()
+    const setSearchDialogOpen = useGlobal((state) => state.setSearchDialogOpen)
 
     return (
         <div
@@ -17,11 +19,16 @@ export function AppSidebarTrigger() {
         >
             <SidebarTrigger className="size-7 text-sidebar-foreground" size="icon" variant="ghost" />
             {(!open || isMobile) && (
-                <Button size="icon" variant="ghost" className="size-7 transition-none" asChild>
-                    <Link to="/">
-                        <PlusIcon />
-                    </Link>
-                </Button>
+                <>
+                    <Button size="icon" variant="ghost" className="size-7 transition-none" onClick={() => setSearchDialogOpen(true)}>
+                        <SearchIcon />
+                    </Button>
+                    <Button size="icon" variant="ghost" className="size-7 transition-none" asChild>
+                        <Link to="/">
+                            <PlusIcon />
+                        </Link>
+                    </Button>
+                </>
             )}
         </div>
     )

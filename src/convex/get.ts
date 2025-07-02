@@ -5,6 +5,7 @@ import { internal } from './_generated/api'
 import type { Id } from './_generated/dataModel'
 import type { QueryCtx } from './_generated/server'
 import { internalQuery, query } from './_generated/server'
+import { SCHEMA_SERVICE } from './schema'
 
 export const threads = query({
     args: {},
@@ -83,32 +84,23 @@ export const messageBody = query({
 
 export const models = query({
     args: {},
-    handler: async (ctx) =>
-        await ctx.db
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return []
+        }
+        const allModels = await ctx.db
             .query('models')
             .withIndex('by_provider_and_label')
             .filter((q) => q.eq(q.field('enabled'), true))
             .order('asc')
             .collect()
-})
-
-export const model = internalQuery({
-    args: { modelId: v.id('models') },
-    handler: async (ctx, { modelId }) => {
-        const model = await ctx.db.get(modelId)
-        if (!model) {
-            return {
-                _id: 'kh7cy4mfjaqrdvz6byjf4fhy897hw5mj',
-                enabled: true,
-                label: 'GPT-4.1 Nano',
-                model: 'openai/gpt-4.1-nano',
-                provider: 'OpenAI',
-                service: 'openRouter',
-                withKey: false,
-                _creationTime: Date.now()
-            }
-        }
-        return model
+        const apiKeys = await ctx.db
+            .query('apiKeys')
+            .withIndex('by_user_and_service', (q) => q.eq('userId', identity.subject))
+            .collect()
+        const availableServices = new Set(apiKeys.map((key) => key.service))
+        return allModels.filter((model) => availableServices.has(model.service))
     }
 })
 
@@ -184,5 +176,38 @@ export const searchChunks = query({
             threadId: messageIdToThreadId[chunk.messageId],
             threadTitle: threadIdToTitle[messageIdToThreadId[chunk.messageId]]
         }))
+    }
+})
+
+export const apiKeys = query({
+    args: {},
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            return { openRouter: false, openAi: false, elevenLabs: false }
+        }
+        const keys = await ctx.db
+            .query('apiKeys')
+            .withIndex('by_user_and_service', (q) => q.eq('userId', identity.subject))
+            .collect()
+        return {
+            openRouter: keys.some((k) => k.service === 'openRouter'),
+            openAi: keys.some((k) => k.service === 'openAi'),
+            elevenLabs: keys.some((k) => k.service === 'elevenLabs')
+        }
+    }
+})
+
+export const apiKey = internalQuery({
+    args: { userId: v.string(), service: SCHEMA_SERVICE },
+    handler: async (ctx, { userId, service }) => {
+        const row = await ctx.db
+            .query('apiKeys')
+            .withIndex('by_user_and_service', (q) => q.eq('userId', userId).eq('service', service))
+            .unique()
+        if (!row) {
+            throw new Error('API Key Not Found')
+        }
+        return row.key
     }
 })

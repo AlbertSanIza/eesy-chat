@@ -2,6 +2,7 @@ import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
 import { internalMutation, mutation } from './_generated/server'
+import { SCHEMA_SERVICE } from './schema'
 
 export const thread = mutation({
     args: { id: v.id('threads') },
@@ -44,5 +45,23 @@ export const chunksByMessageId = internalMutation({
             .withIndex('by_message', (q) => q.eq('messageId', messageId))
             .collect()
         await Promise.all(chunks.map((chunk) => ctx.db.delete(chunk._id)))
+    }
+})
+
+export const apiKey = mutation({
+    args: { service: SCHEMA_SERVICE },
+    returns: v.null(),
+    handler: async (ctx, { service }) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (identity === null) {
+            throw new Error('Not Authenticated')
+        }
+        const existingKey = await ctx.db
+            .query('apiKeys')
+            .withIndex('by_user_and_service', (q) => q.eq('userId', identity.subject).eq('service', service))
+            .unique()
+        if (existingKey) {
+            await ctx.db.delete(existingKey._id)
+        }
     }
 })
