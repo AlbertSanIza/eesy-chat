@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
-import { SmileIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
@@ -57,9 +56,8 @@ export function SearchDialog() {
                 {Object.entries(groupedResults).map(([threadId, { threadTitle, chunks }]) => (
                     <CommandGroup key={threadId} heading={threadTitle}>
                         {chunks.map((chunk, index) => (
-                            <Link key={index} to="/$threadId" params={{ threadId: chunk.threadId }}>
+                            <Link to="/$threadId" key={index} params={{ threadId: chunk.threadId }}>
                                 <CommandItem onSelect={() => setSearchDialogOpen(false)}>
-                                    <SmileIcon />
                                     <span>{chunk.text}</span>
                                 </CommandItem>
                             </Link>
