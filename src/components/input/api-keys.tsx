@@ -10,52 +10,37 @@ import { api } from '@/convex/_generated/api'
 
 export function InputApiKeys() {
     const [isOpen, setIsOpen] = useState(false)
-    const [tempKey, setTempKey] = useState({ openRouter: '', openAi: '', elevenLabs: '' })
     const storedApiKeys = useQuery(api.get.apiKeys)
     const setApiKey = useMutation(api.update.apiKey)
     const removeApiKey = useMutation(api.remove.apiKey)
+    const [tempKey, setTempKey] = useState({ openRouter: '', openAi: '', elevenLabs: '' })
 
     const handleOpenChange = (open: boolean) => {
         if (open) {
-            setTempKey({
-                openRouter: typeof storedApiKeys?.openRouter === 'string' ? storedApiKeys.openRouter : '',
-                openAi: typeof storedApiKeys?.openAi === 'string' ? storedApiKeys.openAi : '',
-                elevenLabs: typeof storedApiKeys?.elevenLabs === 'string' ? storedApiKeys.elevenLabs : ''
-            })
+            setTempKey({ openRouter: '', openAi: '', elevenLabs: '' })
         }
         setIsOpen(open)
     }
 
     const handleSave = async () => {
         setIsOpen(false)
-        try {
-            // Save OpenRouter key
-            if (tempKey.openRouter.trim()) {
-                await setApiKey({ service: 'openRouter', key: tempKey.openRouter })
-            } else {
-                await removeApiKey({ service: 'openRouter' })
-            }
-            // Save OpenAI key
-            if (tempKey.openAi.trim()) {
-                await setApiKey({ service: 'openAi', key: tempKey.openAi })
-            } else {
-                await removeApiKey({ service: 'openAi' })
-            }
-            // Save ElevenLabs key
-            if (tempKey.elevenLabs.trim()) {
-                await setApiKey({ service: 'elevenLabs', key: tempKey.elevenLabs })
-            } else {
-                await removeApiKey({ service: 'elevenLabs' })
-            }
-        } catch (error) {
-            console.error('Failed to save API keys:', error)
+        if (!storedApiKeys?.openRouter && tempKey.openRouter.trim()) {
+            await setApiKey({ service: 'openRouter', key: tempKey.openRouter })
+        }
+        if (!storedApiKeys?.openAi && tempKey.openAi.trim()) {
+            await setApiKey({ service: 'openAi', key: tempKey.openAi })
+        }
+        if (!storedApiKeys?.elevenLabs && tempKey.elevenLabs.trim()) {
+            await setApiKey({ service: 'elevenLabs', key: tempKey.elevenLabs })
         }
     }
 
     const hasValidOpenRouterKey = tempKey.openRouter.trim().length === 0 || tempKey.openRouter.startsWith('sk-or-v1-') || false
     const hasValidOpenAiKey = tempKey.openAi.trim().length === 0 || tempKey.openAi.startsWith('sk-') || false
     const hasValidElevenLabsKey = tempKey.elevenLabs.trim().length === 0 || (tempKey.elevenLabs.length ?? 0) >= 32
-    const allKeysValid = hasValidOpenRouterKey && hasValidOpenAiKey && hasValidElevenLabsKey
+    // Only require validity for keys that are being set (not for disabled inputs)
+    const allKeysValid =
+        (!tempKey.openRouter || hasValidOpenRouterKey) && (!tempKey.openAi || hasValidOpenAiKey) && (!tempKey.elevenLabs || hasValidElevenLabsKey)
 
     const hasStoredOpenRouterKey = !!storedApiKeys?.openRouter
     const hasStoredOpenAiKey = !!storedApiKeys?.openAi
@@ -89,21 +74,27 @@ export function InputApiKeys() {
                                 className="flex-1"
                                 id="openrouter-api-key"
                                 placeholder="sk-or-v1-..."
-                                value={tempKey.openRouter}
+                                disabled={hasStoredOpenRouterKey}
+                                value={storedApiKeys?.openRouter ? '•••••••' : tempKey.openRouter}
                                 onChange={(event) => setTempKey({ ...tempKey, openRouter: event.target.value })}
                             />
-                            {storedApiKeys?.openRouter || tempKey.openRouter ? (
-                                <span className="text-xs text-green-600">Set</span>
-                            ) : (
-                                <span className="text-xs text-gray-400">Not set</span>
-                            )}
-                            {(tempKey.openRouter || storedApiKeys?.openRouter) && (
-                                <Button variant="destructive" size="icon" onClick={() => setTempKey({ ...tempKey, openRouter: '' })} type="button">
+                            {tempKey.openRouter && <span className="text-xs text-orange-600">Pending</span>}
+                            {!hasStoredOpenRouterKey && !tempKey.openRouter && <span className="text-xs text-gray-400">Not set</span>}
+                            {storedApiKeys?.openRouter && (
+                                <Button
+                                    size="icon"
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={async () => {
+                                        await removeApiKey({ service: 'openRouter' })
+                                        setTempKey({ ...tempKey, openRouter: '' })
+                                    }}
+                                >
                                     <XIcon className="size-4" />
                                 </Button>
                             )}
                         </div>
-                        {tempKey.openRouter && !hasValidOpenRouterKey && (
+                        {tempKey.openRouter && !hasValidOpenRouterKey && !storedApiKeys?.openRouter && (
                             <p className="text-xs text-destructive">OpenRouter API key should start with "sk-or-v1-"</p>
                         )}
                     </div>
@@ -116,21 +107,29 @@ export function InputApiKeys() {
                                 className="flex-1"
                                 id="openai-api-key"
                                 placeholder="sk-..."
-                                value={tempKey.openAi}
+                                disabled={hasStoredOpenAiKey}
+                                value={storedApiKeys?.openAi ? '•••••••' : tempKey.openAi}
                                 onChange={(event) => setTempKey({ ...tempKey, openAi: event.target.value })}
                             />
-                            {storedApiKeys?.openAi || tempKey.openAi ? (
-                                <span className="text-xs text-green-600">Set</span>
-                            ) : (
-                                <span className="text-xs text-gray-400">Not set</span>
-                            )}
-                            {(tempKey.openAi || storedApiKeys?.openAi) && (
-                                <Button variant="destructive" size="icon" onClick={() => setTempKey({ ...tempKey, openAi: '' })} type="button">
+                            {tempKey.openAi && <span className="text-xs text-orange-600">Pending</span>}
+                            {!hasStoredOpenAiKey && !tempKey.openAi && <span className="text-xs text-gray-400">Not set</span>}
+                            {storedApiKeys?.openAi && (
+                                <Button
+                                    size="icon"
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={async () => {
+                                        await removeApiKey({ service: 'openAi' })
+                                        setTempKey({ ...tempKey, openAi: '' })
+                                    }}
+                                >
                                     <XIcon className="size-4" />
                                 </Button>
                             )}
                         </div>
-                        {tempKey.openAi && !hasValidOpenAiKey && <p className="text-xs text-destructive">OpenAI API key should start with "sk-"</p>}
+                        {tempKey.openAi && !hasValidOpenAiKey && !storedApiKeys?.openAi && (
+                            <p className="text-xs text-destructive">OpenAI API key should start with "sk-"</p>
+                        )}
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="elevenlabs-api-key">ElevenLabs API Key (Voice Gen)</Label>
@@ -141,21 +140,27 @@ export function InputApiKeys() {
                                 className="flex-1"
                                 placeholder="sk_..."
                                 id="elevenlabs-api-key"
-                                value={tempKey.elevenLabs}
+                                disabled={hasStoredElevenLabsKey}
+                                value={storedApiKeys?.elevenLabs ? '•••••••' : tempKey.elevenLabs}
                                 onChange={(event) => setTempKey({ ...tempKey, elevenLabs: event.target.value })}
                             />
-                            {storedApiKeys?.elevenLabs || tempKey.elevenLabs ? (
-                                <span className="text-xs text-green-600">Set</span>
-                            ) : (
-                                <span className="text-xs text-gray-400">Not set</span>
-                            )}
-                            {(tempKey.elevenLabs || storedApiKeys?.elevenLabs) && (
-                                <Button variant="destructive" size="icon" onClick={() => setTempKey({ ...tempKey, elevenLabs: '' })} type="button">
+                            {tempKey.elevenLabs && <span className="text-xs text-orange-600">Pending</span>}
+                            {!hasStoredElevenLabsKey && !tempKey.elevenLabs && <span className="text-xs text-gray-400">Not set</span>}
+                            {storedApiKeys?.elevenLabs && (
+                                <Button
+                                    size="icon"
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={async () => {
+                                        await removeApiKey({ service: 'elevenLabs' })
+                                        setTempKey({ ...tempKey, elevenLabs: '' })
+                                    }}
+                                >
                                     <XIcon className="size-4" />
                                 </Button>
                             )}
                         </div>
-                        {tempKey.elevenLabs && !hasValidElevenLabsKey && (
+                        {tempKey.elevenLabs && !hasValidElevenLabsKey && !storedApiKeys?.elevenLabs && (
                             <p className="text-xs text-destructive">ElevenLabs API key should be at least 32 characters</p>
                         )}
                     </div>
@@ -164,7 +169,11 @@ export function InputApiKeys() {
                     <Button variant="outline" onClick={() => setIsOpen(false)}>
                         Cancel
                     </Button>
-                    <Button className="bg-sidebar text-sidebar-foreground dark:bg-pink-800" onClick={handleSave} disabled={!allKeysValid}>
+                    <Button
+                        className="bg-sidebar text-sidebar-foreground dark:bg-pink-800"
+                        onClick={handleSave}
+                        disabled={!allKeysValid || (!tempKey.openRouter && !tempKey.openAi && !tempKey.elevenLabs)}
+                    >
                         Save
                     </Button>
                 </DialogFooter>
