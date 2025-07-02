@@ -28,7 +28,7 @@ export function Input() {
     const { threadId } = useParams({ strict: false }) as { threadId?: Id<'threads'> }
     const { input, status, handleInputChange } = useAiChat({ id: threadId || 'home' })
 
-    const isImageGenModel = model?.model === 'dall-e-3'
+    const isImageGenModel = model?.model === 'gpt-image-1'
     const isSoundGenModel = model?.model === 'eleven_monolingual_v2'
 
     useEffect(() => {
