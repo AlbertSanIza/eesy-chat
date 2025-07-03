@@ -171,7 +171,39 @@ export const searchChunks = query({
             .withSearchIndex('search_text', (q) => q.search('text', searchQuery))
             .filter((q) => q.or(...messageIds.map((id) => q.eq(q.field('messageId'), id))))
             .take(20)
-        return results.map((chunk) => ({
+
+        const newResults = results.map((chunk) => {
+            const text = chunk.text
+            const words = text.split(' ')
+            const searchWords = searchQuery.split(' ')
+            const loweredWords = words.map((w) => w.toLowerCase())
+            const loweredSearchWords = searchWords.map((w) => w.toLowerCase())
+            const matchIndices: number[] = []
+            for (let i = 0; i <= loweredWords.length - loweredSearchWords.length; i++) {
+                let match = true
+                for (let j = 0; j < loweredSearchWords.length; j++) {
+                    if (loweredWords[i + j] !== loweredSearchWords[j]) {
+                        match = false
+                        break
+                    }
+                }
+                if (match) {
+                    matchIndices.push(i)
+                }
+            }
+            if (matchIndices.length === 0) {
+                return chunk
+            }
+            const snippets: string[] = matchIndices.map((startIdx) => {
+                const before = Math.max(0, startIdx - 3)
+                const after = Math.min(words.length, startIdx + loweredSearchWords.length + 3)
+                return words.slice(before, after).join(' ')
+            })
+            const newText = snippets.join('...')
+            return { ...chunk, text: newText }
+        })
+
+        return newResults.map((chunk) => ({
             ...chunk,
             threadId: messageIdToThreadId[chunk.messageId],
             threadTitle: threadIdToTitle[messageIdToThreadId[chunk.messageId]]
