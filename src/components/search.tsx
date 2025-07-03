@@ -57,14 +57,45 @@ export function SearchDialog() {
                     <CommandGroup key={threadId} heading={threadTitle}>
                         {chunks.map((chunk, index) => (
                             <Link to="/$threadId" key={index} params={{ threadId: chunk.threadId }}>
-                                <CommandItem onSelect={() => setSearchDialogOpen(false)}>
-                                    <span>{chunk.text}</span>
-                                </CommandItem>
+                                <CommandItem onSelect={() => setSearchDialogOpen(false)}>{highlightText(chunk.text, query)}</CommandItem>
                             </Link>
                         ))}
                     </CommandGroup>
                 ))}
             </CommandList>
         </CommandDialog>
+    )
+}
+
+function highlightText(text: string, searchQuery: string) {
+    if (!searchQuery.trim()) {
+        return <span>{text}</span>
+    }
+
+    const searchWords = searchQuery
+        .trim()
+        .split(/\s+/)
+        .filter((word) => word.length > 0)
+
+    if (searchWords.length === 0) {
+        return <span>{text}</span>
+    }
+
+    const pattern = new RegExp(`(${searchWords.map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi')
+    const parts = text.split(pattern)
+
+    return (
+        <span>
+            {parts.map((part, index) => {
+                const isMatch = searchWords.some((word) => part.toLowerCase() === word.toLowerCase())
+                return isMatch ? (
+                    <mark key={index} className="rounded bg-yellow-300 dark:bg-pink-300">
+                        {part}
+                    </mark>
+                ) : (
+                    <span key={index}>{part}</span>
+                )
+            })}
+        </span>
     )
 }
