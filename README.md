@@ -1,5 +1,7 @@
 # eesy-chat
 
+https://albertsaniza.github.io/eesy-chat
+
 ## License
 
 MIT
