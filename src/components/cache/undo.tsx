@@ -8,8 +8,8 @@ export function UndoCache() {
 
     useEffect(() => {
         setUser({ isSignedIn: false })
-        setThreads([])
         setModels([])
+        setThreads([])
     }, [setModels, setThreads, setUser])
 
     return null

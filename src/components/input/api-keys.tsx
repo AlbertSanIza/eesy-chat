@@ -7,9 +7,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { api } from '@/convex/_generated/api'
+import { useStore } from '@/lib/zustand/store'
 
 export function InputApiKeys() {
     const [isOpen, setIsOpen] = useState(false)
+    const user = useStore((state) => state.user)
     const storedApiKeys = useQuery(api.get.apiKeys)
     const setApiKey = useMutation(api.update.apiKey)
     const removeApiKey = useMutation(api.remove.apiKey)
@@ -52,7 +54,7 @@ export function InputApiKeys() {
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="icon" className="relative">
+                <Button variant="outline" size="icon" className="relative" disabled={!user?.isSignedIn}>
                     <KeyIcon />
                     {hasAllStoredKeys && <div className="absolute right-1.5 bottom-1.5 size-1 rounded-full bg-green-500" />}
                     {hasPartialStoredKeys && <div className="absolute right-1.5 bottom-1.5 size-1 rounded-full bg-orange-500" />}
