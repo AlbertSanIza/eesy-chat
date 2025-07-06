@@ -5,12 +5,14 @@ export function UndoCache() {
     const setUser = useStore((state) => state.setUser)
     const setModels = useStore((state) => state.setModels)
     const setThreads = useStore((state) => state.setThreads)
+    const setThreadSearch = useStore((state) => state.setThreadSearch)
 
     useEffect(() => {
         setUser({ isSignedIn: false })
         setModels([])
         setThreads([])
-    }, [setModels, setThreads, setUser])
+        setThreadSearch('')
+    }, [setModels, setThreads, setUser, setThreadSearch])
 
     return null
 }
